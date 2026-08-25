@@ -125,6 +125,9 @@ export function Header() {
           <a href="#cells-glossary" className="px-2.5 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden md:block">
             {t(ui.navCells)}
           </a>
+          <a href="#eda-reference" className="px-2.5 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden md:block">
+            {t(ui.navRef)}
+          </a>
           <a href="#stage-tapeout" className="px-2.5 py-1 rounded-lg text-xs text-cyan-400 hover:text-cyan-300 transition-colors hidden md:block">
             {t(ui.navTapeout)}
           </a>

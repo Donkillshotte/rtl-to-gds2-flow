@@ -4,10 +4,9 @@
  * Previous layers render at reduced opacity; the active layer stays at full brightness.
  */
 
-import type { Geo } from "./chipGeometry";
 import {
-  geom, rr, mulberry32, inMacro, CORE, MACROS, REGIONS, BLOCKS, BUS,
-  drawDieFoundation, drawMacroBlock, drawSchematicBase,
+  geom, rr, mulberry32, inMacro, CORE, REGIONS, BLOCKS, BUS,
+  drawDieFoundation, drawSchematicBase,
 } from "./chipGeometry";
 
 export const NUM_LAYERS = 14;
@@ -409,18 +408,27 @@ export function drawLayerAnimation(
 
   switch (layer) {
     case 0: {
-      // RTL signal flow along bus connections
-      const phase = (t % 3200) / 3200;
-      for (const b of BLOCKS) {
+      // RTL packets with staggered phases
+      for (let k = 0; k < BLOCKS.length; k++) {
+        const b = BLOCKS[k];
+        const phase = ((t / 2800) + k * 0.18) % 1;
         const cx = X((b.x0 + b.x1) / 2);
         const from = b.y1 < BUS.y0 ? Y(b.y1) : Y(b.y0);
         const to = b.y1 < BUS.y0 ? Y(BUS.y0) : Y(BUS.y1);
         const py = from + (to - from) * phase;
-        ctx.fillStyle = "rgba(34,211,238,0.75)";
+        ctx.fillStyle = "rgba(34,211,238,0.9)";
         ctx.beginPath();
-        ctx.arc(cx, py, 2, 0, Math.PI * 2);
+        ctx.arc(cx, py, 2.4, 0, Math.PI * 2);
         ctx.fill();
       }
+      // packets along the bus
+      const busPhase = (t % 2200) / 2200;
+      const bx = X(BUS.x0 + busPhase * (BUS.x1 - BUS.x0));
+      const by = Y((BUS.y0 + BUS.y1) / 2);
+      ctx.fillStyle = "#67e8f9";
+      ctx.beginPath();
+      ctx.arc(bx, by, 3, 0, Math.PI * 2);
+      ctx.fill();
       break;
     }
     case 1: {
@@ -475,29 +483,50 @@ export function drawLayerAnimation(
       break;
     }
     case 6: {
-      // Clock signal propagation along H-tree
-      const phase = (t % 2000) / 2000;
-      const pulseY = Y(0.05 + phase * 0.45);
-      ctx.fillStyle = "rgba(251,191,36,0.7)";
-      ctx.beginPath();
-      ctx.arc(X(0.5), pulseY, 3, 0, Math.PI * 2);
-      ctx.fill();
+      // Clock pulse: trunk then H-tree arms
+      const phase = (t % 2400) / 2400;
+      ctx.fillStyle = "rgba(251,191,36,0.9)";
+      if (phase < 0.35) {
+        const local = phase / 0.35;
+        ctx.beginPath();
+        ctx.arc(X(0.5), Y(0.05 + local * 0.45), 3.2, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        const local = (phase - 0.35) / 0.65;
+        const spread = 0.21 * Math.min(1, local * 1.4);
+        for (const sx of [-1, 1]) {
+          ctx.beginPath();
+          ctx.arc(X(0.5 + sx * spread), Y(0.5), 2.6, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(X(0.5 + sx * spread), Y(0.5 - spread * 0.72), 2.1, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(X(0.5 + sx * spread), Y(0.5 + spread * 0.72), 2.1, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
       break;
     }
     case 7: {
-      // Traveling dots on global nets
-      const nets: [number, number][] = [
-        [0.30, 0.21], [0.40, 0.21], [0.40, 0.30], [0.50, 0.30],
+      const nets: [number, number][][] = [
+        [[0.30, 0.21], [0.40, 0.21], [0.40, 0.30], [0.50, 0.30]],
+        [[0.30, 0.46], [0.47, 0.46], [0.47, 0.60], [0.60, 0.60]],
+        [[0.655, 0.28], [0.69, 0.28]],
+        [[0.50, 0.50], [0.50, 0.63], [0.42, 0.63]],
       ];
-      const idx = Math.floor((t / 600) % (nets.length - 1));
-      const frac = ((t / 600) % 1);
-      const a = nets[idx], b = nets[idx + 1];
-      const px = a[0] + (b[0] - a[0]) * frac;
-      const py = a[1] + (b[1] - a[1]) * frac;
-      ctx.fillStyle = "#67e8f9";
-      ctx.beginPath();
-      ctx.arc(X(px), Y(py), 2.5, 0, Math.PI * 2);
-      ctx.fill();
+      nets.forEach((net, ni) => {
+        const speed = 550 + ni * 90;
+        const idx = Math.floor((t / speed + ni * 0.3) % (net.length - 1));
+        const frac = ((t / speed) % 1);
+        const a = net[idx], b = net[idx + 1];
+        const px = a[0] + (b[0] - a[0]) * frac;
+        const py = a[1] + (b[1] - a[1]) * frac;
+        ctx.fillStyle = ni % 2 ? "#c4b5fd" : "#67e8f9";
+        ctx.beginPath();
+        ctx.arc(X(px), Y(py), 2.4, 0, Math.PI * 2);
+        ctx.fill();
+      });
       break;
     }
     case 8: {
@@ -509,16 +538,38 @@ export function drawLayerAnimation(
       break;
     }
     case 9: {
-      // Critical path pulse
-      const pulse = 0.5 + 0.5 * Math.sin(t * 0.012);
-      ctx.strokeStyle = `rgba(251,113,133,${0.4 + pulse * 0.5})`;
-      ctx.lineWidth = 3;
-      ctx.setLineDash([5, 4]);
+      const path: [number, number][] = [
+        [0.30, 0.42], [0.40, 0.42], [0.40, 0.24], [0.55, 0.24], [0.55, 0.19], [0.72, 0.19],
+      ];
+      let dist = 0;
+      const seglen: number[] = [];
+      for (let i = 0; i < path.length - 1; i++) {
+        const dx = path[i + 1][0] - path[i][0];
+        const dy = path[i + 1][1] - path[i][1];
+        const d = Math.hypot(dx, dy);
+        seglen.push(d);
+        dist += d;
+      }
+      let remain = ((t / 1400) % 1) * dist;
+      let px = path[0][0], py = path[0][1];
+      for (let i = 0; i < seglen.length; i++) {
+        if (remain <= seglen[i]) {
+          const f = seglen[i] === 0 ? 0 : remain / seglen[i];
+          px = path[i][0] + (path[i + 1][0] - path[i][0]) * f;
+          py = path[i][1] + (path[i + 1][1] - path[i][1]) * f;
+          break;
+        }
+        remain -= seglen[i];
+        px = path[i + 1][0];
+        py = path[i + 1][1];
+      }
+      ctx.fillStyle = "#fb7185";
+      ctx.shadowColor = "rgba(251,113,133,0.9)";
+      ctx.shadowBlur = 8;
       ctx.beginPath();
-      ctx.moveTo(X(0.30), Y(0.42));
-      ctx.lineTo(X(0.72), Y(0.19));
-      ctx.stroke();
-      ctx.setLineDash([]);
+      ctx.arc(X(px), Y(py), 3.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
       break;
     }
     case 10: {
@@ -599,27 +650,33 @@ export function compositeLayers(
   layers: HTMLCanvasElement[],
   current: number,
   t: number,
-  dpr: number
+  dpr: number,
+  revealStart = 0
 ) {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, w, h);
   ctx.fillStyle = "#060b16";
   ctx.fillRect(0, 0, w, h);
 
+  const reveal = Math.min(1, Math.max(0, (t - revealStart) / 850));
+
   for (let i = 0; i <= current; i++) {
     let alpha = layerAlpha(i, current, t) * schematicFade(i, current);
+    if (i === current) alpha *= 0.35 + 0.65 * reveal;
     if (alpha <= 0.01) continue;
     ctx.globalAlpha = alpha;
     ctx.drawImage(layers[i], 0, 0, layers[i].width, layers[i].height, 0, 0, w, h);
   }
   ctx.globalAlpha = 1;
 
-  // Highlight ring on active layer
   const g = geom(w, h);
   const pulse = 0.35 + 0.25 * Math.sin(t * 0.006);
-  ctx.strokeStyle = `rgba(34,211,238,${pulse})`;
-  ctx.lineWidth = 1.5;
+  const meta = LAYER_META[current];
+  ctx.strokeStyle = meta?.color ?? "#22d3ee";
+  ctx.globalAlpha = 0.35 + pulse * 0.45;
+  ctx.lineWidth = 2;
   ctx.strokeRect(g.dx - 2, g.dy - 2, g.S + 4, g.S + 4);
+  ctx.globalAlpha = 1;
 
   drawLayerAnimation(ctx, w, h, current, t);
 }

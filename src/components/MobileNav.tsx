@@ -123,6 +123,7 @@ export function MobileHeaderMenu() {
     { href: "#signoff-checklist", label: t(ui.navSignoff) },
     { href: "#glossary", label: t(ui.navGlossary) },
     { href: "#cells-glossary", label: t(ui.navCells) },
+    { href: "#eda-reference", label: t(ui.navRef) },
     { href: "#stage-tapeout", label: t(ui.navTapeout) },
   ];
 

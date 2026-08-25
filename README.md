@@ -28,12 +28,15 @@ Guida professionale interattiva al flusso completo di **physical design** — da
 
 ## Sezioni aggiuntive
 
-- **Chip Evolution** — Canvas animation: cumulative chip build across all 14 phases
-- **Formule & Modelli** — KaTeX-rendered formulas (setup/hold, IR drop, Black's Eq, MTBF, antenna ratio, …)
-- **Senior Interview Prep** — Q&A per ogni fase
+- **Chip Evolution** — 14 canvas layer sovrapposti: i precedenti diventano più trasparenti, il corrente è animato
+- **Formule & Modelli** — KaTeX (setup/hold, FO4, logical effort, IR drop, Black's Eq, MTBF, antenna, …)
+- **Senior Interview Prep** — Q&A per ogni fase (AOCV/POCV, bump map, fill SI, handoff FE→PD, …)
 - **Checklist di Signoff** — Check di produzione per ogni milestone
-- **Glossario Tecnico** — Termini del flusso PD
-- **Glossario Celle Standard** — INV, BUF, AOI/OAI, CLKBUF, TAP, ENDCAP, GDHS, trunk, decap, power switch, …
+- **Artefatti EDA** — File del flusso (.lib, .lef, .def, .spef, .upf, GDS/OASIS, …)
+- **Stack metallico 7 nm** — M0→AP/RDL, pitch indicativi, preferred direction
+- **Corner PVT / MMMC** — SS/TT/FF, temperature inversion, RC corners
+- **Glossario Tecnico** — 100+ termini (WNS, AOCV, CPPR, NDR, BTO/MTO, …) con ricerca
+- **Glossario Celle Standard** — INV, NAND/NOR, MUX, XOR, SDFF, CLKBUF, TAP, ENDCAP, DLY, CLKMUX, …
 
 ## Avvio locale
 

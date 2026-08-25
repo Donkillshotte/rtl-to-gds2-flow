@@ -60,6 +60,7 @@ export function ChipEvolution({ activeStageIndex, compact = false }: ChipEvoluti
     let W = 0,
       H = 0,
       DPR = 1;
+    let revealStart = 0;
 
     const rebuild = () => {
       W = canvas.offsetWidth;
@@ -74,7 +75,7 @@ export function ChipEvolution({ activeStageIndex, compact = false }: ChipEvoluti
 
     const frame = (now: number) => {
       if (!visible || layers.length === 0) return;
-      compositeLayers(ctx, W, H, layers, activeStageIndex, now, DPR);
+      compositeLayers(ctx, W, H, layers, activeStageIndex, now, DPR, revealStart);
       raf = requestAnimationFrame(frame);
     };
 
@@ -84,6 +85,7 @@ export function ChipEvolution({ activeStageIndex, compact = false }: ChipEvoluti
           if (e.isIntersecting && !visible) {
             visible = true;
             rebuild();
+            revealStart = performance.now();
             raf = requestAnimationFrame(frame);
           } else if (!e.isIntersecting) {
             visible = false;

@@ -564,4 +564,220 @@ export const cellGlossary: CellType[] = [
     ),
     relatedCells: ["FILLER", "BUF"],
   },
+  {
+    id: "nand2",
+    name: loc("NAND2 — NAND a 2 ingressi", "NAND2 — 2-input NAND"),
+    category: loc("Logica Combinatoria", "Combinational Logic"),
+    function: loc(
+      "Y = ¬(A·B). Cella combinatoria più usata dopo INV: area minima, delay basso, mapping naturale della sintesi.",
+      "Y = ¬(A·B). Most-used combinational cell after INV: minimal area, low delay, natural synthesis mapping."
+    ),
+    placement: loc("Qualsiasi sito legale. Drive X1–X16. Varianti HVT/SVT/LVT.", "Any legal site. Drive X1–X16. HVT/SVT/LVT variants."),
+    whenUsed: loc("Logica generale, De Morgan (AND via NAND+INV), datapath.", "General logic, De Morgan (AND via NAND+INV), datapath."),
+    technicalNotes: loc(
+      [
+        "Stack NMOS in serie → rise/fall asimmetrico; sizing P/N nel .lib",
+        "NAND3/NAND4 esistono ma pin-access e stack peggiorano delay",
+        "FO4 delay del NAND2 è metrica di processo",
+      ],
+      [
+        "Series NMOS stack → asymmetric rise/fall; P/N sizing in .lib",
+        "NAND3/NAND4 exist but pin-access and stack worsen delay",
+        "NAND2 FO4 delay is a process metric",
+      ]
+    ),
+    relatedCells: ["NOR2", "INV", "AOI"],
+  },
+  {
+    id: "nor2",
+    name: loc("NOR2 — NOR a 2 ingressi", "NOR2 — 2-input NOR"),
+    category: loc("Logica Combinatoria", "Combinational Logic"),
+    function: loc(
+      "Y = ¬(A+B). Dual del NAND. PMOS in serie → più lento del NAND2 a pari area (mobilità hole).",
+      "Y = ¬(A+B). Dual of NAND. Series PMOS → slower than NAND2 at same area (hole mobility)."
+    ),
+    placement: loc("Row legale. Preferire NAND+INV se timing stretto.", "Legal row. Prefer NAND+INV if timing is tight."),
+    whenUsed: loc("Control logic, reset-tree locale, mapping sintesi.", "Control logic, local reset-tree, synthesis mapping."),
+    technicalNotes: loc(
+      ["NOR2 più debole in pull-up: attenzione max trans su net lunghe", "NOR3 raro in timing-critical path"],
+      ["NOR2 weaker on pull-up: watch max trans on long nets", "NOR3 rare on timing-critical paths"]
+    ),
+    relatedCells: ["NAND2", "INV", "OAI"],
+  },
+  {
+    id: "mux2",
+    name: loc("MUX2 — Multiplexer 2:1", "MUX2 — 2:1 Multiplexer"),
+    category: loc("Logica Combinatoria", "Combinational Logic"),
+    function: loc(
+      "Y = S ? D1 : D0. Transmission-gate o AOI. Pin density alta → congestion e pin-access critici.",
+      "Y = S ? D1 : D0. Transmission-gate or AOI. High pin density → congestion and pin-access critical."
+    ),
+    placement: loc("Evitarne cluster densi senza extra routing tracks. Halo su bus MUX.", "Avoid dense clusters without extra routing tracks. Halo on MUX buses."),
+    whenUsed: loc("Datapath, scan mux (SDFF interno), clock mux (celle dedicate!).", "Datapath, scan mux (inside SDFF), clock mux (dedicated cells!)."),
+    technicalNotes: loc(
+      [
+        "NON usare MUX2 di data path sul clock — glitch e duty distortion",
+        "Clock mux: celle CLKMX / glitch-free con make-before-break",
+        "MUX4 = due MUX2 o cella dedicata, peggior pin access",
+      ],
+      [
+        "Do NOT use datapath MUX2 on clock — glitch and duty distortion",
+        "Clock mux: CLKMX / glitch-free cells with make-before-break",
+        "MUX4 = two MUX2 or dedicated cell, worse pin access",
+      ]
+    ),
+    relatedCells: ["SDFF", "AOI", "CLKBUF"],
+  },
+  {
+    id: "xor2",
+    name: loc("XOR2 / XNOR2", "XOR2 / XNOR2"),
+    category: loc("Logica Combinatoria", "Combinational Logic"),
+    function: loc(
+      "Y = A ⊕ B (XOR) o ¬(A ⊕ B) (XNOR). Datapath (adder, CRC, parity, crypto). Cella grande, molti transistor.",
+      "Y = A ⊕ B (XOR) or ¬(A ⊕ B) (XNOR). Datapath (adder, CRC, parity, crypto). Large cell, many transistors."
+    ),
+    placement: loc("Datapath aligned (bit-slice). XOR in timing path è spesso il bottleneck.", "Datapath-aligned (bit-slice). XOR on a timing path is often the bottleneck."),
+    whenUsed: loc("ALU, ECC, hash, comparator. XNOR per equality.", "ALU, ECC, hash, comparator. XNOR for equality."),
+    technicalNotes: loc(
+      ["Pass-transistor XOR: rischio threshold drop — preferire CMOS statico in .lib", "Half-adder = XOR + AND; full-adder ha cella FA dedicata"],
+      ["Pass-transistor XOR: threshold-drop risk — prefer static CMOS in .lib", "Half-adder = XOR + AND; full-adder has a dedicated FA cell"]
+    ),
+    relatedCells: ["NAND2", "AOI"],
+  },
+  {
+    id: "sdff",
+    name: loc("SDFF — Scan D Flip-Flop", "SDFF — Scan D Flip-Flop"),
+    category: loc("Sequential & Scan", "Sequential & Scan"),
+    function: loc(
+      "DFF con mux scan: SI/SE. In shift, Q segue SI. Obbligatorio per ATPG. Varianti: async set/reset, enable, scan-enable local.",
+      "DFF with scan mux: SI/SE. In shift, Q follows SI. Mandatory for ATPG. Variants: async set/reset, enable, local scan-enable."
+    ),
+    placement: loc("Come DFF. Scan stitching post-place riordina SI→Q per wirelength.", "Like DFF. Post-place scan stitching reorders SI→Q for wirelength."),
+    whenUsed: loc("Quasi tutti i FF di produzione. Coverage stuck-at/transition.", "Almost all production FFs. Stuck-at/transition coverage."),
+    technicalNotes: loc(
+      [
+        "SE è high-fanout net — buffer tree o SE-enable locale",
+        "Hold su scan path: spesso il primo hold da chiudere post-CTS",
+        "Lock-up latch su dominio crossing della chain",
+      ],
+      [
+        "SE is a high-fanout net — buffer tree or local SE enable",
+        "Hold on scan path: often the first hold to close post-CTS",
+        "Lock-up latch on chain domain crossings",
+      ]
+    ),
+    relatedCells: ["DFF", "MUX2", "LATCH"],
+  },
+  {
+    id: "latch",
+    name: loc("LATCH / DLAT", "LATCH / DLAT"),
+    category: loc("Sequential & Scan", "Sequential & Scan"),
+    function: loc(
+      "Livello-sensitive: trasparente quando EN=1. Time borrowing. Pericoloso se inferito da RTL incompleto.",
+      "Level-sensitive: transparent while EN=1. Time borrowing. Dangerous if inferred from incomplete RTL."
+    ),
+    placement: loc("Solo dove l'architettura lo prevede (pulsed latch, lock-up). Mai da lint residual.", "Only where architecture requires it (pulsed latch, lock-up). Never from residual lint."),
+    whenUsed: loc("Lock-up in scan, pulsed-latch CPU, isolation clamp-latch.", "Scan lock-up, pulsed-latch CPU, isolation clamp-latch."),
+    technicalNotes: loc(
+      ["STA: transparent latch apre path combinatori attraverso il latch", "Duty cycle e pulse width diventano constraint"],
+      ["STA: transparent latch opens combinational paths through the latch", "Duty cycle and pulse width become constraints"]
+    ),
+    relatedCells: ["DFF", "SDFF"],
+  },
+  {
+    id: "delay",
+    name: loc("DLY / Delay Cell", "DLY / Delay Cell"),
+    category: loc("Clock & Buffer", "Clock & Buffer"),
+    function: loc(
+      "Cella a ritardo calibrato (DLY1–DLY16) per hold fix. Non è un buffer di drive: Cin alta, Rout alta.",
+      "Calibrated delay cell (DLY1–DLY16) for hold fix. Not a drive buffer: high Cin, high Rout."
+    ),
+    placement: loc("Sul data path corto (hold). Mai sul clock tree (skew incontrollato).", "On short data paths (hold). Never on the clock tree (uncontrolled skew)."),
+    whenUsed: loc("Post-CTS / post-route hold ECO. Preferire buffer se serve anche drive.", "Post-CTS / post-route hold ECO. Prefer buffers if drive is also needed."),
+    technicalNotes: loc(
+      ["Delay vs PVT: DLY peggiora al FF — proprio il corner hold", "Troppe DLY = area e leakage; meglio useful skew se possibile"],
+      ["Delay vs PVT: DLY gets worse at FF — exactly the hold corner", "Too many DLY = area and leakage; prefer useful skew if possible"]
+    ),
+    relatedCells: ["BUF", "CLKBUF"],
+  },
+  {
+    id: "clkinv",
+    name: loc("CLKINV — Clock Inverter", "CLKINV — Clock Inverter"),
+    category: loc("Clock & Buffer", "Clock & Buffer"),
+    function: loc(
+      "Inverter qualified per clock: matching rise/fall, low variation. Per H-tree balanced e clock inversion intenzionale.",
+      "Clock-qualified inverter: matched rise/fall, low variation. For balanced H-trees and intentional clock inversion."
+    ),
+    placement: loc("Solo clock net (CTS). Non usare INV di data path sul clock.", "Clock nets only (CTS). Do not use datapath INV on clock."),
+    whenUsed: loc("CTS inversion, mesh spine, local clock inversion per useful skew.", "CTS inversion, mesh spine, local clock inversion for useful skew."),
+    technicalNotes: loc(
+      ["Duty cycle: rise≠fall accumula distortion lungo il tree", "Liberty clock_gating_integrated / clock cell group"],
+      ["Duty cycle: rise≠fall accumulates distortion along the tree", "Liberty clock_gating_integrated / clock cell group"]
+    ),
+    relatedCells: ["CLKBUF", "INV", "ICG"],
+  },
+  {
+    id: "diode",
+    name: loc("DIODE — Antenna Diode", "DIODE — Antenna Diode"),
+    category: loc("Filler & Physical", "Filler & Physical"),
+    function: loc(
+      "Diodo di scarica verso substrate/well. Identico scopo all'antenna cell; naming PDK-specific (ANTENNA vs DIODE).",
+      "Discharge diode to substrate/well. Same purpose as antenna cell; PDK-specific naming (ANTENNA vs DIODE)."
+    ),
+    placement: loc("Vicino al gate pin della vittima. Inserito da antenna repair.", "Near the victim gate pin. Inserted by antenna repair."),
+    whenUsed: loc("Violazioni antenna post-route.", "Post-route antenna violations."),
+    technicalNotes: loc(
+      ["Non confondere con ESD diode degli IO (scala diversa)", "Area diodo vs AR_max nel DRM"],
+      ["Do not confuse with IO ESD diodes (different scale)", "Diode area vs AR_max in the DRM"]
+    ),
+    relatedCells: ["ANTENNA"],
+  },
+  {
+    id: "welltap",
+    name: loc("WELLTAP — Well Tap dedicato", "WELLTAP — Dedicated Well Tap"),
+    category: loc("Power & Ground", "Power & Ground"),
+    function: loc(
+      "Variante TAP con well/substrate pick-up dimensionato per distanza max DRM. A volte distinto da TAPCELL nel LEF.",
+      "TAP variant with well/substrate pick-up sized for DRM max distance. Sometimes distinct from TAPCELL in LEF."
+    ),
+    placement: loc("Griglia regolare (es. ogni 30–60 µm). Checkerboard N-well / P-sub.", "Regular grid (e.g. every 30–60 µm). Checkerboard N-well / P-sub."),
+    whenUsed: loc("Latch-up prevention. Obbligatorio, non opzionale.", "Latch-up prevention. Mandatory, not optional."),
+    technicalNotes: loc(
+      ["Distanza max è regola DRC — tap missing = ERC/DRC fail", "In FinFET il tap pitch è nel DRM del nodo"],
+      ["Max distance is a DRC rule — missing tap = ERC/DRC fail", "In FinFET, tap pitch is in the node DRM"]
+    ),
+    relatedCells: ["TAP", "ENDCAP"],
+  },
+  {
+    id: "fa",
+    name: loc("FA / HA — Full / Half Adder", "FA / HA — Full / Half Adder"),
+    category: loc("Logica Combinatoria", "Combinational Logic"),
+    function: loc(
+      "Cella datapath: HA = SUM+COUT da 2 bit; FA da 3 bit (A,B,CIN). Mapping diretto in adder/CLA.",
+      "Datapath cell: HA = SUM+COUT from 2 bits; FA from 3 bits (A,B,CIN). Direct mapping in adder/CLA."
+    ),
+    placement: loc("Bit-slice alignment verticale/orizzontale per carry chain corta.", "Bit-slice alignment vertical/horizontal for a short carry chain."),
+    whenUsed: loc("ALU, address gen, popcount. Critico per timing dell'adder.", "ALU, address gen, popcount. Critical for adder timing."),
+    technicalNotes: loc(
+      ["Carry chain è spesso il WNS del core", "Brent-Kung/Sklansky usano AOI/OAI più che FA atomici"],
+      ["Carry chain is often the core WNS", "Brent-Kung/Sklansky use AOI/OAI more than atomic FA"]
+    ),
+    relatedCells: ["XOR2", "AOI", "NAND2"],
+  },
+  {
+    id: "clkmux",
+    name: loc("CLKMUX — Glitch-free Clock Mux", "CLKMUX — Glitch-free Clock Mux"),
+    category: loc("Clock & Buffer", "Clock & Buffer"),
+    function: loc(
+      "Mux clock con sincronizzazione select (make-before-break / synchronizer). Evita glitch di un MUX2 datapath.",
+      "Clock mux with synchronized select (make-before-break / synchronizer). Avoids datapath MUX2 glitches."
+    ),
+    placement: loc("Vicino alla clock source / PLL. NDR sul net di uscita.", "Near clock source / PLL. NDR on the output net."),
+    whenUsed: loc("Clock switching runtime, scan vs functional clock, DFT mux.", "Runtime clock switching, scan vs functional clock, DFT mux."),
+    technicalNotes: loc(
+      ["STA: generated clock per ogni input del mux", "Glitch durante switch = functional fail — cella dedicata obbligatoria"],
+      ["STA: generated clock per mux input", "Glitch during switch = functional fail — dedicated cell mandatory"]
+    ),
+    relatedCells: ["MUX2", "CLKBUF", "ICG"],
+  },
 ];

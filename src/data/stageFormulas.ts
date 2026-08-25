@@ -18,6 +18,14 @@ export const stageFormulas: Record<StageId, StageFormula[]> = {
       ),
     },
     {
+      label: loc("Fanout-of-4 (FO4)", "Fanout-of-4 (FO4)"),
+      latex: "t_{FO4} = t_{pd}(\\text{INV driving 4 identical INV})",
+      explanation: loc(
+        "Metrica di processo: delay di un inverter che guida 4 copie. Un gate 'vale' ~3–5 FO4; un ciclo a 1 GHz ≈ 15–20 FO4 in 7 nm.",
+        "Process metric: delay of an inverter driving 4 copies. A gate is ~3–5 FO4; a 1 GHz cycle is ≈15–20 FO4 in 7 nm."
+      ),
+    },
+    {
       label: loc("Potenza dinamica", "Dynamic power"),
       latex: "P_{dyn} = \\alpha \\cdot C_L \\cdot V_{DD}^2 \\cdot f",
       explanation: loc(
@@ -54,11 +62,27 @@ export const stageFormulas: Record<StageId, StageFormula[]> = {
       ),
     },
     {
+      label: loc("Clock Skew Budget", "Clock Skew Budget"),
+      latex: "T_{skew} + T_{jitter} + T_{OCV} \\leq T_{clk} - t_{logic} - t_{su}",
+      explanation: loc(
+        "Il budget di incertezza clock mangia il ciclo. CTS deve lasciare margine per jitter PLL e OCV, non solo skew nominale.",
+        "Clock uncertainty budget eats the cycle. CTS must leave margin for PLL jitter and OCV, not just nominal skew."
+      ),
+    },
+    {
       label: loc("Hold Timing Constraint", "Hold Timing Constraint"),
       latex: "T_{data} - T_{clk} \\geq T_{hold} - T_{skew} + T_{uncertainty}",
       explanation: loc(
         "Il dato deve rimanere stabile dopo il clock edge. Violazione = race condition (path troppo veloce).",
         "Data must remain stable after clock edge. Violation = race condition (path too fast)."
+      ),
+    },
+    {
+      label: loc("Logical Effort (path)", "Logical Effort (path)"),
+      latex: "D = N F^{1/N} + P,\\quad F = GBH",
+      explanation: loc(
+        "G = logical effort del path, B = branching, H = electrical effort Cout/Cin, P = parasitic. Guida sizing e profondità di logica in sintesi.",
+        "G = path logical effort, B = branching, H = electrical effort Cout/Cin, P = parasitic. Guides sizing and logic depth in synthesis."
       ),
     },
     {
@@ -232,6 +256,14 @@ export const stageFormulas: Record<StageId, StageFormula[]> = {
       ),
     },
     {
+      label: loc("Black's Equation (EM MTTF)", "Black's Equation (EM MTTF)"),
+      latex: "MTTF = A \\cdot J^{-n} \\cdot e^{E_a / kT}",
+      explanation: loc(
+        "n ≈ 1–2 (current density), Ea ≈ 0.7–0.9 eV. T in kelvin. Signoff: MTTF ≥ 10 anni al Tmax del prodotto.",
+        "n ≈ 1–2 (current density), Ea ≈ 0.7–0.9 eV. T in kelvin. Signoff: MTTF ≥ 10 years at product Tmax."
+      ),
+    },
+    {
       label: loc("Decap Effectiveness", "Decap Effectiveness"),
       latex: "\\Delta V = \\frac{I_{peak} \\cdot \\Delta t}{C_{on-chip} + C_{decap}}",
       explanation: loc(
@@ -295,6 +327,16 @@ export const stageInterview: Record<StageId, InterviewQuestion[]> = {
       answer: loc(
         "ICG cells inserite in sintesi/CTS. Riduce power ma aggiunge enable timing paths e complessità CTS. UPF definisce quali domini possono essere gated.",
         "ICG cells inserted in synthesis/CTS. Reduces power but adds enable timing paths and CTS complexity. UPF defines which domains can be gated."
+      ),
+    },
+    {
+      question: loc(
+        "Quali file deve consegnare il FE al PD per un handoff pulito?",
+        "Which files must FE deliver to PD for a clean handoff?"
+      ),
+      answer: loc(
+        "Netlist gate LEC-clean, SDC (clocks reali, I/O, eccezioni documentate), UPF, Liberty+LEF del PDK, scan DEF/chain info, lista macro/memorie. Senza SDC/UPF il PD indovina — e sbaglia.",
+        "LEC-clean gate netlist, SDC (real clocks, I/O, documented exceptions), UPF, PDK Liberty+LEF, scan DEF/chain info, macro/memory list. Without SDC/UPF, PD guesses — and is wrong."
       ),
     },
   ],
@@ -463,6 +505,16 @@ export const stageInterview: Record<StageId, InterviewQuestion[]> = {
         "CMP requires uniform metal density. Without fill: dishing (sparse areas) or erosion (dense areas). Dummy fill satisfies ρ_min ≤ ρ ≤ ρ_max."
       ),
     },
+    {
+      question: loc(
+        "Fill grounded vs floating — impatto su SI?",
+        "Grounded vs floating fill — SI impact?"
+      ),
+      answer: loc(
+        "Grounded fill aumenta C verso ground (più delay, meno crosstalk). Floating fill ha C coupling verso i signal (più SI). Foundry/PDK decide; signoff SPEF deve includere il fill reale.",
+        "Grounded fill increases C to ground (more delay, less crosstalk). Floating fill couples to signals (more SI). Foundry/PDK decides; signoff SPEF must include the real fill."
+      ),
+    },
   ],
   sta: [
     {
@@ -483,6 +535,16 @@ export const stageInterview: Record<StageId, InterviewQuestion[]> = {
       answer: loc(
         "Clock Path Pessimism Removal: rimuove doppio conteggio OCV su common clock path. Riduce pessimismo setup su path same-domain. PrimeTime lo applica automaticamente.",
         "Clock Path Pessimism Removal: removes double-counting OCV on common clock path. Reduces setup pessimism on same-domain paths. PrimeTime applies automatically."
+      ),
+    },
+    {
+      question: loc(
+        "AOCV vs POCV/LVF — quando si usa cosa?",
+        "AOCV vs POCV/LVF — when to use which?"
+      ),
+      answer: loc(
+        "AOCV: derate tabellato depth×distance, standard 16/10 nm. POCV/LVF: σ statistica per cella/net, obbligatorio a 7/5/3 nm dove OCV flat è troppo pessimistico o ottimistico sui path corti.",
+        "AOCV: depth×distance derate tables, standard at 16/10 nm. POCV/LVF: per-cell/net σ, mandatory at 7/5/3 nm where flat OCV is too pessimistic or optimistic on short paths."
       ),
     },
   ],
@@ -539,6 +601,16 @@ export const stageInterview: Record<StageId, InterviewQuestion[]> = {
       answer: loc(
         "Wire-bond: pad periferici, fili dorati, <500 IO, costo basso. Flip-chip: bump array area-I/O, >1000 IO, minore inductance, richiede RDL e package co-design.",
         "Wire-bond: peripheral pads, gold wires, <500 IO, lower cost. Flip-chip: area-I/O bump array, >1000 IO, lower inductance, requires RDL and package co-design."
+      ),
+    },
+    {
+      question: loc(
+        "Perché il bump map si decide al floorplan e non a fine PD?",
+        "Why is the bump map decided at floorplan, not at the end of PD?"
+      ),
+      answer: loc(
+        "I bump di power determinano dove entra la corrente: IR drop paths, RDL, e package balls. Cambiarli post-route significa rifare PDN e spesso il floorplan. Co-design PKG dal day-1.",
+        "Power bumps determine where current enters: IR drop paths, RDL, and package balls. Changing them post-route means redoing PDN and often the floorplan. PKG co-design from day one."
       ),
     },
   ],

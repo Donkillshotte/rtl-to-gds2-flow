@@ -2,9 +2,12 @@
 
 import { useI18n } from "@/i18n/context";
 import { ui } from "@/i18n/ui";
+import { bilingualGlossary, bilingualSignoffChecklist } from "@/data/glossaryBilingual";
+import { cellGlossary } from "@/data/cellGlossary";
 
 export function SummarySection() {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
+  const checkCount = bilingualSignoffChecklist.reduce((n, g) => n + g.items[locale].length, 0);
 
   return (
     <section className="relative py-20 sm:py-32 px-4 sm:px-6 border-t border-slate-800/50">
@@ -18,9 +21,9 @@ export function SummarySection() {
           <div className="grid sm:grid-cols-4 gap-4 mb-16">
             {[
               { value: "14", label: t(ui.statPhases), color: "#22d3ee" },
-              { value: "35+", label: t(ui.statTerms), color: "#a78bfa" },
-              { value: "50+", label: t(ui.statChecks), color: "#34d399" },
-              { value: "GDSII", label: t(ui.statOutput), color: "#60a5fa" },
+              { value: String(bilingualGlossary.length), label: t(ui.statTerms), color: "#a78bfa" },
+              { value: String(checkCount), label: t(ui.statChecks), color: "#34d399" },
+              { value: String(cellGlossary.length), label: t(ui.statCells), color: "#60a5fa" },
             ].map((stat) => (
               <div key={stat.label} className="glass rounded-xl p-5">
                 <div className="text-2xl font-bold font-mono mb-1" style={{ color: stat.color }}>
@@ -44,6 +47,7 @@ export function SummarySection() {
               {[
                 "Timing Closure", "ECO Flow", "Formal Verification", "CDC/RDC",
                 "Floorplan Exit", "PRO Exit", "BTO/MTO", "GKC", "DFM", "MPW",
+                "AOCV/POCV", "SPEF", "UPF", "ATPG",
               ].map((tag) => (
                 <span
                   key={tag}

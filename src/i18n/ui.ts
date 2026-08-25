@@ -28,14 +28,17 @@ export const ui = {
   workNotes: loc("Note di Lavoro", "Work Notes"),
   chipEvolution: loc("Evoluzione del Chip", "Chip Evolution"),
   chipEvolutionDesc: loc(
-    "Visualizzazione cumulativa: ogni fase aggiunge layer fisici al layout.",
-    "Cumulative visualization: each phase adds physical layers to the layout."
+    "Ogni fase è un layer: quelli precedenti restano visibili ma più trasparenti; il corrente è pieno e animato.",
+    "Each phase is a layer: previous ones stay visible but more transparent; the current one is full-bright and animated."
   ),
   glossaryTitle: loc("Glossario Tecnico", "Technical Glossary"),
   glossarySubtitle: loc(
-    "Termini e acronimi del flusso di physical design.",
-    "Terms and acronyms of the physical design flow."
+    "Termini, acronimi e file del flusso RTL → GDSII. Clicca un termine per la definizione.",
+    "Terms, acronyms, and files of the RTL → GDSII flow. Click a term for the definition."
   ),
+  glossarySearch: loc("Cerca termine (WNS, SPEF, AOCV…)", "Search term (WNS, SPEF, AOCV…)"),
+  glossaryEmpty: loc("Nessun termine corrisponde alla ricerca.", "No terms match this search."),
+  glossaryCount: loc("termini", "terms"),
   cellsTitle: loc("Glossario Celle Standard", "Standard Cell Glossary"),
   cellsSubtitle: loc(
     "Ogni cella fisica del PDK: funzione, placement, e regole di utilizzo in produzione.",
@@ -53,7 +56,33 @@ export const ui = {
   navSignoff: loc("Signoff", "Signoff"),
   navGlossary: loc("Glossario", "Glossary"),
   navCells: loc("Celle", "Cells"),
+  navRef: loc("File EDA", "EDA files"),
   navTapeout: loc("Tapeout", "Tapeout"),
+  refTitle: loc("Artefatti EDA, Stack Metallico, PVT", "EDA Artifacts, Metal Stack, PVT"),
+  refSubtitle: loc(
+    "I file che viaggiano nel flusso, una stack 7 nm indicativa, e i corner MMMC che lo STA deve chiudere. Niente di questo è opzionale a tapeout.",
+    "Files that travel through the flow, an indicative 7 nm stack, and the MMMC corners STA must close. None of this is optional at tapeout."
+  ),
+  refFiles: loc("File del flusso", "Flow files"),
+  refStack: loc("Stack metallico", "Metal stack"),
+  refPvt: loc("Corner PVT", "PVT corners"),
+  refExt: loc("Estensione", "Extension"),
+  refName: loc("Nome", "Name"),
+  refPhase: loc("Fase", "Phase"),
+  refRole: loc("Ruolo", "Role"),
+  refUsedFor: loc("Si usa per", "Used for"),
+  refStackNote1: loc(
+    "Pitch e naming sono PDK-specifici (M0 può chiamarsi LI, MINT, or COAG). La regola pratica: layer bassi = densità e pin access; layer alti = bassa R per PG e clock.",
+    "Pitch and naming are PDK-specific (M0 may be LI, MINT, or COAG). Practical rule: lower layers = density and pin access; upper layers = low R for PG and clock."
+  ),
+  refStackNote2: loc(
+    "Preferred direction alterna H/V. Un net che sale di layer usa via ladder; via singoli sono EM-weak — double-via su strap e clock.",
+    "Preferred direction alternates H/V. A net climbing layers uses a via ladder; single vias are EM-weak — double-via on straps and clock."
+  ),
+  refStackNote3: loc(
+    "NDR (wider/spacing/shield) si applicano di solito da M4 in su. M1 è saturato dalle rail e dai pin: non è un layer di signal globale.",
+    "NDRs (wider/spacing/shield) usually apply from M4 up. M1 is saturated by rails and pins: it is not a global signal layer."
+  ),
   langIt: loc("IT", "IT"),
   langEn: loc("EN", "EN"),
   checkCount: loc("check", "checks"),
@@ -73,6 +102,7 @@ export const ui = {
   statPhases: loc("Fasi del flusso", "Flow phases"),
   statTerms: loc("Termini nel glossario", "Glossary terms"),
   statChecks: loc("Check di signoff", "Signoff checks"),
+  statCells: loc("Celle nel glossario", "Cells in glossary"),
   statOutput: loc("Output finale", "Final output"),
   summaryIterTitle: loc("Iterazioni e Timing Closure", "Iterations and Timing Closure"),
   summaryIterDesc: loc(
