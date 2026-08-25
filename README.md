@@ -40,10 +40,38 @@ Guida professionale interattiva al flusso completo di **physical design** — da
 ```bash
 npm install
 npm run build
-npm start -- -p 4317
+npm start
 ```
 
 Apri http://localhost:4317
+
+> Il progetto usa **static export** (`output: "export"`). `npm start` serve la cartella `out/` — non usare `next start` in parallelo.
+
+## GitHub & Cloud Agents
+
+Per modificare il progetto anche con il PC spento (da telefono, tablet o un altro dispositivo):
+
+1. **Repository GitHub** — il codice vive su GitHub come sorgente principale
+2. **Cursor Cloud Agent** — avvii un agente da [cursor.com/agents](https://cursor.com/agents) collegato al repo GitHub; l'agente lavora nel cloud e fa push delle modifiche
+3. **Preview** — ogni agent run espone un preview URL temporaneo
+
+### Push su GitHub (prima volta)
+
+```bash
+# Crea un repo vuoto su github.com (es. rtl-to-gds2-flow), poi:
+git remote add github https://github.com/TUO-USERNAME/rtl-to-gds2-flow.git
+git push -u github main
+```
+
+### Avviare un Cloud Agent dal repo
+
+1. Apri Cursor → **Agents** → **New Agent**
+2. Seleziona il repository GitHub `rtl-to-gds2-flow`
+3. Scrivi la modifica richiesta — l'agente committa e pusha su GitHub
+
+### Deploy statico (opzionale)
+
+Puoi pubblicare su **GitHub Pages** o **Vercel** collegando il repo — entrambi supportano Next.js static export.
 
 ## Stack
 
