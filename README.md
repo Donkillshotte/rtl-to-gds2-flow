@@ -2,6 +2,8 @@
 
 Guida professionale interattiva al flusso completo di **physical design** — dal RTL al tapeout GDSII.
 
+**Bilingual:** Italiano / English (language switcher in header)
+
 ## Contenuto (14 fasi)
 
 ### Front-End
@@ -11,23 +13,27 @@ Guida professionale interattiva al flusso completo di **physical design** — da
 
 ### Physical Design
 4. **Floorplanning** — Macro, IO, power planning, **Floorplan Exit**
-5. **PDN** — Power Delivery Network, IR drop, EM budget
+5. **PDN** — Primary/Secondary PG, power switches, mesh, IR drop, EM
 6. **Placement** — Global/detailed, optimization, **PRO Exit**
-7. **Clock Tree Synthesis** — Skew, latency, useful skew
+7. **Clock Tree Synthesis** — Clock tree vs mesh, skew, useful skew
 8. **Routing** — Global/detailed, antenna, post-route optimization
 9. **Layout & Finishing** — Metal fill, seal ring, ECO
 
 ### Signoff & Tapeout
 10. **STA** — Static Timing Analysis, MMMC, OCV, SI-aware
-11. **PV** — DRC, LVS, ERC, Base DRC vs Metal DRC
-12. **Power Signoff** — IR drop static/dynamic, electromigration
+11. **PV** — DRC, LVS, ERC, antenna, density
+12. **Power Signoff** — IR drop static/dynamic, VCD vectors, EM
 13. **Package & Bump Assignment** — Flip-chip, RDL, PKG co-design
 14. **Tapeout** — **BTO**, **MTO**, **GKC**, GDSII, TOR
 
 ## Sezioni aggiuntive
 
-- **Checklist di Signoff** — 50+ check di produzione per ogni milestone
-- **Glossario Tecnico** — 35+ termini (GKC, PRO Exit, PDN, STA, PV, ecc.)
+- **Chip Evolution** — Canvas animation: cumulative chip build across all 14 phases
+- **Formule & Modelli** — KaTeX-rendered formulas (setup/hold, IR drop, Black's Eq, MTBF, antenna ratio, …)
+- **Senior Interview Prep** — Q&A per ogni fase
+- **Checklist di Signoff** — Check di produzione per ogni milestone
+- **Glossario Tecnico** — Termini del flusso PD
+- **Glossario Celle Standard** — INV, BUF, AOI/OAI, CLKBUF, TAP, ENDCAP, GDHS, trunk, decap, power switch, …
 
 ## Avvio locale
 
@@ -41,4 +47,4 @@ Apri http://localhost:4317
 
 ## Stack
 
-Next.js 16 · TypeScript · Tailwind CSS 4 · Framer Motion · Lucide React
+Next.js 16 · TypeScript · Tailwind CSS 4 · Framer Motion · KaTeX · Lucide React

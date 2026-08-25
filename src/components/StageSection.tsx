@@ -1,8 +1,12 @@
 "use client";
 
-import { ArrowDownToLine, ArrowUpFromLine, Cpu, Lightbulb, CheckCircle2, AlertTriangle, Wrench } from "lucide-react";
+import { ArrowDownToLine, ArrowUpFromLine, Cpu, Lightbulb, CheckCircle2, AlertTriangle, Wrench, MessageCircleQuestion } from "lucide-react";
 import type { Stage } from "@/data/stages";
-import { StageAnimation } from "./StageAnimation";
+import { ChipEvolution } from "./ChipEvolution";
+import { FormulaBlock } from "./Formula";
+import { useI18n } from "@/i18n/context";
+import { ui } from "@/i18n/ui";
+import { stageFormulas, stageInterview } from "@/data/stageFormulas";
 
 interface StageSectionProps {
   stage: Stage;
@@ -10,7 +14,10 @@ interface StageSectionProps {
 }
 
 export function StageSection({ stage, index }: StageSectionProps) {
+  const { t } = useI18n();
   const isEven = index % 2 === 0;
+  const formulas = stageFormulas[stage.id] ?? [];
+  const interview = stageInterview[stage.id] ?? [];
 
   return (
     <section
@@ -38,13 +45,13 @@ export function StageSection({ stage, index }: StageSectionProps) {
           </div>
           <div>
             <p className="text-sm font-mono tracking-wider" style={{ color: stage.color }}>
-              FASE {stage.step} / 14
+              {t(ui.phase)} {stage.step} / 14
             </p>
             <h2 className="text-2xl md:text-4xl font-bold">{stage.title}</h2>
           </div>
         </div>
 
-        <div className={`grid lg:grid-cols-2 gap-12 lg:gap-16 items-start ${isEven ? "" : ""}`}>
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
           <div className={`space-y-6 ${isEven ? "" : "lg:order-2"}`}>
             <div>
               <p className="text-sm font-mono mb-3" style={{ color: stage.color }}>
@@ -55,10 +62,9 @@ export function StageSection({ stage, index }: StageSectionProps) {
               </p>
             </div>
 
-            {/* Deep Dive */}
             <div className="glass rounded-xl p-5">
               <h3 className="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
-                <span style={{ color: stage.color }}>📖</span> Approfondimento
+                <span style={{ color: stage.color }}>📖</span> {t(ui.deepDive)}
               </h3>
               <div className="space-y-3">
                 {stage.deepDive.map((paragraph, i) => (
@@ -69,7 +75,22 @@ export function StageSection({ stage, index }: StageSectionProps) {
               </div>
             </div>
 
-            {/* Subsections */}
+            {formulas.length > 0 && (
+              <div>
+                <h3 className="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
+                  <span className="text-cyan-400 font-mono">∑</span> {t(ui.formulas)}
+                </h3>
+                {formulas.map((f) => (
+                  <FormulaBlock
+                    key={t(f.label)}
+                    label={t(f.label)}
+                    latex={f.latex}
+                    explanation={t(f.explanation)}
+                  />
+                ))}
+              </div>
+            )}
+
             {stage.subsections.map((sub) => (
               <div key={sub.title} className="glass rounded-xl p-5">
                 <h3 className="text-sm font-semibold mb-2" style={{ color: stage.color }}>
@@ -89,16 +110,33 @@ export function StageSection({ stage, index }: StageSectionProps) {
               </div>
             ))}
 
+            {interview.length > 0 && (
+              <div className="glass rounded-xl p-5 border border-indigo-500/20">
+                <div className="flex items-center gap-2 mb-4">
+                  <MessageCircleQuestion className="w-4 h-4 text-indigo-400" />
+                  <h3 className="text-sm font-semibold text-indigo-300">{t(ui.interview)}</h3>
+                </div>
+                <div className="space-y-4">
+                  {interview.map((qa) => (
+                    <div key={t(qa.question)} className="border-l-2 border-indigo-500/30 pl-3">
+                      <p className="text-sm font-medium text-slate-300">Q: {t(qa.question)}</p>
+                      <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">A: {t(qa.answer)}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="grid sm:grid-cols-2 gap-4">
               <InfoCard
                 icon={<ArrowDownToLine className="w-4 h-4" />}
-                title="Input"
+                title={t(ui.inputs)}
                 items={stage.inputs}
                 color={stage.color}
               />
               <InfoCard
                 icon={<ArrowUpFromLine className="w-4 h-4" />}
-                title="Output"
+                title={t(ui.outputs)}
                 items={stage.outputs}
                 color={stage.color}
               />
@@ -107,7 +145,7 @@ export function StageSection({ stage, index }: StageSectionProps) {
             <div className="glass rounded-xl p-5">
               <div className="flex items-center gap-2 mb-3">
                 <Cpu className="w-4 h-4" style={{ color: stage.color }} />
-                <h3 className="text-sm font-semibold text-slate-300">Tool EDA</h3>
+                <h3 className="text-sm font-semibold text-slate-300">{t(ui.tools)}</h3>
               </div>
               <div className="flex flex-wrap gap-2">
                 {stage.tools.map((tool) => (
@@ -129,7 +167,7 @@ export function StageSection({ stage, index }: StageSectionProps) {
             <div className="glass rounded-xl p-5">
               <div className="flex items-center gap-2 mb-3">
                 <Lightbulb className="w-4 h-4" style={{ color: stage.color }} />
-                <h3 className="text-sm font-semibold text-slate-300">Concetti Chiave</h3>
+                <h3 className="text-sm font-semibold text-slate-300">{t(ui.concepts)}</h3>
               </div>
               <ul className="space-y-2">
                 {stage.keyConcepts.map((concept) => (
@@ -145,7 +183,7 @@ export function StageSection({ stage, index }: StageSectionProps) {
               <div className="glass rounded-xl p-5 border border-green-500/20">
                 <div className="flex items-center gap-2 mb-4">
                   <CheckCircle2 className="w-4 h-4 text-green-400" />
-                  <h3 className="text-sm font-semibold text-green-300">Exit Criteria / Milestone</h3>
+                  <h3 className="text-sm font-semibold text-green-300">{t(ui.exitCriteria)}</h3>
                 </div>
                 <div className="space-y-3">
                   {stage.exitCriteria.map((ec) => (
@@ -162,15 +200,16 @@ export function StageSection({ stage, index }: StageSectionProps) {
               <div className="glass rounded-xl p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <AlertTriangle className="w-4 h-4 text-amber-400" />
-                  <h3 className="text-sm font-semibold text-amber-300">Check & Comandi</h3>
+                  <h3 className="text-sm font-semibold text-amber-300">{t(ui.checksTitle)}</h3>
                 </div>
                 {stage.checks.map((group) => (
                   <div key={group.category} className="mb-4 last:mb-0">
                     <p className="text-xs font-mono text-slate-500 mb-2">{group.category}</p>
-                    <ul className="space-y-1">
+                    <ul className="space-y-1.5">
                       {group.items.map((item) => (
-                        <li key={item} className="text-xs text-slate-400 font-mono">
-                          → {item}
+                        <li key={item} className="text-xs text-slate-400 leading-relaxed flex items-start gap-2">
+                          <span className="text-amber-400 shrink-0 mt-0.5">✓</span>
+                          {item}
                         </li>
                       ))}
                     </ul>
@@ -183,7 +222,7 @@ export function StageSection({ stage, index }: StageSectionProps) {
               <div className="glass rounded-xl p-5 border border-amber-500/10">
                 <div className="flex items-center gap-2 mb-3">
                   <Wrench className="w-4 h-4 text-amber-400" />
-                  <h3 className="text-sm font-semibold text-amber-300">Note di Lavoro</h3>
+                  <h3 className="text-sm font-semibold text-amber-300">{t(ui.workNotes)}</h3>
                 </div>
                 <ul className="space-y-2">
                   {stage.practicalNotes.map((note) => (
@@ -198,19 +237,10 @@ export function StageSection({ stage, index }: StageSectionProps) {
 
           <div className={`sticky top-24 ${isEven ? "" : "lg:order-1"}`}>
             <div
-              className="glass rounded-2xl p-6 md:p-8 aspect-[4/3] flex items-center justify-center relative overflow-hidden"
+              className="relative overflow-hidden rounded-2xl"
               style={{ boxShadow: `0 0 60px ${stage.glowColor}` }}
             >
-              <div
-                className="absolute inset-0 opacity-[0.06]"
-                style={{
-                  backgroundImage: `linear-gradient(${stage.color}20 1px, transparent 1px), linear-gradient(90deg, ${stage.color}20 1px, transparent 1px)`,
-                  backgroundSize: "24px 24px",
-                }}
-              />
-              <div className="relative w-full h-full min-h-[200px]">
-                <StageAnimation stageId={stage.id} color={stage.color} />
-              </div>
+              <ChipEvolution activeStageIndex={index} />
             </div>
           </div>
         </div>

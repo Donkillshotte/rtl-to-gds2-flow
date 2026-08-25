@@ -1,28 +1,27 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { stages } from "@/data/stages";
+import { useStages } from "@/hooks/useStages";
+import { useI18n } from "@/i18n/context";
+import { ui } from "@/i18n/ui";
 
 export function FlowOverview() {
+  const stages = useStages();
+  const { t } = useI18n();
+
   return (
     <section id="flow-overview" className="relative py-32 px-6">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-20">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            Il Flusso Completo — 14 Fasi
-          </h2>
-          <p className="text-slate-400 text-lg max-w-3xl mx-auto">
-            Dal design RTL alla verifica formale, sintesi, floorplan, PDN, placement,
-            CTS, routing, layout, STA, PV, power signoff, package e tapeout (BTO/MTO/GKC).
-          </p>
+          <h2 className="text-3xl md:text-5xl font-bold mb-4">{t(ui.flowTitle)}</h2>
+          <p className="text-slate-400 text-lg max-w-3xl mx-auto">{t(ui.flowSubtitle)}</p>
         </div>
 
-        {/* Phase groups */}
         <div className="grid md:grid-cols-3 gap-6 mb-16">
           {[
-            { label: "Front-End", range: [1, 3], color: "#22d3ee" },
-            { label: "Physical Design", range: [4, 9], color: "#a78bfa" },
-            { label: "Signoff & Tapeout", range: [10, 14], color: "#60a5fa" },
+            { label: t(ui.feGroup), range: [1, 3], color: "#22d3ee" },
+            { label: t(ui.pdGroup), range: [4, 9], color: "#a78bfa" },
+            { label: t(ui.signoffGroup), range: [10, 14], color: "#60a5fa" },
           ].map((group) => (
             <div key={group.label} className="glass rounded-xl p-5">
               <h3 className="text-sm font-mono mb-4" style={{ color: group.color }}>
@@ -57,7 +56,6 @@ export function FlowOverview() {
           ))}
         </div>
 
-        {/* All stages grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
           {stages.map((stage) => (
             <motion.a
@@ -83,15 +81,14 @@ export function FlowOverview() {
           ))}
         </div>
 
-        {/* Milestones banner */}
         <div className="mt-16 glass rounded-2xl p-6 md:p-8">
-          <h3 className="text-lg font-semibold mb-4 text-slate-200">Milestone Critici del Flusso</h3>
+          <h3 className="text-lg font-semibold mb-4 text-slate-200">{t(ui.milestones)}</h3>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { name: "GKC", desc: "Gate Keeper Check — review multi-disciplinare", color: "#818cf8" },
-              { name: "Floorplan Exit", desc: "Floorplan legalizzato, pin placed, PG connected", color: "#f472b6" },
-              { name: "PRO Exit", desc: "Placement/Post-Route Optimization completata", color: "#34d399" },
-              { name: "BTO / MTO", desc: "Base Tape-Out (FEOL) → Metal Tape-Out (BEOL)", color: "#60a5fa" },
+              { name: "GKC", desc: t(ui.milestoneGkDesc), color: "#818cf8" },
+              { name: "Floorplan Exit", desc: t(ui.milestoneFpDesc), color: "#f472b6" },
+              { name: "PRO Exit", desc: t(ui.milestoneProDesc), color: "#34d399" },
+              { name: "BTO / MTO", desc: t(ui.milestoneBtoDesc), color: "#60a5fa" },
             ].map((m) => (
               <div
                 key={m.name}

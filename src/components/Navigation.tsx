@@ -2,10 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { stages } from "@/data/stages";
+import { Languages } from "lucide-react";
+import { useStages } from "@/hooks/useStages";
+import { useI18n } from "@/i18n/context";
+import { ui } from "@/i18n/ui";
 import { cn } from "@/lib/utils";
 
 export function Navigation() {
+  const stages = useStages();
   const [activeStage, setActiveStage] = useState<string>("");
   const [visible, setVisible] = useState(false);
 
@@ -33,7 +37,7 @@ export function Navigation() {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [stages]);
 
   return (
     <AnimatePresence>
@@ -86,6 +90,7 @@ export function Navigation() {
 }
 
 export function Header() {
+  const { locale, setLocale, t } = useI18n();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -106,20 +111,42 @@ export function Header() {
           <div className="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center">
             <span className="text-cyan-400 font-mono text-xs font-bold">PD</span>
           </div>
-          <span className="font-semibold text-sm hidden sm:block">
-            Physical Design Flow
-          </span>
+          <span className="font-semibold text-sm hidden sm:block">{t(ui.siteTitle)}</span>
         </a>
         <nav className="flex items-center gap-1">
           <a href="#signoff-checklist" className="px-2.5 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden md:block">
-            Signoff
+            {t(ui.navSignoff)}
           </a>
           <a href="#glossary" className="px-2.5 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden md:block">
-            Glossario
+            {t(ui.navGlossary)}
+          </a>
+          <a href="#cells-glossary" className="px-2.5 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden md:block">
+            {t(ui.navCells)}
           </a>
           <a href="#stage-tapeout" className="px-2.5 py-1 rounded-lg text-xs text-cyan-400 hover:text-cyan-300 transition-colors hidden md:block">
-            Tapeout
+            {t(ui.navTapeout)}
           </a>
+          <div className="flex items-center ml-2 border border-slate-700/50 rounded-lg overflow-hidden">
+            <Languages className="w-3.5 h-3.5 text-slate-500 ml-2" />
+            <button
+              onClick={() => setLocale("it")}
+              className={cn(
+                "px-2 py-1 text-xs font-mono transition-colors",
+                locale === "it" ? "bg-cyan-500/20 text-cyan-400" : "text-slate-500 hover:text-slate-300"
+              )}
+            >
+              {t(ui.langIt)}
+            </button>
+            <button
+              onClick={() => setLocale("en")}
+              className={cn(
+                "px-2 py-1 text-xs font-mono transition-colors",
+                locale === "en" ? "bg-cyan-500/20 text-cyan-400" : "text-slate-500 hover:text-slate-300"
+              )}
+            >
+              {t(ui.langEn)}
+            </button>
+          </div>
         </nav>
       </div>
     </header>

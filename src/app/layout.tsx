@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "katex/dist/katex.min.css";
+import { Providers } from "@/components/Providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "RTL → GDSII | Physical Design Flow",
   description:
-    "Percorso interattivo attraverso l'intero flusso di physical design ad alto livello — dalla descrizione RTL alla geometria GDSII pronta per la fonderia.",
+    "Interactive high-level physical design flow — from RTL description to GDSII geometry ready for fabrication. Bilingual IT/EN.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -24,7 +26,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="it"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

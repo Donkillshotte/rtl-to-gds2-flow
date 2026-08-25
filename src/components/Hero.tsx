@@ -2,10 +2,13 @@
 
 import { useEffect, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useI18n } from "@/i18n/context";
+import { ui } from "@/i18n/ui";
 
 export function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { t } = useI18n();
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
@@ -164,7 +167,7 @@ export function Hero() {
       <motion.div style={{ opacity, y }} className="relative z-10 text-center px-6 max-w-5xl mx-auto">
         <div className="mb-6 hero-enter">
           <span className="inline-block px-4 py-1.5 rounded-full glass text-sm font-mono text-cyan-400 tracking-wider">
-            PHYSICAL DESIGN FLOW
+            {t(ui.heroBadge)}
           </span>
         </div>
 
@@ -175,9 +178,7 @@ export function Hero() {
         </h1>
 
         <p className="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto mb-10 leading-relaxed hero-enter hero-enter-delay-2">
-          Guida professionale al flusso RTL → GDSII: formal verification, sintesi, floorplan,
-          PDN, placement, CTS, routing, STA, PV, bump assignment, package e tapeout (BTO/MTO/GKC).
-          14 fasi con exit criteria, checklist e note di lavoro.
+          {t(ui.heroSubtitle)}
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center hero-enter hero-enter-delay-3">
@@ -185,18 +186,18 @@ export function Hero() {
             href="#flow-overview"
             className="px-8 py-3.5 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-medium hover:bg-cyan-500/30 transition-all hover:shadow-[0_0_30px_rgba(34,211,238,0.3)]"
           >
-            Esplora le 14 fasi
+            {t(ui.heroCta1)}
           </a>
           <a
             href="#signoff-checklist"
             className="px-8 py-3.5 rounded-xl glass text-slate-300 font-medium hover:text-white transition-all"
           >
-            Checklist Signoff
+            {t(ui.heroCta2)}
           </a>
         </div>
 
         <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 hero-enter hero-enter-delay-4">
-          <span className="text-xs text-slate-500 font-mono tracking-widest">SCROLL</span>
+          <span className="text-xs text-slate-500 font-mono tracking-widest">{t(ui.scroll)}</span>
           <div className="w-5 h-8 rounded-full border border-slate-600 flex items-start justify-center p-1 animate-float">
             <div className="w-1 h-2 rounded-full bg-cyan-400" />
           </div>
