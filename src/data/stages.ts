@@ -304,8 +304,9 @@ export const stages: Stage[] = [
       "Il floorplanning definisce la struttura fisica del chip: dimensioni die/core, posizione macro (memories, analog IP, PLL), IO pin placement, regioni di power domain e canali di routing. È la fase più critica per prevenire problemi downstream — la maggior parte dei problemi di timing, congestion e routing nasce qui.",
     deepDive: [
       "Un buon floorplan riduce settimane di timing closure. Un cattivo floorplan causa congestion irrecuperabile, routing detours, IR drop e failure di timing non fixabili con ECO. Regola d'oro: il 70% del successo PD si decide al floorplan.",
-      "Metriche chiave: core utilization (60-80%), aspect ratio (~1:1 preferito), core-to-die ratio, halo/channel spacing tra macro, row utilization. Per wire-bond: macro power-hungry lontano dal centro del die.",
-      "Il pin placement (block IO) influenza direttamente il routing tra blocchi. Pin su layer preferiti (H-V-H alternati), posizionati per minimizzare wirelength e rispettare timing budget tra blocchi.",
+      "Il floorplan non è solo 'disegnare un rettangolo': include definizione die/core, macro placement, IO/bump planning, voltage island layout, riserva canali per power mesh e clock spine, placement blockages, e skeleton della PDN (primary + secondary PG).",
+      "Per design multi-voltage (UPF), ogni power domain deve essere mappato in una regione fisica (voltage island). I power switches vanno posizionati al confine tra always-on e switched domain. La secondary PG serve le isole always-on disgiunte e le retention domains.",
+      "Metriche chiave: core utilization (60-80%), aspect ratio (~1:1), core-to-die ratio, halo/channel spacing, row utilization. Il floorplan deve prevedere spazio per power straps (mesh) su layer alti senza strangolare il routing signal su M1-M3.",
     ],
     inputs: [
       "Netlist post-sintesi (.v / .ddc)",
@@ -325,11 +326,46 @@ export const stages: Stage[] = [
     keyConcepts: [
       "Core vs die area definition",
       "Macro placement & halo/keepout",
+      "Voltage islands & power domain mapping",
+      "Riserva area power switches & mesh",
       "IO planning (wirebond vs flip-chip)",
-      "Channel planning per routing",
-      "Floorplan utilization & aspect ratio",
+      "Channel planning & routing blockages",
     ],
     subsections: [
+      {
+        title: "Definizione Die, Core e Utilization",
+        content:
+          "initialize_floorplan (ICC2) o floorPlan (Innovus) definisce die area, core area, core utilization target e aspect ratio. Core utilization 65-75% è un buon punto di partenza — troppo alta causa congestion, troppo bassa spreca area. Core-to-die ratio definisce margine per IO ring, seal ring e power pad.",
+        bullets: [
+          "initialize_floorplan -control_type core -core_utilization 0.70",
+          "Aspect ratio ~1:1 preferito per routing uniforme",
+          "Core margin: spazio tra core edge e macro/IO",
+          "Rectilinear floorplan per design con macro irregolari",
+        ],
+      },
+      {
+        title: "Voltage Islands — Mapping UPF → Fisico",
+        content:
+          "Ogni power domain UPF diventa una regione fisica nel floorplan. Domini switched (power gated) separati da always-on. Isolation cells ai confini. Level shifters tra domini a voltage diversi. Retention registers con doppia alimentazione (primary + retention supply).",
+        bullets: [
+          "create_voltage_area per ogni power domain",
+          "Place domain cells in region — no mixing",
+          "Isolation cells nel parent always-on domain",
+          "Level shifter sulla boundary tra VDD diversi",
+          "Riservare channel tra voltage islands",
+        ],
+      },
+      {
+        title: "Riserva Spazio Power Switches & Mesh",
+        content:
+          "Al floorplan si riserva spazio per power switch cells (header/footer) vicino al confine del switched domain. Anche le power mesh (straps su M5-M9) consumano routing tracks — pianificare layer assignment: layer alti per PG mesh, layer bassi per signal.",
+        bullets: [
+          "Switch column: strip di celle PSW al bordo del domain",
+          "Fishbone / daisy-chain / high-fanout topologies",
+          "Blockage su layer mesh per evitare signal routing",
+          "Gas station cells per always-on buffer/inverter",
+        ],
+      },
       {
         title: "Sanity Check Pre-Floorplan",
         content:
@@ -394,43 +430,100 @@ export const stages: Stage[] = [
     title: "PDN — Power Delivery Network",
     subtitle: "Power grid, IR drop prevention, EM budget",
     description:
-      "La PDN (Power Delivery Network) distribuisce VDD e VSS a ogni cella del chip attraverso anelli (rings), strisce (stripes), rail e vias. Una PDN mal progettata causa IR drop (degradazione timing), electromigration e failure in silicon. Si progetta in conjunction con floorplan e viene raffinata fino al signoff.",
+      "La PDN (Power Delivery Network) distribuisce VDD e VSS a ogni cella del chip. Comprende primary PG (always-on, alta corrente), secondary PG (domini switched, retention, always-on islands), power switches per power gating, e power mesh su layer metallici alti. Una PDN mal progettata causa IR drop, EM failure e timing degradation in silicon.",
     deepDive: [
-      "La PDN è una rete resistiva/induttiva: V_drop = I × R. Correnti di switching di centinaia di mA attraverso resistenze di mΩ producono drop di decine-hundreds mV — sufficienti a far fallire setup timing.",
-      "Static IR drop: corrente media × resistenza del path. Dynamic IR drop: L × dI/dt da simultaneous switching di milioni di FF al clock edge. I decoupling capacitors (decap) limitano il droop dinamico.",
-      "Power planning include: core rings (VDD/VSS attorno al core), stripes (strisce orizzontali/verticali), follow-pin connections, vias tra layer, e power switches per power gating domains.",
+      "Primary PG (Primary Power Grid): la rete di alimentazione principale always-on che parte dai pad/bump di alimentazione, attraversa i core rings e le mesh/straps, e arriva alle celle standard. Tipicamente VDD e VSS globali su layer spessi (M6-M9). Deve sopportare la corrente di picco dell'intero chip o del blocco.",
+      "Secondary PG (Secondary Power Grid): reti di alimentazione locali o di dominio — VDD_CPU switched, VDD_RET per retention, VDD_AON per always-on islands disgiunte. Ogni secondary PG ha il proprio mesh/strap routing, spesso alimentato tramite power switches dalla primary PG.",
+      "Power Switches: transistori (PMOS header o NMOS footer) controllati che connettono/disconnettono il supply al switched domain. Header switch (PMOS tra VDD e VDD_SW) è lo standard industriale per migliore noise immunity. Footer switch crea 'virtual ground' con ground bounce.",
+      "Power Mesh: griglia di strisce metalliche incrociate (orizzontali + verticali) che forma una rete a bassa resistenza. Superiore a rings+stripes per design ad alta corrente. Clock Mesh è analogo ma per il segnale di clock — griglia ridondante al posto dell'albero.",
+      "La PDN è modellata come rete RC (resistenza + capacità): R causa IR drop statico, L causa droop dinamico (L×dI/dt), C (decap) limita il droop. V_drop = I × R_path lungo il percorso dal pad alla cella.",
     ],
     inputs: ["Floorplan DEF", "Power budget per domain", "Metal stack del PDK", "Switch cell LEF per power gating", "Activity factors (toggle rates)"],
     outputs: ["Power grid completa", "PG netlist", "IR drop report preliminare", "EM budget analysis", "Decap placement"],
     tools: ["Innovus (add_rings, add_stripes)", "ICC2 (create_power_straps)", "RedHawk / Voltus", "Static IR analysis"],
     keyConcepts: [
-      "Power rings, stripes, mesh",
+      "Primary PG vs Secondary PG",
+      "Power switches (header/footer, fine/coarse grain)",
+      "Power mesh vs rings/stripes",
       "IR drop: static vs dynamic",
-      "Decap cells & filler decap",
-      "Power gating & power switches",
-      "Multi-voltage domain PG",
+      "Decap cells & on-chip capacitance",
+      "Switch topologies: daisy-chain, fishbone",
     ],
     subsections: [
       {
-        title: "Architettura PDN",
+        title: "Primary PG — Power Grid Principale",
         content:
-          "Struttura tipica: pad/frame → core ring → vertical stripes → horizontal rails → cell pins. Layer più spessi (M6-M9) per power, layer sottili (M1-M3) per signal. Via arrays ai junction points.",
+          "La Primary PG è la backbone always-on del chip. Flusso: package bump/pad → C4 bump → IO ring power → core ring (VDD/VSS attorno al core) → vertical/horizontal straps → M1 rails → cell pins. Su processi multi-layer, layer alti (M7-M9) portano la maggior corrente per minore R.",
         bullets: [
-          "Ring width: tipicamente 5-20μm (dipende da corrente)",
-          "Stripe pitch: bilanciare IR vs routing resource",
-          "Via stitching ogni N μm per ridurre R",
-          "Separate ring per ogni voltage domain",
+          "VDD primary: always-on, alimenta tutto il chip o il blocco",
+          "VSS (ground): tipicamente unico e condiviso — riferimento stabile",
+          "Core ring: anello attorno al core, width 5-20μm",
+          "Straps: strisce parallele su M5-M9, pitch 10-50μm",
+          "Via arrays ogni 2-5μm ai junction ring↔strap↔rail",
+          "Esempio layer stack: M7=VDD_SYS, M6=VSS, M5=VDD domain",
+        ],
+      },
+      {
+        title: "Secondary PG — Reti di Dominio",
+        content:
+          "La Secondary PG alimenta domini con supply separato: switched domains (VDD_CPU via power switch), retention supply (VDD_RET always-on a bassa corrente), backup supply, o always-on islands disgiunte (AON buffers, isolation cells). Ogni secondary PG richiede mesh dedicata e connessione alla primary.",
+        bullets: [
+          "VDD_SW (switched): output del power switch, solo nel domain",
+          "VDD_RET: alimentazione retention flip-flop durante sleep",
+          "VDD_AON: always-on island per logic che resta accesa",
+          "Secondary mesh più sottile (2-8μm) — corrente minore",
+          "Spacing minimo tra nets a voltage diversi (short prevention)",
+          "PG pin delle celle collegato alla net del proprio domain",
+        ],
+      },
+      {
+        title: "Power Switches — Funzionamento",
+        content:
+          "Un power switch è una cella con transistori PMOS (header) o NMOS (footer) che agiscono come resistenze controllate. Quando ON: supply passa al domain. Quando OFF: domain in power-down, leakage ridotta. Definiti in UPF con create_power_switch, implementati dal P&R tool con celle dalla library (.lib/.lef).",
+        bullets: [
+          "Header (PMOS): tra VDD (primary) e VDD_SW (secondary) — più comune",
+          "Footer (NMOS): tra VSS_SW e VSS — meno usato (ground bounce)",
+          "Fine-grain: switch per piccoli gruppi di celle (granularità fine)",
+          "Coarse-grain: switch per intero domain (CPU, GPU block)",
+          "Control signal (sw_en): da power controller, level-sensitive",
+          "Inrush current: limitato con daisy-chain o staggered turn-on",
+          "Comando ICC2: create_power_switch_array / insert_power_switch",
+        ],
+      },
+      {
+        title: "Topologie Power Switch",
+        content:
+          "La disposizione dei power switches impatta inrush current, wakeup time e IR drop. Daisy-chain: switches accesi sequenzialmente per limitare picco di corrente. Fishbone: distribuzione a spina con switch centrali. High-fanout: enable unico con buffer tree di controllo. Low-latency: tutti switch in parallelo (inrush alto).",
+        bullets: [
+          "Daisy-chain: minore inrush, wakeup più lento",
+          "Fishbone: bilanciamento inrush vs latency",
+          "High-fanout enable: un segnale, molti switch",
+          "Switch column al bordo del voltage island",
+          "Verificare PG connectivity post-switch insertion",
+        ],
+      },
+      {
+        title: "Power Mesh Network",
+        content:
+          "La power mesh è una griglia 2D di strisce metalliche incrociate (orizzontali + verticali) su uno o più layer, connesse da via arrays ai nodi di intersezione. Offre resistenza più uniforme e minore IR drop rispetto a semplici stripes paralleli. Consuma più layer metal e area, ma essenziale per design ad alta corrente (CPU, GPU, networking).",
+        bullets: [
+          "Mesh = straps H + straps V formano griglia",
+          "Via stitching ai cross-points ogni 1-3μm",
+          "Multi-layer mesh: M5-M9 stacked con vias",
+          "Blockage: layer mesh riservati — no signal routing",
+          "PNS (Power Network Synthesis): auto-generazione mesh",
+          "Comandi: add_rings, add_stripes, sroute (ICC2/Innovus)",
         ],
       },
       {
         title: "IR Drop Budget",
         content:
-          "Limiti industriali: static IR < 5% VDD, dynamic IR < 10% VDD. Per VDD=0.8V: max 40mV static, 80mV dynamic. Violation → aggiungere stripes, widen rings, più vias, decap cells.",
+          "Limiti industriali: static IR < 5% VDD, dynamic IR < 10% VDD. Per VDD=0.8V: max 40mV static, 80mV dynamic. Violation → aggiungere stripes/mesh, widen rings, più vias, decap cells, o ripianificare floorplan.",
       },
       {
         title: "Electromigration (EM) — Preview",
         content:
-          "Black's Equation: MTTF = A × J^(-n) × exp(Ea/kT). Corrente eccessiva in wire sottili → void/hillock → open circuit. EM peggiora esponenzialmente con temperatura. Signoff EM a 125°C per consumer, 150°C+ per automotive.",
+          "Black's Equation: MTTF = A × J^(-n) × exp(Ea/kT). Corrente eccessiva in wire sottili → void/hillock → open circuit. Power EM usa corrente average/RMS; Signal EM usa peak/RMS. EM peggiora esponenzialmente con temperatura.",
       },
     ],
     color: "#e879f9",
@@ -508,32 +601,59 @@ export const stages: Stage[] = [
     description:
       "La CTS costruisce l'albero di distribuzione del clock da root ai sink (flip-flop). Obiettivi: minimizzare skew (differenza max-min di clock arrival), controllare latency, rispettare transition/capacitance limits, integrare clock gating. Una CTS mal fatta rende impossibile il timing closure.",
     deepDive: [
+      "Clock Tree (CTS classica): struttura ad albero — root → buffer → buffer → ... → sink FF. Skew controllato ma sensibile a OCV (On-Chip Variation). È lo standard per la maggior parte dei design.",
+      "Clock Mesh: griglia metallica ridondante con multiple driver che alimentano una mesh 2D. Skew tipicamente <1/3 del clock tree, OCV variation 5% vs 20-25% del tree. Usato in CPU/GPU high-end per area clock grande. Costo: più power, più metal, sintesi complessa.",
       "Clock spec definisce: root pin, excluded pins, target skew, max transition, max capacitance, clock gating cells. Non-clock buffers (NCB) e clock buffers (CB) hanno regole diverse.",
-      "Useful skew: skew intenzionale per migliorare setup su critical paths (arrivare clock prima al capture, dopo al launch). Tool come Innovus supportano useful skew optimization.",
-      "CTS consuma routing resource significativa — il floorplan deve riservare spazio per clock spine e buffer. CTS-friendly floorplan: clock source centrale, sink distribuiti uniformemente.",
-      "Post-CTS: hold violations spesso emergono (clock arriva troppo presto). Fix con delay cells, buffer insertion, o useful skew adjustment.",
+      "Useful skew: skew intenzionale per migliorare setup su critical paths. CTS consuma routing resource — il floorplan deve riservare clock spine e spazio per mesh grid.",
+      "Post-CTS: hold violations spesso emergono. Fix con delay cells, buffer insertion, o useful skew adjustment.",
     ],
     inputs: ["Placed design (post PRO exit)", "Clock definitions (SDC)", "CTS spec file", "Buffer/inverter cells per CTS"],
     outputs: ["CTS netlist + DEF", "Clock tree report (skew, latency)", "Post-CTS timing", "Clock power report"],
     tools: ["Innovus ccopt_design", "ICC2 clock_opt", "Tempus", "ClockExplorer"],
     keyConcepts: [
+      "Clock tree vs clock mesh",
       "Clock skew & latency",
       "Useful skew optimization",
-      "Clock gating integration",
+      "Clock gating (ICG cells)",
+      "OCV impact on clock distribution",
       "Hold fixing post-CTS",
-      "Multi-source CTS (MSCTS)",
     ],
     subsections: [
       {
-        title: "Parametri CTS Critici",
+        title: "Clock Tree — CTS Standard",
         content:
-          "Target skew: tipicamente ±50ps per design consumer, ±20ps per high-performance. Max transition: 100-200ps. Max capacitance: dipende dal buffer drive strength. Clock gating: integrare ICG cells nel tree.",
+          "Struttura ad albero bilanciato: clock root (PLL/pad) → root buffer → spine → subtree buffers → leaf buffers → FF clock pin. Target skew ±50ps (consumer) o ±20ps (HPC). ccopt_design (Innovus) o clock_opt (ICC2).",
         bullets: [
           "Root: clock pad o PLL output",
           "Excluded: analog blocks, test mode clocks",
           "Through pins: per clock domain crossing",
-          "Ndr (non-default rules) per clock nets",
+          "NDR per clock nets (wider, double spacing)",
+          "ICG (Integrated Clock Gating) nel tree",
         ],
+      },
+      {
+        title: "Clock Mesh Network",
+        content:
+          "Alternativa al clock tree: griglia 2D di wire clock interconnessi, alimentata da multiple driver (buffer) distribuiti. Ogni FF si connette al punto mesh più vicino (stub wire). Vantaggi: skew ultra-basso, tolleranza OCV, robustezza a variation. Svantaggi: potenza 2-3× superiore, area metal significativa, flow semi-manuale.",
+        bullets: [
+          "Mesh grid: strisce H+V di clock wire su M4-M6",
+          "Multi-driver: 4-16 buffer alimentano la mesh",
+          "Stub: connessione breve mesh → FF clock pin",
+          "Skew target: <15ps (vs ±50ps del tree)",
+          "OCV variation: ~5% (vs 20-25% tree)",
+          "Usato in: CPU core, GPU shader, networking ASIC",
+          "Framework: MeshWorks, ROME, semi-auto in Innovus",
+        ],
+      },
+      {
+        title: "Clock Tree vs Clock Mesh — Quando Usare",
+        content:
+          "Clock tree: default per design general-purpose, basso power, area contenuta. Clock mesh: quando skew critico (multi-GHz), area clock grande, budget power disponibile. Hybrid: mesh locale per blocchi critici + tree per periphery.",
+      },
+      {
+        title: "Parametri CTS Critici",
+        content:
+          "Target skew, max transition (100-200ps), max capacitance, clock gating integration. Post-CTS hold fixing è spesso il bottleneck.",
       },
     ],
     exitCriteria: [
@@ -764,28 +884,104 @@ export const stages: Stage[] = [
     title: "Power Signoff",
     subtitle: "IR Drop, EM, power integrity",
     description:
-      "Il power signoff verifica che la PDN supporti le correnti di switching senza degradare funzionalità (IR drop) e che i wire non falliscano per electromigration nel lifetime del prodotto. Analisi statica (DC) e dinamica (transient) con vector set realistici.",
+      "Il power signoff verifica PDN integrity: IR drop statico e dinamico (con vettori realistici), electromigration su power nets e signal nets, e power grid noise. Richiede activity data (VCD/FSDB/SAIF) o analisi vectorless, estrazione PDN, e simulazione transient.",
     deepDive: [
-      "Static IR: V_drop = I_avg × R_path. Tool: Voltus, RedHawk. Input: SPEF + switching activity (VCD/SAIF). Limit: < 5% VDD.",
-      "Dynamic IR: droop da L × dI/dt al clock edge. Milioni di FF switch simultaneamente. Decap limita droop. Limit: < 10% VDD per < 500ps.",
-      "EM (Electromigration): Black's Equation MTTF = A × J^(-n) × exp(Ea/kT). Ogni wire/via verificato vs J_max per layer. Fix: widen wire, add parallel vias, layer promotion.",
-      "Dynamic IR è il 'silent timing killer': chip passa STA con VDD nominale ma fallisce in silicon perché VDD reale è VDD - 100mV al clock edge.",
+      "Static IR: V_drop = I_avg × R_path. Corrente media dal power analysis tool. Limit: < 5% VDD. Non cattura picchi transitori.",
+      "Dynamic IR: simulazione transient con L×dI/dt. Richiede switching activity (vettori). Il droop al clock edge può causare setup failure non visibile in STA. Limit: < 10% VDD per <500ps.",
+      "Power EM: corrente DC/average/RMS su strap, ring, rail, via della PDN. Limiti J_max per layer (M1: 1-2 mA/μm, M6-M9: 8-15 mA/μm). Fix: widen strap, parallel vias, layer promotion.",
+      "Signal EM: corrente peak/RMS su net di segnale (non power). Segnali ad alta frequenza o bus ad alta toggle rate. Check separato con limiti diversi. RMS per AC signals, average per DC, peak per transient.",
+      "Vettori dinamici: VCD/FSDB da gate-level sim con SDF back-annotation. Cycle selection (WORST_POWER_CYCLE, WORST_DPDT_CYCLE) per trovare il ciclo critico. Vectorless per early analysis, VCD-based per signoff.",
     ],
     inputs: ["Routed layout + SPEF", "Switching activity (VCD/FSDB)", "PDN extraction", "EM rules from PDK"],
     outputs: ["Static IR report", "Dynamic IR waveform", "EM violation report", "Fix recommendations"],
     tools: ["Voltus (Cadence)", "RedHawk (Ansys/Synopsys)", "PrimePower", "Totem"],
     keyConcepts: [
       "Static vs dynamic IR drop",
-      "Black's Equation (EM)",
-      "Decap effectiveness",
-      "Power grid resistance analysis",
-      "Vector-based power analysis",
+      "Power EM vs Signal EM",
+      "VCD/FSDB/SAIF activity vectors",
+      "Vectorless vs vectored analysis",
+      "Cycle selection (worst power/dI/dt)",
+      "Black's Equation (EM MTTF)",
     ],
     subsections: [
       {
-        title: "Limiti Industriali",
+        title: "Analisi IR Drop Statica",
         content:
-          "Static IR: max 5% VDD drop. Dynamic IR: max 10% VDD droop. EM: MTTF ≥ 10 anni @ Tmax (125°C consumer, 150°C automotive). RMS current per signal nets.",
+          "DC analysis: risolve V = I × R sulla rete PDN estratta. I_avg per cella da toggle rate × capacitance × VDD × freq. Report: voltage drop per istanza, worst instance, histogram. Early check al floorplan con vectorless.",
+        bullets: [
+          "analyze_power_rail -type avg (Voltus/Innovus)",
+          "Limit: max drop < 5% VDD (es. 40mV @ 0.8V)",
+          "Fix: widen straps, add vias, decap, mesh densification",
+        ],
+      },
+      {
+        title: "Analisi IR Drop Dinamica — Vettori",
+        content:
+          "Transient simulation: risolve L×dI/dt + IR drop nel tempo. Richiede switching activity per ogni cella nel timing window. Due approcci: vectored (VCD/FSDB reali) e vectorless (statistico/probabilistico).",
+        bullets: [
+          "Vectored: VCD/FSDB da gate-level sim con SDF",
+          "Vectorless: toggle rate target, IPF/BPF, SigmaDVD",
+          "SAIF: switching activity interchange (meno dettaglio di VCD)",
+          "Limit: droop < 10% VDD, duration < 500ps",
+        ],
+      },
+      {
+        title: "VCD/FSDB — Activity Vectors",
+        content:
+          "VCD (Value Change Dump) e FSDB (Fast Signal Database) registrano ogni transizione di segnale durante simulazione. Gate-level VCD con SDF back-annotation è il gold standard per signoff. RTL VCD usabile in early flow con name mapping e event propagation.",
+        bullets: [
+          "Gate-level VCD: post-synthesis, con timing reale (SDF)",
+          "FSDB: formato compresso Synopsys, più efficiente",
+          "Multiple VCD: functional, scan, test, low-power modes",
+          "VCD profiling: trova finestra a max power/corrente",
+          "Name mapping: VCD signal → netlist instance pin",
+          "Event propagation: RTL events → gate-level via logic cone",
+        ],
+      },
+      {
+        title: "Cycle Selection — Selezione Ciclo Critico",
+        content:
+          "Un VCD può contenere migliaia di cicli — simulare tutti è impraticabile. Cycle selection identifica i cicli critici: WORST_POWER_CYCLE (max potenza/corrente), WORST_DPDT_CYCLE (max dI/dt = max droop rate). RedHawk/Voltus analizzano power profile del VCD e selezionano automaticamente.",
+        bullets: [
+          "WORST_POWER_CYCLE: ciclo con max switching → max I_avg",
+          "WORST_DPDT_CYCLE: ciclo con max ΔI/Δt → max droop",
+          "SELECT_RANGE: finestra temporale per cycle selection",
+          "Multi-window: analisi su 2-5 finestre critiche",
+          "True-time vs non-true-time VCD supportati",
+          "Pre-simulation cycles attachati al ciclo selezionato",
+        ],
+      },
+      {
+        title: "Vectorless Dynamic IR",
+        content:
+          "Senza VCD: il tool genera activity stocastica basata su toggle rate, timing window (TWF da STA), e power data (IPF/BPF). Più veloce, conservativo (over-estimate). Usato early (floorplan/placement) e come complemento al VCD-based. SigmaDVD (RedHawk-SC) combina statistica con correlazione spaziale.",
+        bullets: [
+          "Toggle rate per cella o per tipo",
+          "Timing window da STA (quando la cella può switchare)",
+          "Scenario: idle, burst, peak (multiple modes)",
+          "Over-estimate IR → safe but pessimistic",
+          "Floorplan: vectorless OK; Signoff: VCD required",
+        ],
+      },
+      {
+        title: "Power EM vs Signal EM",
+        content:
+          "Power EM verifica corrente su strap, ring, rail, via della PDN. Usa current density average (DC power nets) con J_max per layer. Signal EM verifica net di segnale: clock, bus, reset. Usa RMS (AC/repetitive) e peak (transient) limits. Via EM: limit per singola via (0.3-0.5 mA), fix con via arrays.",
+        bullets: [
+          "Power EM: analyzeEM -type avg su VDD/VSS nets",
+          "Signal EM: analyzeEM -type rms (AC) e -type peak",
+          "Black's Eq: MTTF = A × J^(-n) × exp(Ea/kT)",
+          "M1 J_max: 1-2 mA/μm; M6-M9: 8-15 mA/μm",
+          "Via J_max: 0.3-0.5 mA per via → parallel vias",
+          "Fix power EM: widen strap, add parallel wires",
+          "Fix signal EM: upsize driver, widen net, layer promotion",
+          "Temperature: signoff @ 125°C consumer, 150°C automotive",
+        ],
+      },
+      {
+        title: "Flow Completo Power Signoff",
+        content:
+          "1) Extract PDN (SPEF + power grid) → 2) Import activity (VCD or vectorless) → 3) Static IR check → 4) Cycle selection → 5) Dynamic IR transient → 6) EM avg/rms/peak → 7) Report violations → 8) Fix (mesh, decap, widen) → 9) Re-run until clean.",
       },
     ],
     exitCriteria: [
