@@ -9,140 +9,103 @@ export function FlowOverview() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-20">
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            Il Flusso Completo
+            Il Flusso Completo — 14 Fasi
           </h2>
-          <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-            Otto fasi che trasformano un design logico in un layout fisico pronto
-            per la fabbricazione del silicio.
+          <p className="text-slate-400 text-lg max-w-3xl mx-auto">
+            Dal design RTL alla verifica formale, sintesi, floorplan, PDN, placement,
+            CTS, routing, layout, STA, PV, power signoff, package e tapeout (BTO/MTO/GKC).
           </p>
         </div>
 
-        <div className="relative">
-          {/* Connection line */}
-          <div className="hidden md:block absolute top-1/2 left-0 right-0 h-px -translate-y-1/2">
-            <motion.div
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.5, ease: "easeInOut" }}
-              className="h-full bg-gradient-to-r from-cyan-500/0 via-cyan-500/40 to-blue-500/0 origin-left"
-            />
-          </div>
+        {/* Phase groups */}
+        <div className="grid md:grid-cols-3 gap-6 mb-16">
+          {[
+            { label: "Front-End", range: [1, 3], color: "#22d3ee" },
+            { label: "Physical Design", range: [4, 9], color: "#a78bfa" },
+            { label: "Signoff & Tapeout", range: [10, 14], color: "#60a5fa" },
+          ].map((group) => (
+            <div key={group.label} className="glass rounded-xl p-5">
+              <h3 className="text-sm font-mono mb-4" style={{ color: group.color }}>
+                {group.label.toUpperCase()}
+              </h3>
+              <div className="space-y-2">
+                {stages
+                  .filter((s) => s.step >= group.range[0] && s.step <= group.range[1])
+                  .map((stage) => (
+                    <a
+                      key={stage.id}
+                      href={`#stage-${stage.id}`}
+                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors group"
+                    >
+                      <span
+                        className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-mono font-bold shrink-0"
+                        style={{
+                          background: `${stage.color}15`,
+                          color: stage.color,
+                          border: `1px solid ${stage.color}30`,
+                        }}
+                      >
+                        {stage.step}
+                      </span>
+                      <span className="text-sm text-slate-400 group-hover:text-white transition-colors">
+                        {stage.title}
+                      </span>
+                    </a>
+                  ))}
+              </div>
+            </div>
+          ))}
+        </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 md:gap-3">
-            {stages.map((stage, i) => (
-              <motion.a
-                key={stage.id}
-                href={`#stage-${stage.id}`}
-                whileHover={{ y: -6, scale: 1.05 }}
-                className="group relative flex flex-col items-center text-center"
+        {/* All stages grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
+          {stages.map((stage) => (
+            <motion.a
+              key={stage.id}
+              href={`#stage-${stage.id}`}
+              whileHover={{ y: -4, scale: 1.03 }}
+              className="group glass rounded-xl p-3 flex flex-col items-center text-center"
+            >
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center font-mono font-bold text-sm mb-2"
+                style={{
+                  background: `${stage.color}15`,
+                  border: `1px solid ${stage.color}40`,
+                  color: stage.color,
+                }}
               >
-                <div
-                  className="w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center font-mono font-bold text-lg mb-3 transition-all group-hover:shadow-lg"
-                  style={{
-                    background: `${stage.color}15`,
-                    border: `1px solid ${stage.color}40`,
-                    boxShadow: `0 0 0 0 ${stage.glowColor}`,
-                  }}
-                >
-                  <span style={{ color: stage.color }}>{stage.step}</span>
-                </div>
-                <span className="text-xs md:text-sm font-medium text-slate-300 group-hover:text-white transition-colors leading-tight">
-                  {stage.title}
-                </span>
-                <span className="text-[10px] md:text-xs text-slate-500 mt-0.5 hidden md:block">
-                  {stage.subtitle}
-                </span>
-              </motion.a>
+                {stage.step}
+              </div>
+              <span className="text-[11px] font-medium text-slate-300 group-hover:text-white leading-tight">
+                {stage.title}
+              </span>
+            </motion.a>
+          ))}
+        </div>
+
+        {/* Milestones banner */}
+        <div className="mt-16 glass rounded-2xl p-6 md:p-8">
+          <h3 className="text-lg font-semibold mb-4 text-slate-200">Milestone Critici del Flusso</h3>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { name: "GKC", desc: "Gate Keeper Check — review multi-disciplinare", color: "#818cf8" },
+              { name: "Floorplan Exit", desc: "Floorplan legalizzato, pin placed, PG connected", color: "#f472b6" },
+              { name: "PRO Exit", desc: "Placement/Post-Route Optimization completata", color: "#34d399" },
+              { name: "BTO / MTO", desc: "Base Tape-Out (FEOL) → Metal Tape-Out (BEOL)", color: "#60a5fa" },
+            ].map((m) => (
+              <div
+                key={m.name}
+                className="rounded-xl p-4 border"
+                style={{ borderColor: `${m.color}30`, background: `${m.color}08` }}
+              >
+                <p className="font-mono font-bold text-sm" style={{ color: m.color }}>
+                  {m.name}
+                </p>
+                <p className="text-xs text-slate-500 mt-1">{m.desc}</p>
+              </div>
             ))}
           </div>
         </div>
-
-        {/* Flow diagram */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="mt-20 glass rounded-2xl p-8 md:p-12"
-        >
-          <svg viewBox="0 0 900 200" className="w-full h-auto" aria-hidden="true">
-            <defs>
-              <linearGradient id="flowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#22d3ee" />
-                <stop offset="50%" stopColor="#a78bfa" />
-                <stop offset="100%" stopColor="#60a5fa" />
-              </linearGradient>
-              <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-                <polygon points="0 0, 8 3, 0 6" fill="#64748b" />
-              </marker>
-            </defs>
-
-            {stages.map((stage, i) => {
-              const x = 30 + i * 110;
-              const y = 80;
-              return (
-                <g key={stage.id}>
-                  {i < stages.length - 1 && (
-                    <line
-                      x1={x + 35}
-                      y1={y}
-                      x2={x + 75}
-                      y2={y}
-                      stroke="url(#flowGrad)"
-                      strokeWidth="2"
-                      strokeDasharray="6 4"
-                      className="animate-flow-dash"
-                      opacity="0.5"
-                    />
-                  )}
-                  <motion.rect
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                    x={x - 30}
-                    y={y - 25}
-                    width="60"
-                    height="50"
-                    rx="8"
-                    fill={`${stage.color}20`}
-                    stroke={stage.color}
-                    strokeWidth="1.5"
-                  />
-                  <text
-                    x={x}
-                    y={y + 5}
-                    textAnchor="middle"
-                    fill={stage.color}
-                    fontSize="11"
-                    fontFamily="monospace"
-                    fontWeight="bold"
-                  >
-                    {stage.id.toUpperCase().slice(0, 4)}
-                  </text>
-                  <text
-                    x={x}
-                    y={y + 45}
-                    textAnchor="middle"
-                    fill="#94a3b8"
-                    fontSize="8"
-                    fontFamily="sans-serif"
-                  >
-                    {stage.title.split(" ")[0]}
-                  </text>
-                </g>
-              );
-            })}
-
-            <text x="450" y="30" textAnchor="middle" fill="#64748b" fontSize="12" fontFamily="monospace">
-              DATA FLOW: RTL → NETLIST → LAYOUT → GDSII
-            </text>
-            <text x="450" y="170" textAnchor="middle" fill="#475569" fontSize="10" fontFamily="sans-serif">
-              Iterazioni di timing closure e ECO possono ripetere placement → CTS → routing
-            </text>
-          </svg>
-        </motion.div>
       </div>
     </section>
   );

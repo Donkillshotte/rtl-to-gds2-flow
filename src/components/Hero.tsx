@@ -174,10 +174,10 @@ export function Hero() {
           <span className="glow-text text-purple-400">GDSII</span>
         </h1>
 
-        <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed hero-enter hero-enter-delay-2">
-          Un percorso interattivo attraverso l&apos;intero flusso di physical design
-          ad alto livello — dalla descrizione logica del circuito alla geometria
-          pronta per la fonderia.
+        <p className="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto mb-10 leading-relaxed hero-enter hero-enter-delay-2">
+          Guida professionale al flusso RTL → GDSII: formal verification, sintesi, floorplan,
+          PDN, placement, CTS, routing, STA, PV, bump assignment, package e tapeout (BTO/MTO/GKC).
+          14 fasi con exit criteria, checklist e note di lavoro.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center hero-enter hero-enter-delay-3">
@@ -185,13 +185,13 @@ export function Hero() {
             href="#flow-overview"
             className="px-8 py-3.5 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-medium hover:bg-cyan-500/30 transition-all hover:shadow-[0_0_30px_rgba(34,211,238,0.3)]"
           >
-            Esplora il flusso
+            Esplora le 14 fasi
           </a>
           <a
-            href="#stage-rtl"
+            href="#signoff-checklist"
             className="px-8 py-3.5 rounded-xl glass text-slate-300 font-medium hover:text-white transition-all"
           >
-            Inizia da RTL
+            Checklist Signoff
           </a>
         </div>
 

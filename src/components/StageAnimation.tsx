@@ -12,9 +12,13 @@ export function StageAnimation({ stageId, color }: StageAnimationProps) {
   switch (stageId) {
     case "rtl":
       return <RTLAnimation color={color} />;
+    case "verification":
+      return <VerificationAnimation color={color} />;
     case "synthesis":
       return <SynthesisAnimation color={color} />;
     case "floorplan":
+      return <FloorplanAnimation color={color} />;
+    case "pdn":
       return <FloorplanAnimation color={color} />;
     case "placement":
       return <PlacementAnimation color={color} />;
@@ -22,9 +26,17 @@ export function StageAnimation({ stageId, color }: StageAnimationProps) {
       return <CTSAnimation color={color} />;
     case "routing":
       return <RoutingAnimation color={color} />;
-    case "verification":
+    case "layout":
+      return <GDS2Animation color={color} />;
+    case "sta":
       return <VerificationAnimation color={color} />;
-    case "gds2":
+    case "pv":
+      return <VerificationAnimation color={color} />;
+    case "power":
+      return <FloorplanAnimation color={color} />;
+    case "package":
+      return <FloorplanAnimation color={color} />;
+    case "tapeout":
       return <GDS2Animation color={color} />;
     default:
       return null;

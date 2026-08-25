@@ -45,7 +45,7 @@ export function Navigation() {
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           className="fixed left-4 top-1/2 -translate-y-1/2 z-50 hidden lg:block"
         >
-          <div className="glass rounded-2xl p-3 space-y-1">
+          <div className="glass rounded-2xl p-2 space-y-0.5 max-h-[70vh] overflow-y-auto">
             <a
               href="#"
               className={cn(
@@ -111,16 +111,15 @@ export function Header() {
           </span>
         </a>
         <nav className="flex items-center gap-1">
-          {stages.slice(0, 4).map((s) => (
-            <a
-              key={s.id}
-              href={`#stage-${s.id}`}
-              className="px-2.5 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden md:block"
-            >
-              {s.title}
-            </a>
-          ))}
-          <span className="text-slate-600 hidden md:block">...</span>
+          <a href="#signoff-checklist" className="px-2.5 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden md:block">
+            Signoff
+          </a>
+          <a href="#glossary" className="px-2.5 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden md:block">
+            Glossario
+          </a>
+          <a href="#stage-tapeout" className="px-2.5 py-1 rounded-lg text-xs text-cyan-400 hover:text-cyan-300 transition-colors hidden md:block">
+            Tapeout
+          </a>
         </nav>
       </div>
     </header>
