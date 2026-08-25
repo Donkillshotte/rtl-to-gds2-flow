@@ -27,7 +27,7 @@ export function CellGlossarySection() {
   const categories = cellCategories.map((c) => t(c));
 
   return (
-    <section id="cells-glossary" className="relative py-32 px-6 border-t border-slate-800/50">
+    <section id="cells-glossary" className="relative py-20 sm:py-32 px-4 sm:px-6 border-t border-slate-800/50">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center gap-3 mb-4">
           <Cpu className="w-6 h-6 text-purple-400" />

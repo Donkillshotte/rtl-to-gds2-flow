@@ -159,44 +159,44 @@ export function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden grid-bg"
+      className="relative min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden grid-bg pt-20 pb-28 px-4 sm:px-6"
     >
       <div className="absolute inset-0 chip-gradient pointer-events-none" />
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none opacity-80 sm:opacity-100" />
 
-      <motion.div style={{ opacity, y }} className="relative z-10 text-center px-6 max-w-5xl mx-auto">
-        <div className="mb-6 hero-enter">
-          <span className="inline-block px-4 py-1.5 rounded-full glass text-sm font-mono text-cyan-400 tracking-wider">
+      <motion.div style={{ opacity, y }} className="relative z-10 text-center w-full max-w-5xl mx-auto">
+        <div className="mb-4 sm:mb-6 hero-enter">
+          <span className="inline-block px-3 sm:px-4 py-1.5 rounded-full glass text-xs sm:text-sm font-mono text-cyan-400 tracking-wider">
             {t(ui.heroBadge)}
           </span>
         </div>
 
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 hero-enter hero-enter-delay-1">
+        <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-4 sm:mb-6 hero-enter hero-enter-delay-1">
           <span className="glow-text text-cyan-400">RTL</span>
-          <span className="text-slate-500 mx-3 md:mx-6">→</span>
+          <span className="text-slate-500 mx-2 sm:mx-3 md:mx-6">→</span>
           <span className="glow-text text-purple-400">GDSII</span>
         </h1>
 
-        <p className="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto mb-10 leading-relaxed hero-enter hero-enter-delay-2">
+        <p className="text-sm sm:text-lg md:text-xl text-slate-400 max-w-3xl mx-auto mb-8 sm:mb-10 leading-relaxed hero-enter hero-enter-delay-2">
           {t(ui.heroSubtitle)}
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center hero-enter hero-enter-delay-3">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center w-full max-w-sm sm:max-w-none mx-auto hero-enter hero-enter-delay-3">
           <a
             href="#flow-overview"
-            className="px-8 py-3.5 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-medium hover:bg-cyan-500/30 transition-all hover:shadow-[0_0_30px_rgba(34,211,238,0.3)]"
+            className="px-6 sm:px-8 py-3.5 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-medium text-center active:bg-cyan-500/30 transition-all min-h-[48px] flex items-center justify-center"
           >
             {t(ui.heroCta1)}
           </a>
           <a
             href="#signoff-checklist"
-            className="px-8 py-3.5 rounded-xl glass text-slate-300 font-medium hover:text-white transition-all"
+            className="px-6 sm:px-8 py-3.5 rounded-xl glass text-slate-300 font-medium text-center active:text-white transition-all min-h-[48px] flex items-center justify-center"
           >
             {t(ui.heroCta2)}
           </a>
         </div>
 
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 hero-enter hero-enter-delay-4">
+        <div className="mt-12 sm:mt-16 flex flex-col items-center gap-2 hero-enter hero-enter-delay-4">
           <span className="text-xs text-slate-500 font-mono tracking-widest">{t(ui.scroll)}</span>
           <div className="w-5 h-8 rounded-full border border-slate-600 flex items-start justify-center p-1 animate-float">
             <div className="w-1 h-2 rounded-full bg-cyan-400" />

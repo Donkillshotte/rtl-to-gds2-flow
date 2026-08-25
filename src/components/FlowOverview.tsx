@@ -10,11 +10,11 @@ export function FlowOverview() {
   const { t } = useI18n();
 
   return (
-    <section id="flow-overview" className="relative py-32 px-6">
+    <section id="flow-overview" className="relative py-20 sm:py-32 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-20">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4">{t(ui.flowTitle)}</h2>
-          <p className="text-slate-400 text-lg max-w-3xl mx-auto">{t(ui.flowSubtitle)}</p>
+        <div className="text-center mb-12 sm:mb-20">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 sm:mb-4">{t(ui.flowTitle)}</h2>
+          <p className="text-slate-400 text-sm sm:text-lg max-w-3xl mx-auto">{t(ui.flowSubtitle)}</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-16">
@@ -56,7 +56,7 @@ export function FlowOverview() {
           ))}
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3">
           {stages.map((stage) => (
             <motion.a
               key={stage.id}

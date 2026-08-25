@@ -7,7 +7,7 @@ export function SummarySection() {
   const { t } = useI18n();
 
   return (
-    <section className="relative py-32 px-6 border-t border-slate-800/50">
+    <section className="relative py-20 sm:py-32 px-4 sm:px-6 border-t border-slate-800/50">
       <div className="max-w-4xl mx-auto text-center">
         <div>
           <h2 className="text-3xl md:text-5xl font-bold mb-6">{t(ui.summaryTitle)}</h2>

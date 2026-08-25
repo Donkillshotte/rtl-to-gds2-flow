@@ -28,13 +28,16 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  overflow-x: clip;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
-  overflow-x: hidden;
+  overflow-x: clip;
+  max-width: 100vw;
 }
 
 ::selection {
@@ -108,6 +111,34 @@ body {
 .hero-enter-delay-2 { animation-delay: 0.3s; opacity: 0; }
 .hero-enter-delay-3 { animation-delay: 0.45s; opacity: 0; }
 .hero-enter-delay-4 { animation-delay: 1.2s; opacity: 0; }
+
+/* Safe areas for notched phones */
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* KaTeX mobile overflow */
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+  font-size: 0.95em;
+}
+
+@media (max-width: 767px) {
+  .katex-display {
+    font-size: 0.85em;
+  }
+
+  .glow-text {
+    text-shadow: 0 0 20px rgba(34, 211, 238, 0.35);
+  }
+}
 
 
 /* Custom scrollbar */

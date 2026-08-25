@@ -3,6 +3,7 @@
 import { useEffect, useRef, useCallback } from "react";
 import { useI18n } from "@/i18n/context";
 import { ui } from "@/i18n/ui";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import type { StageId } from "@/data/stages";
 
 const STAGE_ORDER: StageId[] = [
@@ -31,6 +32,8 @@ interface ChipEvolutionProps {
 export function ChipEvolution({ activeStageIndex, compact = false }: ChipEvolutionProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { locale, t } = useI18n();
+  const isMobile = useIsMobile();
+  const isCompact = compact || isMobile;
   const labels = locale === "it" ? STAGE_LABELS.it : STAGE_LABELS.en;
 
   const draw = useCallback(
@@ -76,7 +79,7 @@ export function ChipEvolution({ activeStageIndex, compact = false }: ChipEvoluti
           ctx.lineWidth = 1.5;
           ctx.fillRect(dx + b.x * dieW, dy + b.y * dieH, b.w * dieW, b.h * dieH);
           ctx.strokeRect(dx + b.x * dieW, dy + b.y * dieH, b.w * dieW, b.h * dieH);
-          if (!compact) {
+          if (!isCompact) {
             ctx.fillStyle = b.c;
             ctx.font = `${Math.max(8, w * 0.025)}px monospace`;
             ctx.textAlign = "center";
@@ -117,7 +120,7 @@ export function ChipEvolution({ activeStageIndex, compact = false }: ChipEvoluti
           ctx.lineWidth = 2;
           ctx.fillRect(dx + m.x * dieW, dy + m.y * dieH, m.w * dieW, m.h * dieH);
           ctx.strokeRect(dx + m.x * dieW, dy + m.y * dieH, m.w * dieW, m.h * dieH);
-          if (!compact) {
+          if (!isCompact) {
             ctx.fillStyle = "#f472b6";
             ctx.font = `bold ${Math.max(7, w * 0.022)}px monospace`;
             ctx.textAlign = "center";
@@ -268,7 +271,7 @@ export function ChipEvolution({ activeStageIndex, compact = false }: ChipEvoluti
         ctx.lineTo(dx + dieW, scanY);
         ctx.stroke();
         // Check marks
-        if (!compact) {
+        if (!isCompact) {
           ["DRC", "LVS", "ERC"].forEach((chk, i) => {
             ctx.fillStyle = "#34d399";
             ctx.font = `${Math.max(7, w * 0.02)}px monospace`;
@@ -310,7 +313,7 @@ export function ChipEvolution({ activeStageIndex, compact = false }: ChipEvoluti
         ctx.lineWidth = 3;
         ctx.strokeRect(dx, dy, dieW, dieH);
         ctx.shadowBlur = 0;
-        if (!compact) {
+        if (!isCompact) {
           ctx.fillStyle = "#60a5fa";
           ctx.font = `bold ${Math.max(9, w * 0.028)}px monospace`;
           ctx.textAlign = "center";
@@ -319,7 +322,7 @@ export function ChipEvolution({ activeStageIndex, compact = false }: ChipEvoluti
       }
 
       // Layer legend
-      if (!compact) {
+      if (!isCompact) {
         const legend = labels.slice(0, stage + 1);
         ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
         ctx.fillRect(dx, dy + dieH + 4, dieW, 14 + legend.length * 11);
@@ -331,7 +334,7 @@ export function ChipEvolution({ activeStageIndex, compact = false }: ChipEvoluti
         });
       }
     },
-    [compact, labels]
+    [isCompact, labels]
   );
 
   useEffect(() => {
@@ -367,7 +370,7 @@ export function ChipEvolution({ activeStageIndex, compact = false }: ChipEvoluti
       <p className="text-xs text-slate-500 mb-3">{t(ui.chipEvolutionDesc)}</p>
       <canvas
         ref={canvasRef}
-        className={`w-full rounded-xl bg-slate-950 ${compact ? "h-48" : "h-64 md:h-80"}`}
+        className={`w-full rounded-xl bg-slate-950 ${isCompact ? "h-44 sm:h-48" : "h-64 md:h-80"}`}
       />
       <p className="text-xs font-mono text-slate-400 mt-2 text-center">
         {labels[activeStageIndex] ?? ""} ({activeStageIndex + 1}/14)

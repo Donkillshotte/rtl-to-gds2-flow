@@ -17,7 +17,7 @@ export function GlossarySection() {
   );
 
   return (
-    <section id="glossary" className="relative py-32 px-6">
+    <section id="glossary" className="relative py-20 sm:py-32 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center gap-3 mb-4">
           <BookOpen className="w-6 h-6 text-cyan-400" />
@@ -72,7 +72,7 @@ export function SignoffChecklistSection() {
   const [expanded, setExpanded] = useState<number>(0);
 
   return (
-    <section id="signoff-checklist" className="relative py-32 px-6 border-t border-slate-800/50">
+    <section id="signoff-checklist" className="relative py-20 sm:py-32 px-4 sm:px-6 border-t border-slate-800/50">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center gap-3 mb-4">
           <ClipboardCheck className="w-6 h-6 text-green-400" />

@@ -24,7 +24,7 @@ export function Formula({ latex, block = true, className = "" }: FormulaProps) {
   if (block) {
     return (
       <div
-        className={`my-4 overflow-x-auto rounded-xl bg-slate-900/80 border border-slate-700/50 px-6 py-4 text-center ${className}`}
+        className={`my-3 sm:my-4 overflow-x-auto rounded-xl bg-slate-900/80 border border-slate-700/50 px-3 sm:px-6 py-3 sm:py-4 text-center max-w-full ${className}`}
         dangerouslySetInnerHTML={{ __html: html }}
       />
     );
@@ -46,7 +46,7 @@ interface FormulaBlockProps {
 
 export function FormulaBlock({ label, latex, explanation }: FormulaBlockProps) {
   return (
-    <div className="glass rounded-xl p-5 mb-4">
+    <div className="glass rounded-xl p-4 sm:p-5 mb-4">
       <h4 className="text-sm font-mono text-cyan-400 mb-2">{label}</h4>
       <Formula latex={latex} />
       <p className="text-xs text-slate-400 leading-relaxed mt-2">{explanation}</p>

@@ -22,7 +22,7 @@ export function StageSection({ stage, index }: StageSectionProps) {
   return (
     <section
       id={`stage-${stage.id}`}
-      className="relative py-24 md:py-32 px-6 overflow-hidden"
+      className="relative py-14 sm:py-20 md:py-32 px-4 sm:px-6 overflow-hidden"
     >
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.04]"
@@ -32,9 +32,9 @@ export function StageSection({ stage, index }: StageSectionProps) {
       />
 
       <div className="max-w-6xl mx-auto">
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-start sm:items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
           <div
-            className="w-12 h-12 rounded-xl flex items-center justify-center font-mono font-bold text-lg"
+            className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center font-mono font-bold text-base sm:text-lg shrink-0"
             style={{
               background: `${stage.color}15`,
               border: `1px solid ${stage.color}40`,
@@ -47,11 +47,16 @@ export function StageSection({ stage, index }: StageSectionProps) {
             <p className="text-sm font-mono tracking-wider" style={{ color: stage.color }}>
               {t(ui.phase)} {stage.step} / 14
             </p>
-            <h2 className="text-2xl md:text-4xl font-bold">{stage.title}</h2>
+            <h2 className="text-xl sm:text-2xl md:text-4xl font-bold leading-tight">{stage.title}</h2>
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+        {/* Chip preview — top on mobile, sticky sidebar on desktop */}
+        <div className="mb-6 lg:hidden">
+          <ChipEvolution activeStageIndex={index} />
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
           <div className={`space-y-6 ${isEven ? "" : "lg:order-2"}`}>
             <div>
               <p className="text-sm font-mono mb-3" style={{ color: stage.color }}>
@@ -127,7 +132,7 @@ export function StageSection({ stage, index }: StageSectionProps) {
               </div>
             )}
 
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <InfoCard
                 icon={<ArrowDownToLine className="w-4 h-4" />}
                 title={t(ui.inputs)}
@@ -235,10 +240,10 @@ export function StageSection({ stage, index }: StageSectionProps) {
             )}
           </div>
 
-          <div className={`sticky top-24 ${isEven ? "" : "lg:order-1"}`}>
+          <div className={`hidden lg:block lg:sticky lg:top-24 ${isEven ? "" : "lg:order-1"}`}>
             <div
               className="relative overflow-hidden rounded-2xl"
-              style={{ boxShadow: `0 0 60px ${stage.glowColor}` }}
+              style={{ boxShadow: `0 0 40px ${stage.glowColor}` }}
             >
               <ChipEvolution activeStageIndex={index} />
             </div>

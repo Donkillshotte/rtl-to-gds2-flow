@@ -6,6 +6,7 @@ import { Languages } from "lucide-react";
 import { useStages } from "@/hooks/useStages";
 import { useI18n } from "@/i18n/context";
 import { ui } from "@/i18n/ui";
+import { MobileHeaderMenu } from "./MobileNav";
 import { cn } from "@/lib/utils";
 
 export function Navigation() {
@@ -102,18 +103,19 @@ export function Header() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        scrolled ? "glass py-3" : "py-5"
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 safe-top",
+        scrolled ? "glass py-2 md:py-3" : "py-3 md:py-5"
       )}
     >
-      <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-        <a href="#" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-2">
+        <a href="#" className="flex items-center gap-2 min-w-0 shrink">
+          <div className="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center shrink-0">
             <span className="text-cyan-400 font-mono text-xs font-bold">PD</span>
           </div>
-          <span className="font-semibold text-sm hidden sm:block">{t(ui.siteTitle)}</span>
+          <span className="font-semibold text-sm hidden sm:block truncate">{t(ui.siteTitle)}</span>
         </a>
-        <nav className="flex items-center gap-1">
+        <nav className="flex items-center gap-0.5 sm:gap-1 shrink-0">
+          <MobileHeaderMenu />
           <a href="#signoff-checklist" className="px-2.5 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden md:block">
             {t(ui.navSignoff)}
           </a>
@@ -126,12 +128,12 @@ export function Header() {
           <a href="#stage-tapeout" className="px-2.5 py-1 rounded-lg text-xs text-cyan-400 hover:text-cyan-300 transition-colors hidden md:block">
             {t(ui.navTapeout)}
           </a>
-          <div className="flex items-center ml-2 border border-slate-700/50 rounded-lg overflow-hidden">
-            <Languages className="w-3.5 h-3.5 text-slate-500 ml-2" />
+          <div className="flex items-center border border-slate-700/50 rounded-lg overflow-hidden">
+            <Languages className="w-3.5 h-3.5 text-slate-500 ml-1.5 hidden xs:block" />
             <button
               onClick={() => setLocale("it")}
               className={cn(
-                "px-2 py-1 text-xs font-mono transition-colors",
+                "px-2.5 py-2 text-xs font-mono transition-colors min-w-[44px] min-h-[44px] md:min-h-0 md:min-w-0 md:py-1",
                 locale === "it" ? "bg-cyan-500/20 text-cyan-400" : "text-slate-500 hover:text-slate-300"
               )}
             >
@@ -140,7 +142,7 @@ export function Header() {
             <button
               onClick={() => setLocale("en")}
               className={cn(
-                "px-2 py-1 text-xs font-mono transition-colors",
+                "px-2.5 py-2 text-xs font-mono transition-colors min-w-[44px] min-h-[44px] md:min-h-0 md:min-w-0 md:py-1",
                 locale === "en" ? "bg-cyan-500/20 text-cyan-400" : "text-slate-500 hover:text-slate-300"
               )}
             >
