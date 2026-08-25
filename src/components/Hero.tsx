@@ -189,7 +189,7 @@ export function Hero() {
             {t(ui.heroCta1)}
           </a>
           <a
-            href="#signoff-checklist"
+            href="#learn-lab"
             className="px-6 sm:px-8 py-3.5 rounded-xl glass text-slate-300 font-medium text-center active:text-white transition-all min-h-[48px] flex items-center justify-center"
           >
             {t(ui.heroCta2)}

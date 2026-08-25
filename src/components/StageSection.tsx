@@ -7,6 +7,9 @@ import { FormulaBlock } from "./Formula";
 import { useI18n } from "@/i18n/context";
 import { ui } from "@/i18n/ui";
 import { stageFormulas, stageInterview } from "@/data/stageFormulas";
+import { extraInterview } from "@/data/interviewExtra";
+import { stageEssays } from "@/data/stageEssays";
+import { workedExamples } from "@/data/quizBank";
 
 interface StageSectionProps {
   stage: Stage;
@@ -14,10 +17,12 @@ interface StageSectionProps {
 }
 
 export function StageSection({ stage, index }: StageSectionProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const isEven = index % 2 === 0;
   const formulas = stageFormulas[stage.id] ?? [];
-  const interview = stageInterview[stage.id] ?? [];
+  const interview = [...(stageInterview[stage.id] ?? []), ...(extraInterview[stage.id] ?? [])];
+  const essay = stageEssays[stage.id];
+  const examples = workedExamples.filter((e) => e.stage === stage.id);
 
   return (
     <section
@@ -80,6 +85,19 @@ export function StageSection({ stage, index }: StageSectionProps) {
               </div>
             </div>
 
+            {essay && (
+              <div className="glass rounded-xl p-5 border border-amber-500/15">
+                <h3 className="text-sm font-semibold text-amber-300 mb-3">{t(essay.kicker)}</h3>
+                <div className="space-y-3">
+                  {essay.paragraphs.map((p, i) => (
+                    <p key={i} className="text-sm text-slate-400 leading-relaxed">
+                      {t(p)}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {formulas.length > 0 && (
               <div>
                 <h3 className="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
@@ -114,6 +132,28 @@ export function StageSection({ stage, index }: StageSectionProps) {
                 )}
               </div>
             ))}
+
+            {examples.length > 0 &&
+              examples.map((ex) => (
+                <div key={ex.id} className="glass rounded-xl p-5 border border-cyan-500/15">
+                  <h3 className="text-sm font-semibold text-cyan-300 mb-3">{t(ui.exampleTitle)}</h3>
+                  <p className="text-sm font-medium text-slate-200 mb-2">{t(ex.title)}</p>
+                  <ul className="mb-3 space-y-1">
+                    {ex.given[locale].map((g) => (
+                      <li key={g} className="text-xs text-slate-500">
+                        ▸ {g}
+                      </li>
+                    ))}
+                  </ul>
+                  {ex.steps.map((s) => (
+                    <div key={t(s.title)} className="mb-2">
+                      <p className="text-xs font-medium text-cyan-400/90">{t(s.title)}</p>
+                      <p className="text-xs text-slate-400 leading-relaxed">{t(s.body)}</p>
+                    </div>
+                  ))}
+                  <p className="text-xs text-slate-300 mt-2 leading-relaxed">{t(ex.result)}</p>
+                </div>
+              ))}
 
             {interview.length > 0 && (
               <div className="glass rounded-xl p-5 border border-indigo-500/20">

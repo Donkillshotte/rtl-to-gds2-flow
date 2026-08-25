@@ -116,6 +116,9 @@ export function Header() {
         </a>
         <nav className="flex items-center gap-0.5 sm:gap-1 shrink-0">
           <MobileHeaderMenu />
+          <a href="#learn-lab" className="px-2.5 py-1 rounded-lg text-xs text-amber-400/90 hover:text-amber-300 transition-colors hidden md:block">
+            {t(ui.navLearn)}
+          </a>
           <a href="#signoff-checklist" className="px-2.5 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden md:block">
             {t(ui.navSignoff)}
           </a>

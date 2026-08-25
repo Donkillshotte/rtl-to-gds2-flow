@@ -119,6 +119,7 @@ export function MobileHeaderMenu() {
   const [open, setOpen] = useState(false);
 
   const links = [
+    { href: "#learn-lab", label: t(ui.navLearn) },
     { href: "#flow-overview", label: t(ui.flowTitle).split("—")[0]?.trim() ?? "Flow" },
     { href: "#signoff-checklist", label: t(ui.navSignoff) },
     { href: "#glossary", label: t(ui.navGlossary) },

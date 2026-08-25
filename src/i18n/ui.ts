@@ -4,7 +4,7 @@ export const ui = {
   siteTitle: loc("Physical Design Flow", "Physical Design Flow"),
   heroBadge: loc("PHYSICAL DESIGN FLOW", "PHYSICAL DESIGN FLOW"),
   heroCta1: loc("Esplora le 14 fasi", "Explore 14 phases"),
-  heroCta2: loc("Checklist Signoff", "Signoff checklist"),
+  heroCta2: loc("Laboratorio colloqui", "Interview lab"),
   scroll: loc("SCROLL", "SCROLL"),
   flowTitle: loc("Il Flusso Completo — 14 Fasi", "Complete Flow — 14 Phases"),
   flowSubtitle: loc(
@@ -58,6 +58,38 @@ export const ui = {
   navCells: loc("Celle", "Cells"),
   navRef: loc("File EDA", "EDA files"),
   navTapeout: loc("Tapeout", "Tapeout"),
+  navLearn: loc("Lab", "Lab"),
+  learnTitle: loc("Laboratorio da colloquio", "Interview lab"),
+  learnSubtitle: loc(
+    "Quiz con spiegazione, flashcard dalle Q&A senior, calcolatori (setup/hold, IR, utilization, antenna) ed esempi numerici passo-passo. Cambia i numeri: è così che si impara lo STA, non a memoria.",
+    "Quiz with explanations, senior Q&A flashcards, calculators (setup/hold, IR, utilization, antenna) and step-by-step numerical examples. Change the numbers: that is how you learn STA, not by memorizing."
+  ),
+  learnQuiz: loc("Quiz", "Quiz"),
+  learnCards: loc("Flashcard", "Flashcards"),
+  learnCalc: loc("Calcolatori", "Calculators"),
+  learnExamples: loc("Esempi svolti", "Worked examples"),
+  learnScore: loc("punteggio", "score"),
+  learnNext: loc("Prossima domanda", "Next question"),
+  learnTap: loc("Tocca per la risposta", "Tap for the answer"),
+  learnQ: loc("Tocca per la domanda", "Tap for the question"),
+  learnStaHint: loc(
+    "Skew positivo (capture tardi) aiuta setup e mangia hold. Hold NON dipende da Tclk. Valori verdi = slack ≥ 0.",
+    "Positive skew (late capture) helps setup and eats hold. Hold does NOT depend on Tclk. Green = slack ≥ 0."
+  ),
+  learnIrHint: loc(
+    "Limite statico tipico 5% VDD (verde). Il droop dinamico può essere 2–3× — questo calcolatore è solo I·R.",
+    "Typical static limit 5% VDD (green). Dynamic droop can be 2–3× — this calculator is I·R only."
+  ),
+  learnUtilHint: loc(
+    "Verde se U è tra 55% e 80% (fascia industriale sul CORE, non sul die).",
+    "Green if U is between 55% and 80% (industrial band on CORE, not die)."
+  ),
+  learnAntHint: loc(
+    "Verde se ratio < Rmax. Allargare il metal PEGGIORA il ratio. Fix: jumper o diodo.",
+    "Green if ratio < Rmax. Widening metal WORSENS the ratio. Fix: jumper or diode."
+  ),
+  essayKicker: loc("Mental model da colloquio", "Interview mental model"),
+  exampleTitle: loc("Esempio numerico", "Worked example"),
   refTitle: loc("Artefatti EDA, Stack Metallico, PVT", "EDA Artifacts, Metal Stack, PVT"),
   refSubtitle: loc(
     "I file che viaggiano nel flusso, una stack 7 nm indicativa, e i corner MMMC che lo STA deve chiudere. Niente di questo è opzionale a tapeout.",

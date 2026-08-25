@@ -9,6 +9,7 @@ import { CellGlossarySection } from "@/components/CellGlossarySection";
 import { ReferenceSection } from "@/components/ReferenceSection";
 import { Header, Navigation } from "@/components/Navigation";
 import { MobileBottomNav } from "@/components/MobileNav";
+import { LearnLab } from "@/components/LearnLab";
 import { useStages } from "@/hooks/useStages";
 
 export function HomePage() {
@@ -21,6 +22,7 @@ export function HomePage() {
       <main>
         <Hero />
         <FlowOverview />
+        <LearnLab />
         {stages.map((stage, index) => (
           <StageSection key={stage.id} stage={stage} index={index} />
         ))}
