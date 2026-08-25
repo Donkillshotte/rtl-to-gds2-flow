@@ -7,13 +7,7 @@ export function FlowOverview() {
   return (
     <section id="flow-overview" className="relative py-32 px-6">
       <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.7 }}
-          className="text-center mb-20"
-        >
+        <div className="text-center mb-20">
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
             Il Flusso Completo
           </h2>
@@ -21,7 +15,7 @@ export function FlowOverview() {
             Otto fasi che trasformano un design logico in un layout fisico pronto
             per la fabbricazione del silicio.
           </p>
-        </motion.div>
+        </div>
 
         <div className="relative">
           {/* Connection line */}
@@ -40,10 +34,6 @@ export function FlowOverview() {
               <motion.a
                 key={stage.id}
                 href={`#stage-${stage.id}`}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
                 whileHover={{ y: -6, scale: 1.05 }}
                 className="group relative flex flex-col items-center text-center"
               >

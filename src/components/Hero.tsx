@@ -40,7 +40,7 @@ export function Hero() {
       height = canvas.offsetHeight;
       canvas.width = width * devicePixelRatio;
       canvas.height = height * devicePixelRatio;
-      ctx.scale(devicePixelRatio, devicePixelRatio);
+      ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
     };
 
     const init = () => {
@@ -61,7 +61,6 @@ export function Hero() {
     const draw = () => {
       ctx.clearRect(0, 0, width, height);
 
-      // Draw connections
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
           const dx = nodes[i].x - nodes[j].x;
@@ -78,7 +77,6 @@ export function Hero() {
         }
       }
 
-      // Draw chip outline in center
       const cx = width / 2;
       const cy = height / 2;
       const chipSize = Math.min(width, height) * 0.35;
@@ -86,7 +84,6 @@ export function Hero() {
       ctx.save();
       ctx.translate(cx, cy);
 
-      // Glow
       const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, chipSize);
       gradient.addColorStop(0, "rgba(34, 211, 238, 0.12)");
       gradient.addColorStop(0.5, "rgba(167, 139, 250, 0.06)");
@@ -94,12 +91,10 @@ export function Hero() {
       ctx.fillStyle = gradient;
       ctx.fillRect(-chipSize, -chipSize, chipSize * 2, chipSize * 2);
 
-      // Chip body
       ctx.strokeStyle = "rgba(34, 211, 238, 0.6)";
       ctx.lineWidth = 2;
       ctx.strokeRect(-chipSize / 2, -chipSize / 2, chipSize, chipSize);
 
-      // Inner grid
       const gridStep = chipSize / 8;
       ctx.strokeStyle = "rgba(34, 211, 238, 0.15)";
       ctx.lineWidth = 0.5;
@@ -114,7 +109,6 @@ export function Hero() {
         ctx.stroke();
       }
 
-      // Pins
       ctx.fillStyle = "rgba(34, 211, 238, 0.8)";
       for (let i = -3; i <= 3; i++) {
         if (i === 0) continue;
@@ -126,7 +120,6 @@ export function Hero() {
 
       ctx.restore();
 
-      // Update and draw nodes
       for (const node of nodes) {
         node.x += node.vx;
         node.y += node.vy;
@@ -147,14 +140,16 @@ export function Hero() {
     resize();
     init();
     draw();
-    window.addEventListener("resize", () => {
+
+    const onResize = () => {
       resize();
       init();
-    });
+    };
+    window.addEventListener("resize", onResize);
 
     return () => {
       cancelAnimationFrame(animationId);
-      window.removeEventListener("resize", resize);
+      window.removeEventListener("resize", onResize);
     };
   }, []);
 
@@ -164,48 +159,28 @@ export function Hero() {
       className="relative min-h-screen flex items-center justify-center overflow-hidden grid-bg"
     >
       <div className="absolute inset-0 chip-gradient pointer-events-none" />
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
 
       <motion.div style={{ opacity, y }} className="relative z-10 text-center px-6 max-w-5xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="mb-6"
-        >
+        <div className="mb-6 hero-enter">
           <span className="inline-block px-4 py-1.5 rounded-full glass text-sm font-mono text-cyan-400 tracking-wider">
             PHYSICAL DESIGN FLOW
           </span>
-        </motion.div>
+        </div>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.15 }}
-          className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6"
-        >
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 hero-enter hero-enter-delay-1">
           <span className="glow-text text-cyan-400">RTL</span>
           <span className="text-slate-500 mx-3 md:mx-6">→</span>
           <span className="glow-text text-purple-400">GDSII</span>
-        </motion.h1>
+        </h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed"
-        >
+        <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed hero-enter hero-enter-delay-2">
           Un percorso interattivo attraverso l&apos;intero flusso di physical design
           ad alto livello — dalla descrizione logica del circuito alla geometria
           pronta per la fonderia.
-        </motion.p>
+        </p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.45 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-        >
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center hero-enter hero-enter-delay-3">
           <a
             href="#flow-overview"
             className="px-8 py-3.5 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-medium hover:bg-cyan-500/30 transition-all hover:shadow-[0_0_30px_rgba(34,211,238,0.3)]"
@@ -218,23 +193,14 @@ export function Hero() {
           >
             Inizia da RTL
           </a>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 1 }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        >
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 hero-enter hero-enter-delay-4">
           <span className="text-xs text-slate-500 font-mono tracking-widest">SCROLL</span>
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5 }}
-            className="w-5 h-8 rounded-full border border-slate-600 flex items-start justify-center p-1"
-          >
+          <div className="w-5 h-8 rounded-full border border-slate-600 flex items-start justify-center p-1 animate-float">
             <div className="w-1 h-2 rounded-full bg-cyan-400" />
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </motion.div>
     </section>
   );

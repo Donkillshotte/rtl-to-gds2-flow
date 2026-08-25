@@ -1,17 +1,8 @@
-"use client";
-
-import { motion } from "framer-motion";
-
 export function SummarySection() {
   return (
     <section className="relative py-32 px-6">
       <div className="max-w-4xl mx-auto text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-        >
+        <div>
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
             Dal Silicio alla Geometria
           </h2>
@@ -66,7 +57,7 @@ export function SummarySection() {
               )}
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { ArrowDownToLine, ArrowUpFromLine, Cpu, Lightbulb } from "lucide-react";
 import type { Stage } from "@/data/stages";
 import { StageAnimation } from "./StageAnimation";
@@ -28,13 +27,7 @@ export function StageSection({ stage, index }: StageSectionProps) {
 
       <div className="max-w-6xl mx-auto">
         {/* Step indicator */}
-        <motion.div
-          initial={{ opacity: 0, x: isEven ? -30 : 30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6 }}
-          className="flex items-center gap-4 mb-8"
-        >
+        <div className="flex items-center gap-4 mb-8">
           <div
             className="w-12 h-12 rounded-xl flex items-center justify-center font-mono font-bold text-lg"
             style={{
@@ -51,17 +44,10 @@ export function StageSection({ stage, index }: StageSectionProps) {
             </p>
             <h2 className="text-2xl md:text-4xl font-bold">{stage.title}</h2>
           </div>
-        </motion.div>
+        </div>
 
         <div className={`grid lg:grid-cols-2 gap-12 lg:gap-16 items-center ${isEven ? "" : "lg:direction-rtl"}`}>
-          {/* Content */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.7 }}
-            className={isEven ? "" : "lg:order-2"}
-          >
+          <div className={isEven ? "" : "lg:order-2"}>
             <p className="text-sm font-mono mb-3" style={{ color: stage.color }}>
               {stage.subtitle}
             </p>
@@ -120,16 +106,9 @@ export function StageSection({ stage, index }: StageSectionProps) {
                 ))}
               </ul>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Animation */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.7, delay: 0.15 }}
-            className={`relative ${isEven ? "" : "lg:order-1"}`}
-          >
+          <div className={`relative ${isEven ? "" : "lg:order-1"}`}>
             <div
               className="glass rounded-2xl p-6 md:p-8 aspect-[4/3] flex items-center justify-center relative overflow-hidden"
               style={{
@@ -147,28 +126,16 @@ export function StageSection({ stage, index }: StageSectionProps) {
                 <StageAnimation stageId={stage.id} color={stage.color} />
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
 
-        {/* Connector arrow to next stage */}
         {index < 7 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="flex justify-center mt-16"
-          >
+          <div className="flex justify-center mt-16">
             <div className="flex flex-col items-center gap-2">
               <div className="w-px h-12 bg-gradient-to-b from-slate-600 to-transparent" />
-              <motion.div
-                animate={{ y: [0, 6, 0] }}
-                transition={{ repeat: Infinity, duration: 1.5 }}
-                className="text-slate-500"
-              >
-                ↓
-              </motion.div>
+              <div className="text-slate-500 animate-float">↓</div>
             </div>
-          </motion.div>
+          </div>
         )}
       </div>
     </section>
