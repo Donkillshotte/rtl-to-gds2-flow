@@ -29,12 +29,13 @@ export const LAYER_META = [
   { color: "#60a5fa", short: "GDS" },
 ];
 
-/** Opacity: current layer = 1.0, older layers fade with age */
+/** Opacity: current layer = 1.0, older layers fade progressively with age */
 export function layerAlpha(layer: number, current: number, t: number): number {
   if (layer > current) return 0;
-  if (layer === current) return 0.94 + 0.06 * Math.sin(t * 0.005);
+  if (layer === current) return 0.96 + 0.04 * Math.sin(t * 0.005);
   const age = current - layer;
-  return Math.max(0.08, 0.62 - age * 0.042);
+  // Older layers become increasingly transparent (min 0.06)
+  return Math.max(0.06, 0.72 - age * 0.055);
 }
 
 /** Schematic layers ghost out once die floorplan appears */
