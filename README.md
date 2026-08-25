@@ -28,7 +28,7 @@ Guida professionale interattiva al flusso completo di **physical design** — da
 
 ## Sezioni aggiuntive
 
-- **Chip Evolution** — 14 canvas layer sovrapposti: i precedenti diventano più trasparenti, il corrente è animato
+- **Laboratorio da colloquio** — Quiz, flashcard, calcolatori STA/IR/utilization/antenna, esempi numerici passo-passo
 - **Formule & Modelli** — KaTeX (setup/hold, FO4, logical effort, IR drop, Black's Eq, MTBF, antenna, …)
 - **Senior Interview Prep** — Q&A per ogni fase (AOCV/POCV, bump map, fill SI, handoff FE→PD, …)
 - **Checklist di Signoff** — Check di produzione per ogni milestone
