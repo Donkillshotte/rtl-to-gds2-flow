@@ -1,0 +1,87 @@
+{
+  "$schema": "/home/ubuntu/.cursor/plugins/cache/cursor-public/9333/bdf7aa355337897f167153e05069aca505dae17c/skills/orchestrate/schemas/plan.schema.json",
+  "goal": "FlowLab phase visual UI polish per PD stage. FlowLab (repo rtl-to-gds2-flow) is a Next.js 16 + TypeScript + Tailwind v4 + framer-motion teaching site for the RTL->GDSII physical design flow. Each of the 14 phases renders a per-stage visual kit: a bespoke animated SVG diagram (src/components/StageAnimation.tsx), a 4-step operational list and a teaching metrics bar chart (both driven by src/data/stageVisualMeta.ts and presented by src/components/StageVisualKit.tsx). Polish the per-stage visual UI specifically for the six Physical Design (PD) stages: floorplan (step 4, #f472b6), pdn (step 5, #e879f9), placement (step 6, #34d399), cts (step 7, #fbbf24), routing (step 8, #fb923c) and layout/Layout & Finishing (step 9, #2dd4bf; its SVG is the GDS2Animation). Polish means: make the six PD SVG diagrams more legible, technically faithful, visually richer and consistently styled (labels, legends, spacing, color use, motion) while keeping the existing StageAnimation prop contract and viewBox 0 0 400 220; and refine the PD-stage steps/detail copy and metrics chart data plus the shared visual-kit presentation so the steps cards and bar chart look crisp and readable. Do not regress non-PD stages, keep bilingual (loc(it,en)) strings, keep static export building, and keep eslint clean.",
+  "summary": "polish the per-stage visual UI (SVG diagram + steps + metrics) for the six physical-design phases of FlowLab",
+  "rootSlug": "pd-visual-polish",
+  "baseBranch": "main",
+  "prBase": "main",
+  "repoUrl": "https://github.com/Donkillshotte/rtl-to-gds2-flow",
+  "selfAgentId": "bc-2cf65dcc-7920-433a-ac53-b0dd53f35773",
+  "syncStateToGit": true,
+  "acceptanceCriteria": [
+    "All six PD stages (floorplan, pdn, placement, cts, routing, layout) have a visibly polished, legible, technically faithful animated SVG diagram.",
+    "PD-stage steps and metrics-chart presentation are crisp and readable, with bilingual copy preserved.",
+    "npm run build (static export) succeeds and npm run lint is clean.",
+    "No visual or functional regression on the eight non-PD stages.",
+    "Work ships as a single draft PR against main."
+  ],
+  "tasks": [
+    {
+      "name": "pd-stage-diagrams",
+      "type": "worker",
+      "scopedGoal": "Polish the six Physical Design per-stage animated SVG diagrams in src/components/StageAnimation.tsx: FloorplanAnimation (floorplan), PDNAnimation (pdn), PlacementAnimation (placement), CTSAnimation (cts), RoutingAnimation (routing) and GDS2Animation (the layout/'Layout & Finishing' stage). Goal: make each diagram more legible, technically faithful and visually polished while keeping it recognizably the same concept. Concrete polish direction per diagram: (1) Floorplan - keep die/core/macros/power-ring but improve label legibility (avoid text overlapping the red power ring), add a small legend or clearer core-vs-macro distinction, tidy spacing. (2) PDN - clarify the bump->ring->strap->rail current path, consider subtle animated current-flow direction, ensure rails/straps/rings are visually distinguishable and the caption doesn't collide. (3) Placement - the timing-driven cell fill into rows; improve row/cell contrast and staggered motion, avoid cells overflowing the row band. (4) CTS - the clock H-tree; make the buffer levels and leaf endpoints clearer, keep the pulse animation but ensure branches read as a balanced tree. (5) Routing - multi-layer metal routes; fix the via dots which are currently rendered at cx=0,cy=0 (they do not sit on the route bends) so vias actually land on path vertices, and make the M1..M5 layer legend consistent with the route colors. (6) GDS2/layout - the layer stack + die; improve layer label legibility and stacking, keep 'design.gds' caption. Constraints: DO NOT change the StageAnimation export signature or the switch/case wiring; keep every animation's prop contract ({ color }: { color: string }) and the SVG viewBox '0 0 400 220'; keep it a client component with framer-motion; prefer whileInView with viewport once:true for entrance and keep any looping motion subtle. You MAY add CSS @keyframes/utility classes to src/app/globals.css if a diagram needs new named animation, but do not remove or rename existing keyframes/utilities (flow-dash, float, pulse-glow, scan-line, fade-up, .glass) that other components rely on. Only touch the six PD animations plus shared defs you add; do not alter the eight non-PD animation functions except trivially-shared <defs> you introduce. Run `npm install` then `npm run build` and `npm run lint`; both must pass before you hand off.",
+      "pathsAllowed": [
+        "src/components/StageAnimation.tsx",
+        "src/app/globals.css"
+      ],
+      "pathsForbidden": [
+        "src/data/stageVisualMeta.ts",
+        "src/components/StageVisualKit.tsx"
+      ],
+      "acceptance": [
+        "All six PD SVG diagrams (floorplan, pdn, placement, cts, routing, layout/GDS2) are visibly polished and more legible.",
+        "Routing via dots are positioned on actual route vertices (not at 0,0).",
+        "StageAnimation export signature, switch/case wiring, per-animation {color} prop contract, and viewBox 0 0 400 220 are unchanged.",
+        "No existing globals.css keyframe/utility (flow-dash, float, pulse-glow, scan-line, fade-up, .glass) is removed or renamed.",
+        "npm run build (static export) and npm run lint both pass."
+      ],
+      "verify": "## Setup\n- npm install\n\n## Automated\n- npm run build (Next.js static export must succeed)\n- npm run lint (must be clean)\n\n## Manual\n- npm run dev, open http://localhost:3000, scroll to stages 4-9 (Floorplanning, PDN, Placement, CTS, Routing, Layout & Finishing) and confirm each diagram is legible, animates on scroll, labels/legends don't overlap, and routing vias sit on route bends.\n\n## Gotchas\n- Keep viewBox '0 0 400 220' and the { color } prop for every animation. Do not touch the eight non-PD animations' behavior."
+    },
+    {
+      "name": "pd-stage-metrics",
+      "type": "worker",
+      "scopedGoal": "Polish the per-stage teaching metadata for the six Physical Design stages in src/data/stageVisualMeta.ts and the SHARED presentation in src/components/StageVisualKit.tsx so the steps cards and metrics bar chart look crisp and read well. In src/data/stageVisualMeta.ts, review ONLY the six PD entries (floorplan, pdn, placement, cts, routing, layout): tighten the 4 steps' label/detail copy for accuracy and clarity, make diagramTitle/stepsTitle/chartTitle/chartUnit consistent, and sanity-check the teaching chart[] values and labels so each chart tells a clear story (e.g. placement congestion, cts skew/latency, pdn IR budget, floorplan utilization, routing layer usage, layout metal density). Keep ALL strings bilingual via loc(\"it\",\"en\") and keep the StageVisualMeta type shape unchanged; DO NOT edit the eight non-PD entries. In src/components/StageVisualKit.tsx (shared across all stages), make presentation-only polish that improves every stage without changing the component's props or the three variants (full/diagram/metrics): improve the steps cards (numbered badge, label/detail hierarchy, spacing, hover/border), and the metrics bar chart (bar readability, value/label legibility, negative-value handling that already supports red bars, baseline/gridline or subtle axis, spacing) using Tailwind classes and framer-motion already imported. Do not add new npm dependencies and do not edit src/app/globals.css or src/components/StageAnimation.tsx. Run `npm install` then `npm run build` and `npm run lint`; both must pass before you hand off.",
+      "pathsAllowed": [
+        "src/data/stageVisualMeta.ts",
+        "src/components/StageVisualKit.tsx"
+      ],
+      "pathsForbidden": [
+        "src/components/StageAnimation.tsx",
+        "src/app/globals.css"
+      ],
+      "acceptance": [
+        "The six PD entries in stageVisualMeta.ts have clearer, accurate steps copy and coherent chart data, all strings bilingual via loc(), StageVisualMeta type shape unchanged, non-PD entries untouched.",
+        "StageVisualKit.tsx steps cards and metrics bar chart are visibly crisper/more legible, with props and the full/diagram/metrics variants unchanged.",
+        "No new dependencies; globals.css and StageAnimation.tsx not modified.",
+        "npm run build (static export) and npm run lint both pass."
+      ],
+      "verify": "## Setup\n- npm install\n\n## Automated\n- npm run build (Next.js static export must succeed)\n- npm run lint (must be clean)\n\n## Manual\n- npm run dev, open the site, scroll to stages 4-9 and confirm the steps cards and the 'metrics' visual band bar chart are readable and the PD copy is accurate. Toggle the IT/EN language switch and confirm PD steps/chart titles translate.\n\n## Gotchas\n- StageVisualKit is shared by all 14 stages; presentation polish must not break non-PD stages. Keep loc() bilingual strings."
+    },
+    {
+      "name": "integrate-pd-visuals",
+      "type": "worker",
+      "scopedGoal": "Integrate the two upstream PD-visual-polish branches into one deliverable branch and open a draft PR. Two upstream handoffs are included above in this prompt; each has a '## Branch' line naming the branch to merge (one for pd-stage-diagrams touching src/components/StageAnimation.tsx and src/app/globals.css, one for pd-stage-metrics touching src/data/stageVisualMeta.ts and src/components/StageVisualKit.tsx). Steps: (1) Read both '## Branch' lines. (2) From your current branch (cloned from main), run `git fetch origin <diagrams-branch> <metrics-branch>` then `git merge --no-ff` each of the two branches into your current branch. The two changes touch DISJOINT files so no conflicts are expected; if a conflict does arise, preserve BOTH sides' intent (never drop one worker's changes). (3) Run `npm install`, then `npm run build` (must succeed - static export) and `npm run lint` (must be clean); fix any integration breakage. (4) Commit and push your branch. (5) Open a DRAFT pull request against main via the ManagePullRequest tool titled something like 'Polish per-PD-stage visual UI (diagrams + metrics)' with a body summarizing the diagram and metrics/kit polish for floorplan, pdn, placement, cts, routing and layout, and noting that non-PD stages are unchanged. Do not merge the PR.",
+      "pathsAllowed": [
+        "src/**",
+        "package-lock.json"
+      ],
+      "dependsOn": ["pd-stage-diagrams", "pd-stage-metrics"],
+      "openPR": true,
+      "acceptance": [
+        "Both upstream branches are merged into a single branch with both parents in history.",
+        "npm run build (static export) and npm run lint pass on the merged branch.",
+        "A draft PR against main is opened containing the combined PD visual polish.",
+        "Neither upstream worker's changes were dropped during integration."
+      ]
+    },
+    {
+      "name": "verify-pd-visuals",
+      "type": "verifier",
+      "verifies": "integrate-pd-visuals",
+      "scopedGoal": "Verify the integrated PD visual polish on the integrate-pd-visuals branch against the plan's acceptance criteria. Run `npm install`, `npm run build` (confirm the Next.js static export succeeds) and `npm run lint` (confirm clean). Then start `npm run dev` and inspect stages 4-9 (Floorplanning, PDN, Placement, CTS, Routing, Layout & Finishing): confirm each has a polished, legible animated SVG diagram (and that routing vias sit on route vertices, not at 0,0), that the steps cards and metrics bar chart render crisply, and that the IT/EN language toggle still translates PD copy. Spot-check at least two non-PD stages (e.g. RTL and STA) to confirm no regression in their diagrams/steps/charts. Report a Verification verdict with concrete execution evidence for each acceptance criterion.",
+      "acceptance": [
+        "Verification section includes execution evidence (build result, lint result, per-PD-stage visual observations, non-PD regression spot-check) for the integrate-pd-visuals acceptance criteria."
+      ]
+    }
+  ]
+}
