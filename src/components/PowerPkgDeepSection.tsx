@@ -12,7 +12,6 @@ import { cn } from "@/lib/utils";
 export function PowerPkgDeepSection() {
   const { t, locale } = useI18n();
   const [active, setActive] = useState(powerPkgTopics[0].id);
-  const topic = powerPkgTopics.find((x) => x.id === active) ?? powerPkgTopics[0];
 
   return (
     <section
@@ -31,7 +30,13 @@ export function PowerPkgDeepSection() {
             <button
               key={tp.id}
               type="button"
-              onClick={() => setActive(tp.id)}
+              onClick={() => {
+                setActive(tp.id);
+                document.getElementById(`power-pkg-${tp.id}`)?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
+              }}
               className={cn(
                 "px-3 py-1.5 rounded-xl text-sm border transition-colors",
                 active === tp.id
@@ -44,64 +49,75 @@ export function PowerPkgDeepSection() {
           ))}
         </div>
 
-        <article id={`power-pkg-${topic.id}`} className="glass rounded-2xl p-5 sm:p-7 scroll-mt-28">
-          <h3 className="text-xl sm:text-2xl font-bold text-slate-100 mb-2">{t(topic.title)}</h3>
-          <p className="text-sm text-emerald-300/90 mb-5 leading-relaxed">{t(topic.kicker)}</p>
+        <div className="space-y-8">
+          {powerPkgTopics.map((topic) => (
+            <article
+              key={topic.id}
+              id={`power-pkg-${topic.id}`}
+              className={cn(
+                "glass rounded-2xl p-5 sm:p-7 scroll-mt-28 transition-opacity",
+                active === topic.id ? "ring-1 ring-emerald-500/30" : "opacity-95"
+              )}
+            >
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-100 mb-2">{t(topic.title)}</h3>
+              <p className="text-sm text-emerald-300/90 mb-5 leading-relaxed">{t(topic.kicker)}</p>
 
-          <div className="flex flex-wrap gap-2 mb-6">
-            {topic.stageLinks.map((lnk) => (
-              <a
-                key={lnk.href}
-                href={lnk.href}
-                className="text-xs px-2.5 py-1 rounded-lg border border-slate-600/50 text-slate-300 hover:border-emerald-500/40 hover:text-emerald-300"
-              >
-                {locale === "it" ? lnk.labelIt : lnk.labelEn}
-              </a>
-            ))}
-          </div>
-
-          <div className="space-y-5">
-            {topic.paragraphs.map((para, i) => (
-              <div key={i}>
-                <p className="text-sm sm:text-[15px] text-slate-300 leading-relaxed">
-                  <TermText>{t(para.body)}</TermText>
-                </p>
-                <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-500/70">
-                    {t(ui.sourcedRefs)}
-                  </span>
-                  {para.refs.map((rid) => {
-                    const src = sourceById(rid);
-                    return (
-                      <a
-                        key={rid}
-                        href={`#source-${rid}`}
-                        className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-emerald-500/25 text-emerald-300/90 hover:bg-emerald-500/10"
-                        title={src ? t(src.title) : rid}
-                      >
-                        {src?.cite ?? rid}
-                      </a>
-                    );
-                  })}
-                </div>
+              <div className="flex flex-wrap gap-2 mb-6">
+                {topic.stageLinks.map((lnk) => (
+                  <a
+                    key={lnk.href}
+                    href={lnk.href}
+                    className="text-xs px-2.5 py-1 rounded-lg border border-slate-600/50 text-slate-300 hover:border-emerald-500/40 hover:text-emerald-300"
+                  >
+                    {locale === "it" ? lnk.labelIt : lnk.labelEn}
+                  </a>
+                ))}
               </div>
-            ))}
-          </div>
 
-          <div className="mt-6 pt-5 border-t border-slate-700/40">
-            <p className="text-[10px] uppercase tracking-wide text-slate-500 mb-2">
-              {t(ui.powerPkgTakeaways)}
-            </p>
-            <ul className="space-y-2">
-              {topic.takeaways.map((line) => (
-                <li key={t(line)} className="text-sm text-slate-300 leading-relaxed flex gap-2">
-                  <span className="text-emerald-400 shrink-0">▸</span>
-                  <span>{t(line)}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </article>
+              <div className="space-y-5">
+                {topic.paragraphs.map((para, i) => (
+                  <div key={i}>
+                    <p className="text-sm sm:text-[15px] text-slate-300 leading-relaxed">
+                      <TermText>{t(para.body)}</TermText>
+                    </p>
+                    <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-500/70">
+                        {t(ui.sourcedRefs)}
+                      </span>
+                      {para.refs.map((rid) => {
+                        const src = sourceById(rid);
+                        return (
+                          <a
+                            key={rid}
+                            href={`#source-${rid}`}
+                            className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-emerald-500/25 text-emerald-300/90 hover:bg-emerald-500/10"
+                            title={src ? t(src.title) : rid}
+                          >
+                            {src?.cite ?? rid}
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 pt-5 border-t border-slate-700/40">
+                <p className="text-[10px] uppercase tracking-wide text-slate-500 mb-2">
+                  {t(ui.powerPkgTakeaways)}
+                </p>
+                <ul className="space-y-2">
+                  {topic.takeaways.map((line) => (
+                    <li key={t(line)} className="text-sm text-slate-300 leading-relaxed flex gap-2">
+                      <span className="text-emerald-400 shrink-0">▸</span>
+                      <span>{t(line)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
