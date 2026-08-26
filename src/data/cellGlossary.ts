@@ -1245,7 +1245,7 @@ export const cellGlossary: CellType[] = [
       "It forces the output of a shutting-down domain to a safe value before the source becomes X or floating. For a typical clamp-low cell, Y = ISO_EN ? 0 : A, while clamp-high variants use 1. The cell is powered by a supply that remains available during shutdown, often always-on."
     ),
     placement: loc(
-      "Viene collocata al confine del power domain sul lato whose supply resta accesa, secondo la location rule UPF. Il routing deve connettere correttamente source, receiver, isolation control e secondary PG pins. Il placer raggruppa crossing correlati senza creare congestion lungo il bordo della voltage area.",
+      "Viene collocata al confine del power domain sul lato la cui supply resta accesa, secondo la location rule UPF. Il routing deve connettere correttamente source, receiver, isolation control e secondary PG pins. Il placer raggruppa crossing correlati senza creare congestion lungo il bordo della voltage area.",
       "It is placed at the power-domain boundary on the side whose supply remains on, according to the UPF location rule. Routing must correctly connect source, receiver, isolation control, and secondary PG pins. Placement groups related crossings without creating congestion along the voltage-area boundary."
     ),
     whenUsed: loc(
