@@ -17,6 +17,7 @@ import { stageDeepDiveExtras } from "@/data/stageDeepDiveExtras";
 import { stageDeepDiveExtras2 } from "@/data/stageDeepDiveExtras2";
 import { stageSubsectionExtras } from "@/data/stageSubsectionExtras";
 import { practicalNotesExtras } from "@/data/practicalNotesExtras";
+import { stageDescriptionExtras } from "@/data/stageDescriptionExtras";
 import { workedExamples } from "@/data/quizBank";
 import { workedExamplesMore } from "@/data/workedExamplesMore";
 
@@ -46,6 +47,7 @@ export function StageSection({ stage, index }: StageSectionProps) {
   ];
   const subsectionExtras = stageSubsectionExtras[stage.id] ?? [];
   const workNotesExtras = practicalNotesExtras[stage.id] ?? [];
+  const descriptionExtras = stageDescriptionExtras[stage.id] ?? [];
   const examples = [...workedExamples, ...workedExamplesMore].filter((e) => e.stage === stage.id);
 
   return (
@@ -91,9 +93,16 @@ export function StageSection({ stage, index }: StageSectionProps) {
               <p className="text-sm font-mono mb-3" style={{ color: stage.color }}>
                 {stage.subtitle}
               </p>
-              <p className="text-slate-400 text-base md:text-lg leading-relaxed">
-                {stage.description}
-              </p>
+              <div className="space-y-4">
+                <p className="text-slate-400 text-base md:text-lg leading-relaxed">
+                  {stage.description}
+                </p>
+                {descriptionExtras.map((p, i) => (
+                  <p key={i} className="text-slate-400 text-base md:text-lg leading-relaxed">
+                    {t(p)}
+                  </p>
+                ))}
+              </div>
             </div>
 
             <div className="glass rounded-xl p-5">
