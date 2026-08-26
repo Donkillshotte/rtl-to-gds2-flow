@@ -111,6 +111,43 @@ export function StageSection({ stage, index }: StageSectionProps) {
               </div>
             </div>
 
+            {sourced && (
+              <div
+                id={`stage-${stage.id}-literature`}
+                className="glass rounded-xl p-5 border-2 border-sky-500/40 bg-sky-500/[0.04] scroll-mt-28"
+              >
+                <h3 className="text-sm font-semibold text-sky-300 mb-1">{t(ui.sourcedEssay)}</h3>
+                <p className="text-xs text-slate-500 mb-4 leading-relaxed">{t(sourced.kicker)}</p>
+                <div className="space-y-5">
+                  {sourced.paragraphs.map((para, i) => (
+                    <div key={i}>
+                      <p className="text-sm text-slate-300 leading-relaxed">
+                        <TermText>{t(para.body)}</TermText>
+                      </p>
+                      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-sky-500/70">
+                          {t(ui.sourcedRefs)}
+                        </span>
+                        {para.refs.map((rid) => {
+                          const src = sourceById(rid);
+                          return (
+                            <a
+                              key={rid}
+                              href={`#source-${rid}`}
+                              className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-sky-500/25 text-sky-300/90 hover:bg-sky-500/10"
+                              title={src ? t(src.title) : rid}
+                            >
+                              {src?.cite ?? rid}
+                            </a>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="glass rounded-xl p-5">
               <h3 className="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
                 <span style={{ color: stage.color }}>📖</span> {t(ui.deepDive)}
@@ -154,40 +191,6 @@ export function StageSection({ stage, index }: StageSectionProps) {
                     <p key={i} className="text-sm text-slate-400 leading-relaxed">
                       <TermText>{t(p)}</TermText>
                     </p>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {sourced && (
-              <div className="glass rounded-xl p-5 border border-sky-500/20">
-                <h3 className="text-sm font-semibold text-sky-300 mb-1">{t(ui.sourcedEssay)}</h3>
-                <p className="text-xs text-slate-500 mb-4 leading-relaxed">{t(sourced.kicker)}</p>
-                <div className="space-y-5">
-                  {sourced.paragraphs.map((para, i) => (
-                    <div key={i}>
-                      <p className="text-sm text-slate-400 leading-relaxed">
-                        <TermText>{t(para.body)}</TermText>
-                      </p>
-                      <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-sky-500/70">
-                          {t(ui.sourcedRefs)}
-                        </span>
-                        {para.refs.map((rid) => {
-                          const src = sourceById(rid);
-                          return (
-                            <a
-                              key={rid}
-                              href={`#source-${rid}`}
-                              className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-sky-500/25 text-sky-300/90 hover:bg-sky-500/10"
-                              title={src ? t(src.title) : rid}
-                            >
-                              {src?.cite ?? rid}
-                            </a>
-                          );
-                        })}
-                      </div>
-                    </div>
                   ))}
                 </div>
               </div>
