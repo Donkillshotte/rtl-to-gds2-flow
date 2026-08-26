@@ -16,6 +16,7 @@ import { stageDeepDiveExtras2 } from "@/data/stageDeepDiveExtras2";
 import { stageSubsectionExtras } from "@/data/stageSubsectionExtras";
 import { practicalNotesExtras } from "@/data/practicalNotesExtras";
 import { workedExamples } from "@/data/quizBank";
+import { workedExamplesMore } from "@/data/workedExamplesMore";
 
 interface StageSectionProps {
   stage: Stage;
@@ -39,7 +40,7 @@ export function StageSection({ stage, index }: StageSectionProps) {
   ];
   const subsectionExtras = stageSubsectionExtras[stage.id] ?? [];
   const workNotesExtras = practicalNotesExtras[stage.id] ?? [];
-  const examples = workedExamples.filter((e) => e.stage === stage.id);
+  const examples = [...workedExamples, ...workedExamplesMore].filter((e) => e.stage === stage.id);
 
   return (
     <section

@@ -5,16 +5,19 @@ import { GraduationCap, Calculator, Layers, ListChecks, FlipHorizontal, Swords, 
 import { useI18n } from "@/i18n/context";
 import { ui } from "@/i18n/ui";
 import { quizBank, workedExamples } from "@/data/quizBank";
+import { workedExamplesMore } from "@/data/workedExamplesMore";
 import { extraInterview } from "@/data/interviewExtra";
 import { stageInterview } from "@/data/stageFormulas";
 import { scenarios } from "@/data/scenarios";
 import { playbook } from "@/data/playbook";
 import { playbookMore } from "@/data/playbookMore";
 import { playbookEvenMore } from "@/data/playbookEvenMore";
+import { playbookFinal } from "@/data/playbookFinal";
 import type { StageId } from "@/data/stages";
 import { cn } from "@/lib/utils";
 
-const allPlaybook = [...playbook, ...playbookMore, ...playbookEvenMore];
+const allPlaybook = [...playbook, ...playbookMore, ...playbookEvenMore, ...playbookFinal];
+const allWorkedExamples = [...workedExamples, ...workedExamplesMore];
 
 type Tab = "quiz" | "cards" | "scenarios" | "playbook" | "calc" | "examples";
 
@@ -582,14 +585,14 @@ function Row({ k, v, ok }: { k: string; v: string; ok?: boolean }) {
 
 function ExamplePanel() {
   const { t, locale } = useI18n();
-  const [id, setId] = useState(workedExamples[0].id);
-  const ex = workedExamples.find((e) => e.id === id) ?? workedExamples[0];
+  const [id, setId] = useState(allWorkedExamples[0].id);
+  const ex = allWorkedExamples.find((e) => e.id === id) ?? allWorkedExamples[0];
   const [open, setOpen] = useState(0);
 
   return (
     <div className="grid lg:grid-cols-[220px_1fr] gap-6">
       <div className="flex lg:flex-col gap-2 overflow-x-auto">
-        {workedExamples.map((e) => (
+        {allWorkedExamples.map((e) => (
           <button
             key={e.id}
             type="button"
