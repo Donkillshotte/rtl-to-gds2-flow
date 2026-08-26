@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { ArrowDownToLine, ArrowUpFromLine, Cpu, Lightbulb, CheckCircle2, AlertTriangle, Wrench, MessageCircleQuestion } from "lucide-react";
 import type { Stage } from "@/data/stages";
 import { ChipEvolution } from "./ChipEvolution";
+import { StageVisualKit } from "./StageVisualKit";
 import { FormulaBlock } from "./Formula";
 import { useI18n } from "@/i18n/context";
 import { ui } from "@/i18n/ui";
@@ -145,7 +146,8 @@ export function StageSection({ stage, index }: StageSectionProps) {
               </div>
             </div>
 
-            <div className="lg:hidden">
+            <div className="lg:hidden space-y-4">
+              <StageVisualKit stageId={stage.id} color={stage.color} variant="diagram" />
               <ChipEvolution activeStageIndex={index} />
             </div>
 
@@ -444,14 +446,23 @@ export function StageSection({ stage, index }: StageSectionProps) {
             )}
           </div>
 
-          <div className={`hidden lg:block lg:sticky lg:top-24 ${isEven ? "" : "lg:order-1"}`}>
+          <div className={`hidden lg:block lg:sticky lg:top-24 space-y-4 ${isEven ? "" : "lg:order-1"}`}>
             <div
               className="relative overflow-hidden rounded-2xl"
               style={{ boxShadow: `0 0 40px ${stage.glowColor}` }}
             >
               <ChipEvolution activeStageIndex={index} />
             </div>
+            <StageVisualKit stageId={stage.id} color={stage.color} variant="diagram" />
           </div>
+        </div>
+
+        {/* Full visual band: steps + charts for every stage */}
+        <div className="mt-10 sm:mt-12">
+          <p className="text-xs font-mono uppercase tracking-wider text-slate-500 mb-4">
+            {t(ui.visualBand)}
+          </p>
+          <StageVisualKit stageId={stage.id} color={stage.color} variant="metrics" />
         </div>
 
         {links && (

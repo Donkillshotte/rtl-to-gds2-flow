@@ -172,6 +172,9 @@ export const ui = {
   ),
   sourcedEssay: loc("Approfondimento da letteratura", "Literature deep-dive"),
   sourcedRefs: loc("Fonti", "Sources"),
+  visualExplain: loc("Spiegazione visuale", "Visual explainer"),
+  visualChip: loc("Evoluzione chip", "Chip evolution"),
+  visualBand: loc("Strutture e metriche della fase", "Stage structures and metrics"),
   navSources: loc("Fonti", "Sources"),
   powerPkgTitle: loc("Approfondimento PKG · CPA · Decap · System PDN", "Deep dive: PKG · CPA · Decap · System PDN"),
   powerPkgLead: loc(

@@ -13,13 +13,13 @@ export function StageAnimation({ stageId, color }: StageAnimationProps) {
     case "rtl":
       return <RTLAnimation color={color} />;
     case "verification":
-      return <VerificationAnimation color={color} />;
+      return <VerificationPyramidAnimation color={color} />;
     case "synthesis":
       return <SynthesisAnimation color={color} />;
     case "floorplan":
       return <FloorplanAnimation color={color} />;
     case "pdn":
-      return <FloorplanAnimation color={color} />;
+      return <PDNAnimation color={color} />;
     case "placement":
       return <PlacementAnimation color={color} />;
     case "cts":
@@ -29,15 +29,15 @@ export function StageAnimation({ stageId, color }: StageAnimationProps) {
     case "layout":
       return <GDS2Animation color={color} />;
     case "sta":
-      return <VerificationAnimation color={color} />;
+      return <STAAnimation color={color} />;
     case "pv":
       return <VerificationAnimation color={color} />;
     case "power":
-      return <FloorplanAnimation color={color} />;
+      return <PowerDroopAnimation color={color} />;
     case "package":
-      return <FloorplanAnimation color={color} />;
+      return <PackageBumpAnimation color={color} />;
     case "tapeout":
-      return <GDS2Animation color={color} />;
+      return <TapeoutChecklistAnimation color={color} />;
     default:
       return null;
   }
@@ -608,7 +608,6 @@ function GDS2Animation({ color }: { color: string }) {
         </motion.g>
       ))}
 
-      {/* Final chip */}
       <motion.rect
         initial={{ opacity: 0, scale: 0.8 }}
         whileInView={{ opacity: 1, scale: 1 }}
@@ -624,7 +623,6 @@ function GDS2Animation({ color }: { color: string }) {
         strokeWidth="2"
       />
 
-      {/* Transistor patterns inside */}
       {[0, 1, 2, 3, 4].map((i) => (
         <motion.rect
           key={i}
@@ -658,6 +656,201 @@ function GDS2Animation({ color }: { color: string }) {
       >
         design.gds
       </motion.text>
+    </svg>
+  );
+}
+
+function PDNAnimation({ color }: { color: string }) {
+  return (
+    <svg viewBox="0 0 400 220" className="w-full h-full" aria-hidden>
+      <motion.rect x="30" y="25" width="340" height="170" rx="4" fill="none" stroke={color} strokeWidth="1.5"
+        initial={{ opacity: 0 }} whileInView={{ opacity: 0.5 }} viewport={{ once: true }} />
+      {/* Rings */}
+      <motion.rect x="30" y="25" width="340" height="10" fill="#22d3ee" opacity={0.7}
+        initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} style={{ transformOrigin: "30px 30px" }} />
+      <motion.rect x="30" y="185" width="340" height="10" fill="#64748b" opacity={0.7}
+        initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ delay: 0.1 }} />
+      {/* Straps */}
+      {[70, 110, 150].map((y, i) => (
+        <motion.rect key={y} x="50" y={y} width="300" height="6" fill={color} opacity={0.55}
+          initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }}
+          transition={{ delay: 0.2 + i * 0.1 }} style={{ transformOrigin: "50px center" }} />
+      ))}
+      {/* Rails */}
+      {Array.from({ length: 10 }).map((_, i) => (
+        <motion.rect key={i} x={60 + i * 28} y="45" width="4" height="130"
+          fill={i % 2 === 0 ? "#22d3ee" : "#94a3b8"} opacity={0.85}
+          initial={{ scaleY: 0 }} whileInView={{ scaleY: 1 }} viewport={{ once: true }}
+          transition={{ delay: 0.4 + i * 0.04 }} style={{ transformOrigin: "center 175px" }} />
+      ))}
+      <text x="200" y="215" textAnchor="middle" fill="#64748b" fontSize="10" fontFamily="monospace">
+        bump → ring → strap → rail
+      </text>
+    </svg>
+  );
+}
+
+function STAAnimation({ color }: { color: string }) {
+  return (
+    <svg viewBox="0 0 400 220" className="w-full h-full" aria-hidden>
+      <line x1="40" y1="110" x2="360" y2="110" stroke="#334155" strokeWidth="1" />
+      <motion.line x1="90" y1="40" x2="90" y2="160" stroke={color} strokeWidth="2"
+        initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }} />
+      <motion.line x1="290" y1="40" x2="290" y2="160" stroke={color} strokeWidth="2"
+        initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }} />
+      <text x="90" y="30" textAnchor="middle" fill={color} fontSize="11" fontFamily="monospace">launch</text>
+      <text x="290" y="30" textAnchor="middle" fill={color} fontSize="11" fontFamily="monospace">capture</text>
+      <motion.path d="M100 120 Q190 160 280 120" fill="none" stroke="#f472b6" strokeWidth="2"
+        initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }} transition={{ delay: 0.4, duration: 0.8 }} />
+      <text x="190" y="175" textAnchor="middle" fill="#f472b6" fontSize="10" fontFamily="monospace">
+        Tco + Tpd ≤ Tclk − Tsu
+      </text>
+      <motion.path d="M100 95 Q140 60 180 95" fill="none" stroke="#fb923c" strokeWidth="2"
+        initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }} transition={{ delay: 0.7, duration: 0.6 }} />
+      <text x="190" y="205" textAnchor="middle" fill="#fb923c" fontSize="10" fontFamily="monospace">
+        hold: Tco + Tpd ≥ Thold
+      </text>
+    </svg>
+  );
+}
+
+function PowerDroopAnimation({ color }: { color: string }) {
+  const pts = "40,80 80,78 120,90 160,70 200,110 240,85 280,95 320,75 360,88";
+  return (
+    <svg viewBox="0 0 400 220" className="w-full h-full" aria-hidden>
+      <text x="20" y="30" fill="#94a3b8" fontSize="10" fontFamily="monospace">VDD</text>
+      <line x1="40" y1="50" x2="360" y2="50" stroke="#334155" strokeDasharray="4 4" />
+      <text x="365" y="54" fill="#64748b" fontSize="9" fontFamily="monospace">nom</text>
+      <line x1="40" y1="120" x2="360" y2="120" stroke="#ef444480" strokeDasharray="4 4" />
+      <text x="365" y="124" fill="#ef4444" fontSize="9" fontFamily="monospace">min</text>
+      <motion.polyline
+        points={pts}
+        fill="none"
+        stroke={color}
+        strokeWidth="2.5"
+        initial={{ pathLength: 0 }}
+        whileInView={{ pathLength: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.4 }}
+      />
+      <motion.circle cx="200" cy="110" r="5" fill="#ef4444"
+        initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.9 }} />
+      <text x="200" y="145" textAnchor="middle" fill="#ef4444" fontSize="10" fontFamily="monospace">
+        WORST_dI/dt droop
+      </text>
+      <text x="200" y="205" textAnchor="middle" fill="#64748b" fontSize="10" fontFamily="monospace">
+        voltage vs time
+      </text>
+    </svg>
+  );
+}
+
+function PackageBumpAnimation({ color }: { color: string }) {
+  return (
+    <svg viewBox="0 0 400 220" className="w-full h-full" aria-hidden>
+      <motion.rect x="70" y="30" width="260" height="160" rx="6" fill={`${color}10`} stroke={color} strokeWidth="1.5"
+        initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} />
+      {Array.from({ length: 8 }).map((_, r) =>
+        Array.from({ length: 10 }).map((_, c) => {
+          const isPower = (r + c) % 3 === 0;
+          return (
+            <motion.circle
+              key={`${r}-${c}`}
+              cx={95 + c * 22}
+              cy={50 + r * 18}
+              r={isPower ? 5 : 3.5}
+              fill={isPower ? "#22d3ee" : `${color}80`}
+              initial={{ scale: 0 }}
+              whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: (r * 10 + c) * 0.01 }}
+            />
+          );
+        })
+      )}
+      <text x="200" y="210" textAnchor="middle" fill="#64748b" fontSize="10" fontFamily="monospace">
+        cyan = VDD/VSS bumps · others = signal
+      </text>
+    </svg>
+  );
+}
+
+function TapeoutChecklistAnimation({ color }: { color: string }) {
+  const items = ["GKC", "BTO", "MTO", "TOR", "SHA"];
+  return (
+    <svg viewBox="0 0 400 220" className="w-full h-full" aria-hidden>
+      {items.map((label, i) => (
+        <motion.g key={label}>
+          <motion.rect
+            x={40 + i * 70}
+            y="70"
+            width="58"
+            height="70"
+            rx="8"
+            fill="#34d39915"
+            stroke="#34d399"
+            strokeWidth="1.5"
+            initial={{ y: 100, opacity: 0 }}
+            whileInView={{ y: 70, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.12 }}
+          />
+          <text x={69 + i * 70} y="100" textAnchor="middle" fill="#34d399" fontSize="12" fontFamily="monospace" fontWeight="bold">
+            {label}
+          </text>
+          <text x={69 + i * 70} y="120" textAnchor="middle" fill="#34d399" fontSize="14">✓</text>
+        </motion.g>
+      ))}
+      <motion.path
+        d="M70 160 H330"
+        stroke={color}
+        strokeWidth="2"
+        strokeDasharray="6 4"
+        initial={{ pathLength: 0 }}
+        whileInView={{ pathLength: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.7, duration: 0.8 }}
+      />
+      <text x="200" y="195" textAnchor="middle" fill={color} fontSize="11" fontFamily="monospace">
+        foundry data package
+      </text>
+    </svg>
+  );
+}
+
+function VerificationPyramidAnimation({ color }: { color: string }) {
+  const bands = [
+    { y: 40, w: 80, label: "Formal" },
+    { y: 85, w: 160, label: "Unit / UVM" },
+    { y: 130, w: 260, label: "System / SW" },
+  ];
+  return (
+    <svg viewBox="0 0 400 220" className="w-full h-full" aria-hidden>
+      {bands.map((b, i) => (
+        <motion.g key={b.label}>
+          <motion.rect
+            x={(400 - b.w) / 2}
+            y={b.y}
+            width={b.w}
+            height="36"
+            rx="6"
+            fill={`${color}${20 + i * 15}`}
+            stroke={color}
+            strokeWidth="1.5"
+            initial={{ scaleX: 0, opacity: 0 }}
+            whileInView={{ scaleX: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.2 }}
+            style={{ transformOrigin: "200px center" }}
+          />
+          <text x="200" y={b.y + 23} textAnchor="middle" fill={color} fontSize="12" fontFamily="monospace">
+            {b.label}
+          </text>
+        </motion.g>
+      ))}
+      <text x="200" y="200" textAnchor="middle" fill="#64748b" fontSize="10" fontFamily="monospace">
+        more cycles ↓ · more proof ↑
+      </text>
     </svg>
   );
 }
