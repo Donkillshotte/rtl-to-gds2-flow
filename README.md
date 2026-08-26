@@ -28,6 +28,7 @@ Guida professionale interattiva al flusso completo di **physical design** — da
 
 ## Sezioni aggiuntive
 
+- **Visuali per ogni fase** — diagramma animato dedicato, 4 passi operativi e grafico metriche (non solo chip laterale)
 - **Approfondimento PKG · CPA · Decap · System PDN** — saggi bilingue su package, modelli Chip–Package Analysis, decoupling on-die e impedenza end-to-end VRM→pin
 - **Ricerca globale** — cerca fasi, glossario, celle e playbook dall’header
 - **Progresso di studio** — fasi lette (IntersectionObserver), quiz, drill, best colloquio a tempo (localStorage)
