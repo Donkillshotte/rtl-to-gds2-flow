@@ -21,7 +21,26 @@ type Hit = {
   title: string;
   href: string;
   blurb: string;
+  score: number;
 };
+
+function escapeRegExp(s: string) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/** Prefer exact / word-boundary hits over long-body substring noise. */
+function scoreMatch(needle: string, title: string, body: string): number | null {
+  const t = title.toLowerCase();
+  const b = body.toLowerCase();
+  if (t === needle) return 100;
+  if (t.startsWith(needle)) return 90;
+  const word = new RegExp(`(?:^|[^a-z0-9])${escapeRegExp(needle)}(?:[^a-z0-9]|$)`, "i");
+  if (word.test(title)) return 80;
+  if (t.includes(needle)) return 60;
+  if (word.test(body)) return 40;
+  if (b.includes(needle) && needle.length >= 3) return 20;
+  return null;
+}
 
 export function GlobalSearch() {
   const { t } = useI18n();
@@ -36,66 +55,82 @@ export function GlobalSearch() {
     const out: Hit[] = [];
 
     for (const s of stages) {
-      const hay = `${s.title} ${s.subtitle} ${s.description}`.toLowerCase();
-      if (hay.includes(needle)) {
+      const title = s.title;
+      const body = `${s.subtitle} ${s.description} ${s.keyConcepts.join(" ")}`;
+      const score = scoreMatch(needle, title, body);
+      if (score !== null) {
         out.push({
           id: s.id,
           kind: "stage",
           title: s.title,
           href: `#stage-${s.id}`,
           blurb: s.subtitle,
+          score: score + 5,
         });
       }
     }
 
     for (const g of getUniqueGlossary()) {
-      const hay = `${g.term} ${t(g.definition)}`.toLowerCase();
-      if (hay.includes(needle)) {
+      const score = scoreMatch(needle, g.term, t(g.definition));
+      if (score !== null) {
         out.push({
           id: g.term,
           kind: "glossary",
           title: g.term,
           href: `#${glossaryTermId(g.term)}`,
           blurb: t(g.definition).slice(0, 100) + "…",
+          score: score + (g.term.toLowerCase() === needle ? 20 : 10),
         });
       }
     }
 
     for (const c of cellGlossary) {
-      const hay = `${t(c.name)} ${t(c.function)}`.toLowerCase();
-      if (hay.includes(needle)) {
+      const name = t(c.name);
+      const score = scoreMatch(needle, name, t(c.function));
+      if (score !== null) {
         out.push({
           id: c.id,
           kind: "cell",
-          title: t(c.name),
+          title: name,
           href: `#cell-${c.id}`,
           blurb: t(c.category),
+          score,
         });
       }
     }
 
     for (const ch of allPlaybook) {
-      const hay = `${t(ch.title)} ${ch.paragraphs.map((p) => t(p)).join(" ")}`.toLowerCase();
-      if (hay.includes(needle)) {
+      const title = t(ch.title);
+      const body = ch.paragraphs.map((p) => t(p)).join(" ");
+      const score = scoreMatch(needle, title, body);
+      if (score !== null && score >= 40) {
         out.push({
           id: ch.id,
           kind: "playbook",
-          title: t(ch.title),
+          title,
           href: "#learn-lab",
           blurb: t(ui.searchPlaybook),
+          score: score - 5,
         });
       }
     }
 
-    return out.slice(0, 12);
+    return out.sort((a, b) => b.score - a.score).slice(0, 10);
   }, [q, stages, t]);
 
   useEffect(() => {
     function onDoc(e: MouseEvent) {
       if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
     }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
     document.addEventListener("mousedown", onDoc);
-    return () => document.removeEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onKey);
+    };
   }, []);
 
   const kindLabel = {
@@ -110,7 +145,7 @@ export function GlobalSearch() {
       <label className="sr-only" htmlFor="global-search">
         {t(ui.searchPlaceholder)}
       </label>
-      <div className="flex items-center gap-2 rounded-lg border border-slate-700/50 bg-slate-900/60 px-2.5 py-1.5">
+      <div className="flex items-center gap-2 rounded-lg border border-slate-700/50 bg-slate-950/70 px-2.5 py-1.5 backdrop-blur-sm">
         <Search className="size-3.5 shrink-0 text-slate-500" aria-hidden />
         <input
           id="global-search"
@@ -126,7 +161,7 @@ export function GlobalSearch() {
         />
       </div>
       {open && q.trim().length >= 2 && (
-        <div className="absolute right-0 left-0 z-[60] mt-2 max-h-80 overflow-auto rounded-xl border border-slate-700/50 bg-slate-950 shadow-xl">
+        <div className="absolute right-0 left-0 z-[60] mt-2 max-h-80 overflow-auto rounded-xl border border-slate-700/50 bg-slate-950/95 shadow-xl backdrop-blur-md">
           {hits.length === 0 ? (
             <p className="px-3 py-3 text-sm text-slate-500">{t(ui.searchEmpty)}</p>
           ) : (

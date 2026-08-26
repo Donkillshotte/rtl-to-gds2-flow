@@ -127,11 +127,6 @@ export function StageSection({ stage, index }: StageSectionProps) {
           </button>
         </div>
 
-        {/* Chip preview — top on mobile, sticky sidebar on desktop */}
-        <div className="mb-6 lg:hidden">
-          <ChipEvolution activeStageIndex={index} />
-        </div>
-
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
           <div className={`space-y-6 ${isEven ? "" : "lg:order-2"}`}>
             <div>
@@ -148,6 +143,10 @@ export function StageSection({ stage, index }: StageSectionProps) {
                   </p>
                 ))}
               </div>
+            </div>
+
+            <div className="lg:hidden">
+              <ChipEvolution activeStageIndex={index} />
             </div>
 
             {sourced && (

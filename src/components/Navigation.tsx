@@ -107,7 +107,9 @@ export function Header() {
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 safe-top",
-        scrolled ? "glass py-2 md:py-3" : "py-3 md:py-5"
+        scrolled
+          ? "glass py-2 md:py-3 border-b border-slate-800/40"
+          : "py-3 md:py-4 bg-gradient-to-b from-slate-950/80 to-transparent"
       )}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-2">
