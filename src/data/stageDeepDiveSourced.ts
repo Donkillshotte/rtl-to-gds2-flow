@@ -3,7 +3,7 @@ import type { StageId } from "./stages";
 
 export interface SourcedDeepDive {
   body: Localized;
-  refs: string[];
+  refs: string[]; // Must be ids from sources.ts.
 }
 
 export const stageDeepDiveSourced: Record<StageId, SourcedDeepDive[]> = {
