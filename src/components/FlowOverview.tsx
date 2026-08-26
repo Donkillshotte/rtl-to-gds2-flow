@@ -15,6 +15,7 @@ export function FlowOverview() {
         <div className="text-center mb-12 sm:mb-20">
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 sm:mb-4">{t(ui.flowTitle)}</h2>
           <p className="text-slate-400 text-sm sm:text-lg max-w-3xl mx-auto">{t(ui.flowSubtitle)}</p>
+          <p className="text-xs text-cyan-500/70 mt-3 max-w-xl mx-auto">{t(ui.termHint)}</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-16">

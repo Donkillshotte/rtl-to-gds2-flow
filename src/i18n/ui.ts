@@ -33,8 +33,8 @@ export const ui = {
   ),
   glossaryTitle: loc("Glossario Tecnico", "Technical Glossary"),
   glossarySubtitle: loc(
-    "Termini, acronimi e file del flusso RTL → GDSII. Clicca un termine per la definizione.",
-    "Terms, acronyms, and files of the RTL → GDSII flow. Click a term for the definition."
+    "Termini, acronimi e file del flusso RTL → GDSII. Nei testi delle fasi i termini sottolineati sono cliccabili e aprono questa definizione.",
+    "Terms, acronyms, and files of the RTL → GDSII flow. In phase text, dotted underlined terms are clickable and open this definition."
   ),
   glossarySearch: loc("Cerca termine (WNS, SPEF, AOCV…)", "Search term (WNS, SPEF, AOCV…)"),
   glossaryEmpty: loc("Nessun termine corrisponde alla ricerca.", "No terms match this search."),
@@ -159,4 +159,10 @@ export const ui = {
   milestoneFpDesc: loc("Floorplan legalizzato, pin placed, PG connected", "Legalized floorplan, pins placed, PG connected"),
   milestoneProDesc: loc("Placement/Post-Route Optimization completata", "Placement/Post-Route Optimization completed"),
   milestoneBtoDesc: loc("Base Tape-Out (FEOL) → Metal Tape-Out (BEOL)", "Base Tape-Out (FEOL) → Metal Tape-Out (BEOL)"),
+  termClose: loc("Chiudi", "Close"),
+  termOpenGlossary: loc("Apri nel glossario", "Open in glossary"),
+  termHint: loc(
+    "I termini sottolineati sono cliccabili: aprono la definizione dal glossario.",
+    "Dotted underlined terms are clickable: they open the glossary definition."
+  ),
 };

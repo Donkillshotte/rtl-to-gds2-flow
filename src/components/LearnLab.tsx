@@ -15,6 +15,7 @@ import { playbookEvenMore } from "@/data/playbookEvenMore";
 import { playbookFinal } from "@/data/playbookFinal";
 import type { StageId } from "@/data/stages";
 import { cn } from "@/lib/utils";
+import { TermText } from "@/components/TermPopup";
 
 const allPlaybook = [...playbook, ...playbookMore, ...playbookEvenMore, ...playbookFinal];
 const allWorkedExamples = [...workedExamples, ...workedExamplesMore];
@@ -407,7 +408,7 @@ function PlaybookPanel() {
         <p className="text-sm text-amber-300/90 leading-relaxed">{t(ch.kicker)}</p>
         {ch.paragraphs.map((p, i) => (
           <p key={i} className="text-sm text-slate-400 leading-relaxed">
-            {t(p)}
+            <TermText>{t(p)}</TermText>
           </p>
         ))}
       </article>

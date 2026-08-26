@@ -20,6 +20,7 @@ import { practicalNotesExtras } from "@/data/practicalNotesExtras";
 import { stageDescriptionExtras } from "@/data/stageDescriptionExtras";
 import { workedExamples } from "@/data/quizBank";
 import { workedExamplesMore } from "@/data/workedExamplesMore";
+import { TermText } from "@/components/TermPopup";
 
 interface StageSectionProps {
   stage: Stage;
@@ -95,11 +96,11 @@ export function StageSection({ stage, index }: StageSectionProps) {
               </p>
               <div className="space-y-4">
                 <p className="text-slate-400 text-base md:text-lg leading-relaxed">
-                  {stage.description}
+                  <TermText>{stage.description}</TermText>
                 </p>
                 {descriptionExtras.map((p, i) => (
                   <p key={i} className="text-slate-400 text-base md:text-lg leading-relaxed">
-                    {t(p)}
+                    <TermText>{t(p)}</TermText>
                   </p>
                 ))}
               </div>
@@ -112,7 +113,7 @@ export function StageSection({ stage, index }: StageSectionProps) {
               <div className="space-y-3">
                 {[...stage.deepDive, ...deepDiveExtras.map((p) => t(p))].map((paragraph, i) => (
                   <p key={i} className="text-sm text-slate-400 leading-relaxed">
-                    {paragraph}
+                    <TermText>{paragraph}</TermText>
                   </p>
                 ))}
               </div>
@@ -124,7 +125,7 @@ export function StageSection({ stage, index }: StageSectionProps) {
                 <div className="space-y-3">
                   {[...essay.paragraphs, ...essayExtras].map((p, i) => (
                     <p key={i} className="text-sm text-slate-400 leading-relaxed">
-                      {t(p)}
+                      <TermText>{t(p)}</TermText>
                     </p>
                   ))}
                 </div>
@@ -160,13 +161,15 @@ export function StageSection({ stage, index }: StageSectionProps) {
                   <h3 className="text-sm font-semibold mb-2" style={{ color: stage.color }}>
                     {title}
                   </h3>
-                  <p className="text-sm text-slate-400 leading-relaxed mb-3">{content}</p>
+                  <p className="text-sm text-slate-400 leading-relaxed mb-3">
+                    <TermText>{content}</TermText>
+                  </p>
                   {bullets && bullets.length > 0 && (
                     <ul className="space-y-1.5">
                       {bullets.map((b) => (
                         <li key={b} className="flex items-start gap-2 text-xs text-slate-500">
                           <span style={{ color: stage.color }} className="mt-0.5">▸</span>
-                          {b}
+                          <TermText muted>{b}</TermText>
                         </li>
                       ))}
                     </ul>
@@ -183,17 +186,21 @@ export function StageSection({ stage, index }: StageSectionProps) {
                   <ul className="mb-3 space-y-1">
                     {ex.given[locale].map((g) => (
                       <li key={g} className="text-xs text-slate-500">
-                        ▸ {g}
+                        ▸ <TermText muted>{g}</TermText>
                       </li>
                     ))}
                   </ul>
                   {ex.steps.map((s) => (
                     <div key={t(s.title)} className="mb-2">
                       <p className="text-xs font-medium text-cyan-400/90">{t(s.title)}</p>
-                      <p className="text-xs text-slate-400 leading-relaxed">{t(s.body)}</p>
+                      <p className="text-xs text-slate-400 leading-relaxed">
+                        <TermText muted>{t(s.body)}</TermText>
+                      </p>
                     </div>
                   ))}
-                  <p className="text-xs text-slate-300 mt-2 leading-relaxed">{t(ex.result)}</p>
+                  <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+                    <TermText muted>{t(ex.result)}</TermText>
+                  </p>
                 </div>
               ))}
 
@@ -206,8 +213,12 @@ export function StageSection({ stage, index }: StageSectionProps) {
                 <div className="space-y-4">
                   {interview.map((qa) => (
                     <div key={t(qa.question)} className="border-l-2 border-indigo-500/30 pl-3">
-                      <p className="text-sm font-medium text-slate-300">Q: {t(qa.question)}</p>
-                      <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">A: {t(qa.answer)}</p>
+                      <p className="text-sm font-medium text-slate-300">
+                        Q: <TermText>{t(qa.question)}</TermText>
+                      </p>
+                      <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                        A: <TermText muted>{t(qa.answer)}</TermText>
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -260,7 +271,7 @@ export function StageSection({ stage, index }: StageSectionProps) {
                 {stage.keyConcepts.map((concept) => (
                   <li key={concept} className="flex items-start gap-2 text-sm text-slate-400">
                     <span style={{ color: stage.color }} className="mt-1 shrink-0">▸</span>
-                    {concept}
+                    <TermText>{concept}</TermText>
                   </li>
                 ))}
               </ul>
@@ -275,8 +286,12 @@ export function StageSection({ stage, index }: StageSectionProps) {
                 <div className="space-y-3">
                   {stage.exitCriteria.map((ec) => (
                     <div key={ec.name} className="border-l-2 border-green-500/30 pl-3">
-                      <p className="text-sm font-medium text-slate-300">{ec.name}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">{ec.description}</p>
+                      <p className="text-sm font-medium text-slate-300">
+                        <TermText>{ec.name}</TermText>
+                      </p>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        <TermText muted>{ec.description}</TermText>
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -296,7 +311,7 @@ export function StageSection({ stage, index }: StageSectionProps) {
                       {group.items.map((item) => (
                         <li key={item} className="text-xs text-slate-400 leading-relaxed flex items-start gap-2">
                           <span className="text-amber-400 shrink-0 mt-0.5">✓</span>
-                          {item}
+                          <TermText muted>{item}</TermText>
                         </li>
                       ))}
                     </ul>
@@ -314,12 +329,12 @@ export function StageSection({ stage, index }: StageSectionProps) {
                 <ul className="space-y-2">
                   {(stage.practicalNotes ?? []).map((note) => (
                     <li key={note} className="text-xs text-slate-400 leading-relaxed">
-                      💡 {note}
+                      💡 <TermText muted>{note}</TermText>
                     </li>
                   ))}
                   {workNotesExtras.map((note) => (
                     <li key={t(note)} className="text-xs text-slate-400 leading-relaxed">
-                      💡 {t(note)}
+                      💡 <TermText muted>{t(note)}</TermText>
                     </li>
                   ))}
                 </ul>
@@ -370,7 +385,7 @@ function InfoCard({
       <ul className="space-y-1.5">
         {items.map((item) => (
           <li key={item} className="text-xs text-slate-400 leading-relaxed">
-            {item}
+            <TermText muted>{item}</TermText>
           </li>
         ))}
       </ul>

@@ -2,6 +2,7 @@
 
 import katex from "katex";
 import "katex/dist/katex.min.css";
+import { TermText } from "@/components/TermPopup";
 
 interface FormulaProps {
   latex: string;
@@ -49,7 +50,9 @@ export function FormulaBlock({ label, latex, explanation }: FormulaBlockProps) {
     <div className="glass rounded-xl p-4 sm:p-5 mb-4">
       <h4 className="text-sm font-mono text-cyan-400 mb-2">{label}</h4>
       <Formula latex={latex} />
-      <p className="text-xs text-slate-400 leading-relaxed mt-2">{explanation}</p>
+      <p className="text-xs text-slate-400 leading-relaxed mt-2">
+        <TermText muted>{explanation}</TermText>
+      </p>
     </div>
   );
 }
