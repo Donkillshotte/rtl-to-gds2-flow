@@ -9,8 +9,12 @@ import { extraInterview } from "@/data/interviewExtra";
 import { stageInterview } from "@/data/stageFormulas";
 import { scenarios } from "@/data/scenarios";
 import { playbook } from "@/data/playbook";
+import { playbookMore } from "@/data/playbookMore";
+import { playbookEvenMore } from "@/data/playbookEvenMore";
 import type { StageId } from "@/data/stages";
 import { cn } from "@/lib/utils";
+
+const allPlaybook = [...playbook, ...playbookMore, ...playbookEvenMore];
 
 type Tab = "quiz" | "cards" | "scenarios" | "playbook" | "calc" | "examples";
 
@@ -375,13 +379,13 @@ function ScenarioPanel() {
 
 function PlaybookPanel() {
   const { t } = useI18n();
-  const [id, setId] = useState(playbook[0].id);
-  const ch = playbook.find((c) => c.id === id) ?? playbook[0];
+  const [id, setId] = useState(allPlaybook[0].id);
+  const ch = allPlaybook.find((c) => c.id === id) ?? allPlaybook[0];
 
   return (
     <div className="grid lg:grid-cols-[220px_1fr] gap-6">
       <div className="flex lg:flex-col gap-2 overflow-x-auto">
-        {playbook.map((c) => (
+        {allPlaybook.map((c) => (
           <button
             key={c.id}
             type="button"

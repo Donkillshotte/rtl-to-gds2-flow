@@ -8,7 +8,13 @@ import { useI18n } from "@/i18n/context";
 import { ui } from "@/i18n/ui";
 import { stageFormulas, stageInterview } from "@/data/stageFormulas";
 import { extraInterview } from "@/data/interviewExtra";
+import { interviewExtraMore } from "@/data/interviewExtraMore";
 import { stageEssays } from "@/data/stageEssays";
+import { stageEssayExtras } from "@/data/stageEssayExtras";
+import { stageDeepDiveExtras } from "@/data/stageDeepDiveExtras";
+import { stageDeepDiveExtras2 } from "@/data/stageDeepDiveExtras2";
+import { stageSubsectionExtras } from "@/data/stageSubsectionExtras";
+import { practicalNotesExtras } from "@/data/practicalNotesExtras";
 import { workedExamples } from "@/data/quizBank";
 
 interface StageSectionProps {
@@ -20,8 +26,19 @@ export function StageSection({ stage, index }: StageSectionProps) {
   const { t, locale } = useI18n();
   const isEven = index % 2 === 0;
   const formulas = stageFormulas[stage.id] ?? [];
-  const interview = [...(stageInterview[stage.id] ?? []), ...(extraInterview[stage.id] ?? [])];
+  const interview = [
+    ...(stageInterview[stage.id] ?? []),
+    ...(extraInterview[stage.id] ?? []),
+    ...(interviewExtraMore[stage.id] ?? []),
+  ];
   const essay = stageEssays[stage.id];
+  const essayExtras = stageEssayExtras[stage.id] ?? [];
+  const deepDiveExtras = [
+    ...(stageDeepDiveExtras[stage.id] ?? []),
+    ...(stageDeepDiveExtras2[stage.id] ?? []),
+  ];
+  const subsectionExtras = stageSubsectionExtras[stage.id] ?? [];
+  const workNotesExtras = practicalNotesExtras[stage.id] ?? [];
   const examples = workedExamples.filter((e) => e.stage === stage.id);
 
   return (
@@ -77,7 +94,7 @@ export function StageSection({ stage, index }: StageSectionProps) {
                 <span style={{ color: stage.color }}>📖</span> {t(ui.deepDive)}
               </h3>
               <div className="space-y-3">
-                {stage.deepDive.map((paragraph, i) => (
+                {[...stage.deepDive, ...deepDiveExtras.map((p) => t(p))].map((paragraph, i) => (
                   <p key={i} className="text-sm text-slate-400 leading-relaxed">
                     {paragraph}
                   </p>
@@ -89,7 +106,7 @@ export function StageSection({ stage, index }: StageSectionProps) {
               <div className="glass rounded-xl p-5 border border-amber-500/15">
                 <h3 className="text-sm font-semibold text-amber-300 mb-3">{t(essay.kicker)}</h3>
                 <div className="space-y-3">
-                  {essay.paragraphs.map((p, i) => (
+                  {[...essay.paragraphs, ...essayExtras].map((p, i) => (
                     <p key={i} className="text-sm text-slate-400 leading-relaxed">
                       {t(p)}
                     </p>
@@ -114,24 +131,33 @@ export function StageSection({ stage, index }: StageSectionProps) {
               </div>
             )}
 
-            {stage.subsections.map((sub) => (
-              <div key={sub.title} className="glass rounded-xl p-5">
-                <h3 className="text-sm font-semibold mb-2" style={{ color: stage.color }}>
-                  {sub.title}
-                </h3>
-                <p className="text-sm text-slate-400 leading-relaxed mb-3">{sub.content}</p>
-                {sub.bullets && (
-                  <ul className="space-y-1.5">
-                    {sub.bullets.map((b) => (
-                      <li key={b} className="flex items-start gap-2 text-xs text-slate-500">
-                        <span style={{ color: stage.color }} className="mt-0.5">▸</span>
-                        {b}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            ))}
+            {[...stage.subsections, ...subsectionExtras].map((sub, subIdx) => {
+              const title =
+                typeof sub.title === "object" ? t(sub.title) : sub.title;
+              const content =
+                typeof sub.content === "object" ? t(sub.content) : sub.content;
+              const bullets = sub.bullets?.map((b) =>
+                typeof b === "object" ? t(b) : b
+              );
+              return (
+                <div key={`${stage.id}-sub-${subIdx}`} className="glass rounded-xl p-5">
+                  <h3 className="text-sm font-semibold mb-2" style={{ color: stage.color }}>
+                    {title}
+                  </h3>
+                  <p className="text-sm text-slate-400 leading-relaxed mb-3">{content}</p>
+                  {bullets && bullets.length > 0 && (
+                    <ul className="space-y-1.5">
+                      {bullets.map((b) => (
+                        <li key={b} className="flex items-start gap-2 text-xs text-slate-500">
+                          <span style={{ color: stage.color }} className="mt-0.5">▸</span>
+                          {b}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
 
             {examples.length > 0 &&
               examples.map((ex) => (
@@ -263,16 +289,21 @@ export function StageSection({ stage, index }: StageSectionProps) {
               </div>
             )}
 
-            {stage.practicalNotes && (
+            {((stage.practicalNotes && stage.practicalNotes.length > 0) || workNotesExtras.length > 0) && (
               <div className="glass rounded-xl p-5 border border-amber-500/10">
                 <div className="flex items-center gap-2 mb-3">
                   <Wrench className="w-4 h-4 text-amber-400" />
                   <h3 className="text-sm font-semibold text-amber-300">{t(ui.workNotes)}</h3>
                 </div>
                 <ul className="space-y-2">
-                  {stage.practicalNotes.map((note) => (
+                  {(stage.practicalNotes ?? []).map((note) => (
                     <li key={note} className="text-xs text-slate-400 leading-relaxed">
                       💡 {note}
+                    </li>
+                  ))}
+                  {workNotesExtras.map((note) => (
+                    <li key={t(note)} className="text-xs text-slate-400 leading-relaxed">
+                      💡 {t(note)}
                     </li>
                   ))}
                 </ul>
