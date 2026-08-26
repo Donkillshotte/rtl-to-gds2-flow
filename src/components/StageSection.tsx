@@ -1,11 +1,17 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { ArrowDownToLine, ArrowUpFromLine, Cpu, Lightbulb, CheckCircle2, AlertTriangle, Wrench, MessageCircleQuestion } from "lucide-react";
 import type { Stage } from "@/data/stages";
 import { ChipEvolution } from "./ChipEvolution";
 import { FormulaBlock } from "./Formula";
 import { useI18n } from "@/i18n/context";
 import { ui } from "@/i18n/ui";
+import { useProgress } from "@/hooks/useProgress";
+import { stageCrossLinks } from "@/data/stageCrossLinks";
+import { cellGlossary } from "@/data/cellGlossary";
+import { useStages } from "@/hooks/useStages";
+import { cn, glossaryTermId } from "@/lib/utils";
 import { stageFormulas, stageInterview } from "@/data/stageFormulas";
 import { extraInterview } from "@/data/interviewExtra";
 import { interviewExtraMore } from "@/data/interviewExtraMore";
@@ -32,7 +38,27 @@ interface StageSectionProps {
 
 export function StageSection({ stage, index }: StageSectionProps) {
   const { t, locale } = useI18n();
+  const { markStageRead, isStageRead } = useProgress();
+  const allStages = useStages();
+  const sectionRef = useRef<HTMLElement>(null);
   const isEven = index % 2 === 0;
+  const read = isStageRead(stage.id);
+  const links = stageCrossLinks[stage.id];
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.35) {
+          markStageRead(stage.id);
+        }
+      },
+      { threshold: 0.35 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [markStageRead, stage.id]);
   const formulas = stageFormulas[stage.id] ?? [];
   const interview = [
     ...(stageInterview[stage.id] ?? []),
@@ -58,8 +84,9 @@ export function StageSection({ stage, index }: StageSectionProps) {
 
   return (
     <section
+      ref={sectionRef}
       id={`stage-${stage.id}`}
-      className="relative py-14 sm:py-20 md:py-32 px-4 sm:px-6 overflow-hidden"
+      className="relative py-14 sm:py-20 md:py-32 px-4 sm:px-6 overflow-hidden density-stage"
     >
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.04]"
@@ -80,12 +107,24 @@ export function StageSection({ stage, index }: StageSectionProps) {
           >
             {String(stage.step).padStart(2, "0")}
           </div>
-          <div>
+          <div className="min-w-0 flex-1">
             <p className="text-sm font-mono tracking-wider" style={{ color: stage.color }}>
               {t(ui.phase)} {stage.step} / 14
             </p>
             <h2 className="text-xl sm:text-2xl md:text-4xl font-bold leading-tight">{stage.title}</h2>
           </div>
+          <button
+            type="button"
+            onClick={() => markStageRead(stage.id)}
+            className={cn(
+              "shrink-0 rounded-lg border px-3 py-1.5 text-xs font-mono transition-colors",
+              read
+                ? "border-emerald-500/40 text-emerald-300 bg-emerald-500/10"
+                : "border-slate-700/50 text-slate-500 hover:text-slate-200"
+            )}
+          >
+            {read ? t(ui.markedRead) : t(ui.markRead)}
+          </button>
         </div>
 
         {/* Chip preview — top on mobile, sticky sidebar on desktop */}
@@ -114,7 +153,7 @@ export function StageSection({ stage, index }: StageSectionProps) {
             {sourced && (
               <div
                 id={`stage-${stage.id}-literature`}
-                className="glass rounded-xl p-5 border-2 border-sky-500/40 bg-sky-500/[0.04] scroll-mt-28"
+                className="glass rounded-xl p-5 border-2 border-sky-500/40 bg-sky-500/[0.04] scroll-mt-28 density-hide-compact"
               >
                 <h3 className="text-sm font-semibold text-sky-300 mb-1">{t(ui.sourcedEssay)}</h3>
                 <p className="text-xs text-slate-500 mb-4 leading-relaxed">{t(sourced.kicker)}</p>
@@ -415,6 +454,77 @@ export function StageSection({ stage, index }: StageSectionProps) {
             </div>
           </div>
         </div>
+
+        {links && (
+          <div className="mt-10 glass rounded-xl p-4 sm:p-5">
+            <p className="text-xs font-mono uppercase tracking-wider text-slate-500 mb-3">
+              {t(ui.crossLinks)}
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {links.glossary.length > 0 && (
+                <div>
+                  <p className="text-[10px] uppercase text-cyan-500/80 mb-2">{t(ui.crossGlossary)}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {links.glossary.map((term) => (
+                      <a
+                        key={term}
+                        href={`#${glossaryTermId(term)}`}
+                        className="text-xs font-mono px-2 py-1 rounded-md border border-cyan-500/25 text-cyan-300/90 hover:bg-cyan-500/10"
+                      >
+                        {term}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {links.cells.length > 0 && (
+                <div>
+                  <p className="text-[10px] uppercase text-purple-400/80 mb-2">{t(ui.crossCells)}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {links.cells.map((id) => {
+                      const cell = cellGlossary.find((c) => c.id === id);
+                      return (
+                        <a
+                          key={id}
+                          href={`#cell-${id}`}
+                          className="text-xs font-mono px-2 py-1 rounded-md border border-purple-500/25 text-purple-300/90 hover:bg-purple-500/10"
+                        >
+                          {cell ? t(cell.name).split("—")[0]?.trim() ?? id : id}
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+              <div>
+                <p className="text-[10px] uppercase text-amber-400/80 mb-2">{t(ui.crossRelated)}</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {links.related.map((id) => {
+                    const s = allStages.find((x) => x.id === id);
+                    return (
+                      <a
+                        key={id}
+                        href={`#stage-${id}`}
+                        className="text-xs px-2 py-1 rounded-md border border-amber-500/25 text-amber-200/90 hover:bg-amber-500/10"
+                      >
+                        {s?.title ?? id}
+                      </a>
+                    );
+                  })}
+                  {links.extras?.map((ex) => (
+                    <a
+                      key={ex.href}
+                      href={ex.href}
+                      className="text-xs px-2 py-1 rounded-md border border-slate-600/50 text-slate-300 hover:bg-slate-800"
+                    >
+                      {locale === "it" ? ex.labelIt : ex.labelEn}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {index < 13 && (
           <div className="flex justify-center mt-16">

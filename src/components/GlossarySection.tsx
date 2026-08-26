@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { ChevronDown, ClipboardCheck, BookOpen, Search } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, glossaryTermId } from "@/lib/utils";
 import { useI18n } from "@/i18n/context";
 import { ui } from "@/i18n/ui";
 import { bilingualSignoffChecklist } from "@/data/glossaryBilingual";
@@ -74,9 +74,10 @@ export function GlossarySection() {
                   .map((term) => (
                     <button
                       key={term.term}
+                      id={glossaryTermId(term.term)}
                       onClick={() => setOpenTerm(openTerm === term.term ? null : term.term)}
                       className={cn(
-                        "glass rounded-xl p-4 text-left transition-all hover:border-cyan-500/30",
+                        "glass rounded-xl p-4 text-left transition-all hover:border-cyan-500/30 scroll-mt-28",
                         openTerm === term.term && "border-cyan-500/40 bg-cyan-500/5"
                       )}
                     >

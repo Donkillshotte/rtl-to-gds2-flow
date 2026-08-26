@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Languages } from "lucide-react";
+import { Languages, AlignLeft, Rows3 } from "lucide-react";
 import { useStages } from "@/hooks/useStages";
 import { useI18n } from "@/i18n/context";
+import { useDensity } from "@/hooks/useDensity";
 import { ui } from "@/i18n/ui";
 import { MobileHeaderMenu } from "./MobileNav";
+import { GlobalSearch } from "./GlobalSearch";
 import { cn } from "@/lib/utils";
 
 export function Navigation() {
@@ -92,6 +94,7 @@ export function Navigation() {
 
 export function Header() {
   const { locale, setLocale, t } = useI18n();
+  const { density, toggle, isCompact } = useDensity();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -112,31 +115,40 @@ export function Header() {
           <div className="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center shrink-0">
             <span className="text-cyan-400 font-mono text-xs font-bold">PD</span>
           </div>
-          <span className="font-semibold text-sm hidden sm:block truncate">{t(ui.siteTitle)}</span>
+          <span className="font-semibold text-sm hidden lg:block truncate">{t(ui.siteTitle)}</span>
         </a>
+        <div className="flex-1 flex justify-center px-2 max-w-md mx-auto">
+          <GlobalSearch />
+        </div>
         <nav className="flex items-center gap-0.5 sm:gap-1 shrink-0">
           <MobileHeaderMenu />
-          <a href="#learn-lab" className="px-2.5 py-1 rounded-lg text-xs text-amber-400/90 hover:text-amber-300 transition-colors hidden md:block">
+          <a href="#learn-lab" className="px-2 py-1 rounded-lg text-xs text-amber-400/90 hover:text-amber-300 transition-colors hidden xl:block">
             {t(ui.navLearn)}
           </a>
-          <a href="#signoff-checklist" className="px-2.5 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden md:block">
-            {t(ui.navSignoff)}
+          <a href="#compare" className="px-2 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden xl:block">
+            {t(ui.navCompare)}
           </a>
-          <a href="#sources" className="px-2.5 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden md:block">
-            {t(ui.navSources)}
-          </a>
-          <a href="#glossary" className="px-2.5 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden md:block">
+          <a href="#glossary" className="px-2 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden xl:block">
             {t(ui.navGlossary)}
           </a>
-          <a href="#cells-glossary" className="px-2.5 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden md:block">
-            {t(ui.navCells)}
+          <a href="#cheat-sheet" className="px-2 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden xl:block">
+            {t(ui.navCheat)}
           </a>
-          <a href="#eda-reference" className="px-2.5 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden md:block">
-            {t(ui.navRef)}
-          </a>
-          <a href="#stage-tapeout" className="px-2.5 py-1 rounded-lg text-xs text-cyan-400 hover:text-cyan-300 transition-colors hidden md:block">
-            {t(ui.navTapeout)}
-          </a>
+          <button
+            type="button"
+            onClick={toggle}
+            title={isCompact ? t(ui.densityDeep) : t(ui.densityCompact)}
+            className={cn(
+              "hidden sm:flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs border transition-colors",
+              density === "compact"
+                ? "border-cyan-500/40 text-cyan-300 bg-cyan-500/10"
+                : "border-slate-700/50 text-slate-500 hover:text-slate-300"
+            )}
+            aria-pressed={isCompact}
+          >
+            {isCompact ? <Rows3 className="w-3.5 h-3.5" /> : <AlignLeft className="w-3.5 h-3.5" />}
+            <span className="hidden md:inline">{isCompact ? t(ui.densityCompact) : t(ui.densityDeep)}</span>
+          </button>
           <div className="flex items-center border border-slate-700/50 rounded-lg overflow-hidden">
             <Languages className="w-3.5 h-3.5 text-slate-500 ml-1.5 hidden xs:block" />
             <button

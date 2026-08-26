@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { GraduationCap, Calculator, Layers, ListChecks, FlipHorizontal, Swords, BookOpen } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { GraduationCap, Calculator, Layers, ListChecks, FlipHorizontal, Swords, BookOpen, Timer } from "lucide-react";
 import { useI18n } from "@/i18n/context";
 import { ui } from "@/i18n/ui";
+import { useProgress } from "@/hooks/useProgress";
 import { quizBank, workedExamples } from "@/data/quizBank";
 import { workedExamplesMore } from "@/data/workedExamplesMore";
 import { extraInterview } from "@/data/interviewExtra";
@@ -20,7 +21,7 @@ import { TermText } from "@/components/TermPopup";
 const allPlaybook = [...playbook, ...playbookMore, ...playbookEvenMore, ...playbookFinal];
 const allWorkedExamples = [...workedExamples, ...workedExamplesMore];
 
-type Tab = "quiz" | "cards" | "scenarios" | "playbook" | "calc" | "examples";
+type Tab = "quiz" | "cards" | "scenarios" | "playbook" | "calc" | "examples" | "timed";
 
 const STAGE_OPTS: { id: StageId | "all"; label: string }[] = [
   { id: "all", label: "ALL" },
@@ -55,6 +56,7 @@ export function LearnLab() {
             [
               ["quiz", t(ui.learnQuiz), ListChecks],
               ["cards", t(ui.learnCards), FlipHorizontal],
+              ["timed", t(ui.learnTimed), Timer],
               ["scenarios", t(ui.learnScenarios), Swords],
               ["playbook", t(ui.learnPlaybook), BookOpen],
               ["calc", t(ui.learnCalc), Calculator],
@@ -80,6 +82,7 @@ export function LearnLab() {
 
         {tab === "quiz" && <QuizPanel />}
         {tab === "cards" && <CardPanel />}
+        {tab === "timed" && <TimedInterviewPanel />}
         {tab === "scenarios" && <ScenarioPanel />}
         {tab === "playbook" && <PlaybookPanel />}
         {tab === "calc" && <CalcPanel />}
@@ -91,6 +94,7 @@ export function LearnLab() {
 
 function QuizPanel() {
   const { t, locale } = useI18n();
+  const { bumpQuiz } = useProgress();
   const [filter, setFilter] = useState<StageId | "all" | "cross">("all");
   const [idx, setIdx] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
@@ -108,6 +112,7 @@ function QuizPanel() {
     if (picked !== null) return;
     setPicked(i);
     setScore((s) => ({ ok: s.ok + (i === q.correct ? 1 : 0), n: s.n + 1 }));
+    bumpQuiz();
   };
 
   const next = () => {
@@ -244,8 +249,144 @@ function CardPanel() {
   );
 }
 
+function TimedInterviewPanel() {
+  const { t } = useI18n();
+  const { setInterviewBest, progress } = useProgress();
+  const cards = useMemo(() => {
+    const fromStages = (Object.keys(stageInterview) as StageId[]).flatMap((id) =>
+      stageInterview[id].map((q) => ({ stage: id, question: q.question, answer: q.answer }))
+    );
+    const extra = (Object.keys(extraInterview) as StageId[]).flatMap((id) =>
+      extraInterview[id].map((q) => ({ stage: id, question: q.question, answer: q.answer }))
+    );
+    return [...fromStages, ...extra];
+  }, []);
+
+  const DURATION = 600;
+  const [running, setRunning] = useState(false);
+  const [left, setLeft] = useState(DURATION);
+  const [i, setI] = useState(0);
+  const [flip, setFlip] = useState(false);
+  const [answered, setAnswered] = useState(0);
+  const [finished, setFinished] = useState(false);
+
+  useEffect(() => {
+    if (!running || finished) return;
+    if (left <= 0) {
+      setRunning(false);
+      setFinished(true);
+      const pct = Math.min(100, Math.round((answered / Math.max(1, cards.length * 0.15)) * 100));
+      setInterviewBest(pct);
+      return;
+    }
+    const id = window.setInterval(() => setLeft((s) => s - 1), 1000);
+    return () => clearInterval(id);
+  }, [running, left, finished, answered, cards.length, setInterviewBest]);
+
+  const start = () => {
+    setRunning(true);
+    setFinished(false);
+    setLeft(DURATION);
+    setAnswered(0);
+    setI(0);
+    setFlip(false);
+  };
+
+  const finishEarly = () => {
+    setRunning(false);
+    setFinished(true);
+    const pct = Math.min(100, Math.round((answered / Math.max(1, cards.length * 0.15)) * 100));
+    setInterviewBest(pct);
+  };
+
+  const nextCard = () => {
+    setFlip(false);
+    setAnswered((n) => n + 1);
+    setI((x) => (x + 1) % cards.length);
+  };
+
+  const c = cards[i % cards.length];
+  const mm = String(Math.floor(left / 60)).padStart(2, "0");
+  const ss = String(left % 60).padStart(2, "0");
+
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-slate-400">{t(ui.learnTimedHint)}</p>
+      <div className="flex flex-wrap items-center gap-3">
+        {!running && !finished && (
+          <button
+            type="button"
+            onClick={start}
+            className="px-4 py-2 rounded-xl text-sm bg-amber-500/20 text-amber-300 border border-amber-500/40"
+          >
+            {t(ui.learnTimedStart)}
+          </button>
+        )}
+        {running && (
+          <>
+            <span className="font-mono text-lg text-amber-300">
+              {mm}:{ss} {t(ui.learnTimedLeft)}
+            </span>
+            <button
+              type="button"
+              onClick={finishEarly}
+              className="px-3 py-1.5 rounded-lg text-xs border border-slate-700 text-slate-400"
+            >
+              {t(ui.learnTimedStop)}
+            </button>
+            <span className="text-xs font-mono text-slate-500 ml-auto">
+              {answered} · best {progress.interviewBest || "—"}%
+            </span>
+          </>
+        )}
+        {finished && (
+          <p className="text-sm text-emerald-300">
+            {t(ui.learnTimedDone)} — {answered} · {progress.interviewBest}%
+          </p>
+        )}
+      </div>
+
+      {(running || finished) && (
+        <div>
+          <button
+            type="button"
+            onClick={() => setFlip((f) => !f)}
+            disabled={finished}
+            className="w-full glass rounded-2xl p-8 min-h-[200px] text-left disabled:opacity-60"
+          >
+            <p className="text-[10px] font-mono text-amber-400 mb-3">{c.stage.toUpperCase()}</p>
+            <p className="text-lg text-slate-200 leading-relaxed">
+              {flip ? t(c.answer) : t(c.question)}
+            </p>
+            <p className="text-xs text-slate-500 mt-6">{flip ? t(ui.learnQ) : t(ui.learnTap)}</p>
+          </button>
+          {running && (
+            <button
+              type="button"
+              onClick={nextCard}
+              className="mt-4 px-4 py-2 rounded-lg text-sm bg-amber-500/20 text-amber-300 border border-amber-500/30"
+            >
+              {t(ui.learnNext)}
+            </button>
+          )}
+          {finished && (
+            <button
+              type="button"
+              onClick={start}
+              className="mt-4 px-4 py-2 rounded-lg text-sm border border-slate-700 text-slate-300"
+            >
+              {t(ui.learnRestart)}
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ScenarioPanel() {
   const { t, locale } = useI18n();
+  const { markDrillDone } = useProgress();
   const [sid, setSid] = useState(scenarios[0].id);
   const sc = scenarios.find((s) => s.id === sid) ?? scenarios[0];
   const [step, setStep] = useState(0);
@@ -254,6 +395,10 @@ function ScenarioPanel() {
   const done = step >= sc.steps.length;
   const st = !done ? sc.steps[step] : null;
   const choices = st ? st.choices[locale] : [];
+
+  useEffect(() => {
+    if (done) markDrillDone(sid);
+  }, [done, sid, markDrillDone]);
 
   const reset = (id = sid) => {
     setSid(id);

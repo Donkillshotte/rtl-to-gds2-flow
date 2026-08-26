@@ -11,6 +11,12 @@ import { SourcesSection } from "@/components/SourcesSection";
 import { Header, Navigation } from "@/components/Navigation";
 import { MobileBottomNav } from "@/components/MobileNav";
 import { LearnLab } from "@/components/LearnLab";
+import { ProgressBar } from "@/components/ProgressBar";
+import { ComparisonsSection } from "@/components/ComparisonsSection";
+import { InteractiveDiagrams } from "@/components/InteractiveDiagrams";
+import { ToolCommandsSection } from "@/components/ToolCommandsSection";
+import { CheatSheetSection } from "@/components/CheatSheetSection";
+import { WarStoriesSection } from "@/components/WarStoriesSection";
 import { useStages } from "@/hooks/useStages";
 
 export function HomePage() {
@@ -23,10 +29,16 @@ export function HomePage() {
       <main>
         <Hero />
         <FlowOverview />
+        <ProgressBar />
         <LearnLab />
+        <InteractiveDiagrams />
+        <ComparisonsSection />
         {stages.map((stage, index) => (
           <StageSection key={stage.id} stage={stage} index={index} />
         ))}
+        <ToolCommandsSection />
+        <WarStoriesSection />
+        <CheatSheetSection />
         <SignoffChecklistSection />
         <ReferenceSection />
         <SourcesSection />

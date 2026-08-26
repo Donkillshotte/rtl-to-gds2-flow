@@ -172,3 +172,40 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(34, 211, 238, 0.5);
 }
+
+/* Compact density */
+html[data-density="compact"] .density-stage {
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
+html[data-density="compact"] .density-hide-compact {
+  display: none !important;
+}
+
+html[data-density="compact"] .density-stage p.text-base {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #cheat-sheet,
+  #cheat-sheet * {
+    visibility: visible;
+  }
+  #cheat-sheet {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: white !important;
+    color: black !important;
+  }
+  header,
+  nav {
+    display: none !important;
+  }
+}

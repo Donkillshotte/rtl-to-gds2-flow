@@ -120,12 +120,16 @@ export function MobileHeaderMenu() {
 
   const links = [
     { href: "#learn-lab", label: t(ui.navLearn) },
-    { href: "#flow-overview", label: t(ui.flowTitle).split("—")[0]?.trim() ?? "Flow" },
+    { href: "#progress", label: t(ui.progressTitle) },
+    { href: "#diagrams", label: t(ui.navDiagrams) },
+    { href: "#compare", label: t(ui.navCompare) },
+    { href: "#tool-commands", label: t(ui.navTools) },
+    { href: "#war-stories", label: t(ui.navWar) },
+    { href: "#cheat-sheet", label: t(ui.navCheat) },
     { href: "#signoff-checklist", label: t(ui.navSignoff) },
-    { href: "#sources", label: t(ui.navSources) },
     { href: "#glossary", label: t(ui.navGlossary) },
     { href: "#cells-glossary", label: t(ui.navCells) },
-    { href: "#eda-reference", label: t(ui.navRef) },
+    { href: "#sources", label: t(ui.navSources) },
     { href: "#stage-tapeout", label: t(ui.navTapeout) },
   ];
 

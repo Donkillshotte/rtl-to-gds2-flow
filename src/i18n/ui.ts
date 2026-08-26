@@ -173,4 +173,107 @@ export const ui = {
   sourcedEssay: loc("Approfondimento da letteratura", "Literature deep-dive"),
   sourcedRefs: loc("Fonti", "Sources"),
   navSources: loc("Fonti", "Sources"),
+  searchPlaceholder: loc("Cerca fasi, termini…", "Search stages, terms…"),
+  searchEmpty: loc("Nessun risultato.", "No results."),
+  searchPlaybook: loc("Capitolo playbook", "Playbook chapter"),
+  searchKindStage: loc("Fase", "Stage"),
+  searchKindGlossary: loc("Glossario", "Glossary"),
+  searchKindCell: loc("Cella", "Cell"),
+  searchKindPlaybook: loc("Playbook", "Playbook"),
+  progressEyebrow: loc("Il tuo percorso", "Your path"),
+  progressTitle: loc("Progresso di studio", "Study progress"),
+  progressLead: loc(
+    "Segna le fasi lette e tieni traccia di quiz, drill e colloquio a tempo (salvato in locale).",
+    "Mark stages as read and track quiz, drills, and timed interview (saved locally)."
+  ),
+  progressReset: loc("Azzera", "Reset"),
+  progressStages: loc("Fasi lette", "Stages read"),
+  progressQuiz: loc("Quiz completati", "Quizzes done"),
+  progressDrill: loc("Drill completati", "Drills done"),
+  progressInterview: loc("Best colloquio", "Interview best"),
+  markRead: loc("Segna come letta", "Mark as read"),
+  markedRead: loc("Letta", "Read"),
+  densityDeep: loc("Testo pieno", "Full text"),
+  densityCompact: loc("Compatto", "Compact"),
+  compareEyebrow: loc("Confronto", "Compare"),
+  compareTitle: loc("Confronti affiancati", "Side-by-side comparisons"),
+  compareLead: loc(
+    "Le coppie che tornano sempre in colloquio e in war-room: modelli, metriche, setup/hold, clock.",
+    "The pairs that always return in interviews and war-rooms: models, metrics, setup/hold, clocks."
+  ),
+  compareAspect: loc("Aspetto", "Aspect"),
+  compareTakeaway: loc("Takeaway", "Takeaway"),
+  toolsTitle: loc("Carte comandi EDA", "EDA command cards"),
+  toolsLead: loc(
+    "Comandi tipici di timing/power/PV con cosa guardare nell’output e le trappole da colloquio.",
+    "Typical timing/power/PV commands with what to look for in the output and interview pitfalls."
+  ),
+  toolsLook: loc("Cosa guardare", "What to look for"),
+  toolsPitfall: loc("Trappola", "Pitfall"),
+  warTitle: loc("War stories dal silicio", "Silicon war stories"),
+  warLead: loc(
+    "Casi realistici: sintomo → causa root → lezione. Collegano STA, fill, scan, IR e tapeout.",
+    "Realistic cases: symptom → root cause → lesson. They link STA, fill, scan, IR, and tapeout."
+  ),
+  warSymptom: loc("Sintomo", "Symptom"),
+  warCause: loc("Causa root", "Root cause"),
+  warLesson: loc("Lezione", "Lesson"),
+  diagramTitle: loc("Diagrammi interattivi", "Interactive diagrams"),
+  diagramLead: loc(
+    "PDN, CTS, scan e setup/hold: tocca i controlli per vedere come cambiano le strutture.",
+    "PDN, CTS, scan, and setup/hold: use the controls to see how structures change."
+  ),
+  diagramPdnHint: loc(
+    "Rails su M1 alimentano le row; straps orizzontali distribuiscono corrente; rings chiudono il dominio.",
+    "M1 rails feed the rows; horizontal straps distribute current; rings close the domain."
+  ),
+  diagramPdnRails: loc("Rails", "Rails"),
+  diagramPdnStraps: loc("Straps", "Straps"),
+  diagramPdnRings: loc("Rings", "Rings"),
+  diagramCtsL0: loc("Root clock (sorgente / PLL).", "Clock root (source / PLL)."),
+  diagramCtsL1: loc("Primo livello di buffer / H-tree.", "First buffer / H-tree level."),
+  diagramCtsL2: loc("Branch verso i cluster di sink.", "Branches toward sink clusters."),
+  diagramCtsL3: loc("Leaf driver → FF (latency e skew locali).", "Leaf drivers → FFs (local latency & skew)."),
+  diagramCtsLevel: loc("Livello", "Level"),
+  diagramScanHint: loc(
+    "Con SE=1 i FF formano una catena SI→SO (shift). Hold inter-FF è il rischio tipico post-CTS.",
+    "With SE=1 FFs form an SI→SO chain (shift). Inter-FF hold is the typical post-CTS risk."
+  ),
+  diagramScanToggle: loc("Toggle SE (shift ↔ func)", "Toggle SE (shift ↔ func)"),
+  diagramSetupHint: loc(
+    "Setup: il dato lanciato al bordo launch deve arrivare prima del bordo capture meno Tsu (corner lento).",
+    "Setup: data launched at the launch edge must arrive before capture minus Tsu (slow corner)."
+  ),
+  diagramHoldHint: loc(
+    "Hold: il dato non deve cambiare troppo presto dopo il bordo di cattura (corner veloce; indipendente da Tclk).",
+    "Hold: data must not change too soon after the capturing edge (fast corner; independent of Tclk)."
+  ),
+  diagramGotoStage: loc("Vai alla fase", "Go to stage"),
+  cheatTitle: loc("Cheat sheet stampabile", "Printable cheat sheet"),
+  cheatLead: loc(
+    "Formule e regole operative da tenere sul banco. Usa Stampa per PDF o carta.",
+    "Formulas and operating rules for the bench. Use Print for PDF or paper."
+  ),
+  cheatPrint: loc("Stampa / PDF", "Print / PDF"),
+  cheatTopic: loc("Argomento", "Topic"),
+  cheatFormula: loc("Formula", "Formula"),
+  cheatNote: loc("Nota operativa", "Operating note"),
+  crossLinks: loc("Collegamenti", "Cross-links"),
+  crossGlossary: loc("Glossario", "Glossary"),
+  crossCells: loc("Celle", "Cells"),
+  crossRelated: loc("Fasi correlate", "Related stages"),
+  navCompare: loc("Confronti", "Compare"),
+  navDiagrams: loc("Diagrammi", "Diagrams"),
+  navTools: loc("Comandi", "Commands"),
+  navCheat: loc("Cheat", "Cheat"),
+  navWar: loc("Stories", "Stories"),
+  learnTimed: loc("Colloquio a tempo", "Timed interview"),
+  learnTimedStart: loc("Avvia 10 min", "Start 10 min"),
+  learnTimedStop: loc("Termina", "Finish"),
+  learnTimedLeft: loc("rimanenti", "left"),
+  learnTimedDone: loc("Tempo scaduto — punteggio registrato", "Time up — score saved"),
+  learnTimedHint: loc(
+    "Rispondi a quante più flashcard puoi in 10 minuti. Il best score resta in locale.",
+    "Answer as many flashcards as you can in 10 minutes. Best score stays local."
+  ),
 };

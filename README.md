@@ -28,15 +28,25 @@ Guida professionale interattiva al flusso completo di **physical design** — da
 
 ## Sezioni aggiuntive
 
-- **Laboratorio da colloquio** — Quiz, flashcard, **drill war-room** (scenari multi-step: hold post-CTS, congestion, IR, ECO/GKC, scan/DFT, coloring/DFM, floorplan, EM, SSO, TNS), calcolatori STA/IR/utilization/antenna, esempi numerici, playbook DFT/DFM/ECO/GKC
+- **Ricerca globale** — cerca fasi, glossario, celle e playbook dall’header
+- **Progresso di studio** — fasi lette (IntersectionObserver), quiz, drill, best colloquio a tempo (localStorage)
+- **Densità testo** — toggle pieno / compatto (nasconde saggi letteratura)
+- **Diagrammi interattivi** — PDN, CTS, scan chain, setup/hold
+- **Confronti affiancati** — NLDM/CCS, WNS/TNS, setup/hold, tree/mesh
+- **Carte comandi EDA** — `report_timing`, IR, PV… con cosa guardare e trappole
+- **War stories** — casi silicio: sintomo → causa → lezione
+- **Cheat sheet stampabile** — formule operative + Print/PDF
+- **Colloquio a tempo** — 10 minuti di flashcard nel Lab
+- **Cross-link** — ogni fase punta a glossario, celle e fasi correlate
+- **Laboratorio da colloquio** — Quiz, flashcard, **drill war-room**, calcolatori, esempi, playbook
 - **Formule & Modelli** — KaTeX (setup/hold, FO4, logical effort, IR drop, Black's Eq, MTBF, antenna, …)
-- **Senior Interview Prep** — Q&A per ogni fase (AOCV/POCV, bump map, fill SI, handoff FE→PD, …)
+- **Senior Interview Prep** — Q&A per ogni fase
 - **Checklist di Signoff** — Check di produzione per ogni milestone
 - **Artefatti EDA** — File del flusso (.lib, .lef, .def, .spef, .upf, GDS/OASIS, …)
 - **Stack metallico 7 nm** — M0→AP/RDL, pitch indicativi, preferred direction
 - **Corner PVT / MMMC** — SS/TT/FF, temperature inversion, RC corners
-- **Glossario Tecnico** — 100+ termini (WNS, AOCV, CPPR, NDR, BTO/MTO, …) con ricerca
-- **Glossario Celle Standard** — INV, NAND/NOR, MUX, XOR, SDFF, CLKBUF, TAP, ENDCAP, DLY, CLKMUX, …
+- **Glossario Tecnico** — 100+ termini con definizioni estese e popup cliccabili
+- **Glossario Celle Standard** — INV, NAND/NOR, MUX, XOR, SDFF, CLKBUF, TAP, ENDCAP, DLY, …
 
 ## Avvio locale
 

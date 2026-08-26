@@ -75,8 +75,9 @@ export function CellGlossarySection() {
           {filtered.map((cell) => (
             <div
               key={cell.id}
+              id={`cell-${cell.id}`}
               className={cn(
-                "glass rounded-xl overflow-hidden transition-all",
+                "glass rounded-xl overflow-hidden transition-all scroll-mt-28",
                 openId === cell.id && "border-purple-500/30"
               )}
             >
