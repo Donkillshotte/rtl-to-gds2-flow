@@ -1,0 +1,109 @@
+{
+  "$schema": "/home/ubuntu/.cursor/plugins/cache/cursor-public/9333/bdf7aa355337897f167153e05069aca505dae17c/skills/orchestrate/schemas/plan.schema.json",
+  "goal": "OpenROAD Studio production",
+  "summary": "productionize the RTL\u2192GDSII app and rebrand it as OpenROAD Studio",
+  "rootSlug": "openroad-studio",
+  "baseBranch": "main",
+  "prBase": "main",
+  "repoUrl": "https://github.com/Donkillshotte/rtl-to-gds2-flow",
+  "selfAgentId": "bc-3a8d54d9-1a88-4e52-97dc-0f8354ad4d2b",
+  "syncStateToGit": true,
+  "acceptanceCriteria": [
+    "Product is branded \"OpenROAD Studio\" across metadata, header, hero, and README while keeping the RTL\u2192GDSII learning content intact",
+    "npm run lint is clean (0 errors, 0 warnings) and npm run build succeeds with static export",
+    "Production SEO/PWA basics are present (Open Graph + Twitter metadata, robots, sitemap, web manifest, favicon/OG image)",
+    "A GitHub Actions CI workflow runs install + lint + build on pull requests",
+    "Changes land as a single draft PR against main, verified by a verifier"
+  ],
+  "tasks": [
+    {
+      "name": "rebrand-and-seo",
+      "type": "worker",
+      "scopedGoal": "Rebrand this Next.js 16 static-export app as \"OpenROAD Studio\" and add production SEO/PWA metadata, while KEEPING all existing RTL\u2192GDSII physical-design learning content, the bilingual IT/EN switcher, and the visual/lab features intact. Branding: (1) src/app/layout.tsx metadata.title should become \"OpenROAD Studio \u2014 RTL \u2192 GDSII Physical Design\" (or a close bilingual-neutral variant) with a matching description; (2) src/i18n/ui.ts: update siteTitle and heroBadge so the product reads as \"OpenROAD Studio\" in both `it` and `en` (keep the subject matter \u2014 the RTL\u2192GDSII flow \u2014 in subtitles/descriptions); (3) src/components/Navigation.tsx header brand text should say \"OpenROAD Studio\"; (4) src/components/Hero.tsx: introduce \"OpenROAD Studio\" as the product name tastefully (e.g. in the badge or an added brand line) but DO NOT delete the RTL \u2192 GDSII headline treatment; (5) README.md title and intro; (6) package.json \"name\" field to \"openroad-studio\". Production SEO/PWA (compatible with output:\"export\" \u2014 read node_modules/next/dist/docs for this Next version before using metadata/route APIs): add Open Graph and Twitter card metadata to layout.tsx (or a metadata export), a robots and sitemap solution that works with static export (e.g. app/robots.ts + app/sitemap.ts if supported by this export mode, otherwise static files under public/), a web app manifest (public/manifest.webmanifest wired via metadata), and a simple SVG-based favicon/OG image referenced from metadata. Use a neutral site URL placeholder like https://openroad-studio.example (leave a comment noting it should be swapped for the real domain). Keep everything type-safe and ensure `npm run build` still produces the static export in out/.",
+      "pathsAllowed": [
+        "src/app/layout.tsx",
+        "src/i18n/ui.ts",
+        "src/components/Navigation.tsx",
+        "src/components/Hero.tsx",
+        "README.md",
+        "package.json",
+        "public/**",
+        "src/app/robots.ts",
+        "src/app/sitemap.ts",
+        "src/app/opengraph-image*",
+        "src/app/icon*"
+      ],
+      "pathsForbidden": [
+        "src/hooks/**",
+        "src/i18n/context.tsx",
+        "src/components/MobileNav.tsx",
+        "src/components/LearnLab.tsx",
+        ".github/**"
+      ],
+      "acceptance": [
+        "metadata.title and README present the product as \"OpenROAD Studio\"",
+        "siteTitle and heroBadge in src/i18n/ui.ts read as OpenROAD Studio in both it and en",
+        "Header (Navigation.tsx) shows the OpenROAD Studio brand",
+        "Open Graph + Twitter metadata, robots, sitemap, and a web manifest are present and wired via Next metadata",
+        "A favicon/OG image asset exists and is referenced",
+        "npm run build succeeds and emits the static export; RTL\u2192GDSII content and IT/EN switching still work"
+      ],
+      "verify": "## Setup\n- npm install\n\n## Automated\n- npm run build (must succeed, output: 'export' emits out/)\n- npm run lint (should not regress)\n- grep the built out/ HTML for the OpenROAD Studio title and og: meta tags\n\n## Manual\n- npm start and open the app; confirm the header/hero show OpenROAD Studio, the IT/EN switch still works, and the RTL\u2192GDSII stages still render.\n\n## Gotchas\n- This is a customized Next.js 16 with breaking changes; read node_modules/next/dist/docs before using metadata/route conventions.\n- output: 'export' constrains server-only features; robots/sitemap/manifest must be export-compatible."
+    },
+    {
+      "name": "code-health-ci",
+      "type": "worker",
+      "scopedGoal": "Harden code health and add CI without touching product branding. (1) Fix all ESLint problems reported by `npm run lint` (currently 4 errors + 1 warning, all react-hooks/set-state-in-effect). The flagged locations are: src/hooks/useProgress.tsx (~line 66, setState in an empty-dep effect for localStorage hydration), src/i18n/context.tsx (~line 23, setLocaleState from a hydration effect), src/hooks/useDensity.tsx (~line 32), src/components/LearnLab.tsx (~line 276), and src/components/MobileNav.tsx. Resolve them idiomatically for React 19 \u2014 prefer lazy useState initializers guarded for SSR, useSyncExternalStore for localStorage-backed state, or event-driven updates \u2014 rather than blanket eslint-disable comments. Preserve current runtime behavior (no hydration mismatches, persisted locale/progress/density still load). (2) Ensure `npm run lint` reports 0 errors and 0 warnings and `npm run build` still succeeds. (3) Add a GitHub Actions workflow at .github/workflows/ci.yml that, on pull_request and push to main, checks out, sets up Node 20, runs `npm ci`, `npm run lint`, and `npm run build`. Do not modify branding files (layout.tsx, i18n/ui.ts, Navigation.tsx, Hero.tsx, README.md, package.json name).",
+      "pathsAllowed": [
+        "src/hooks/**",
+        "src/i18n/context.tsx",
+        "src/components/LearnLab.tsx",
+        "src/components/MobileNav.tsx",
+        ".github/**"
+      ],
+      "pathsForbidden": [
+        "src/app/layout.tsx",
+        "src/i18n/ui.ts",
+        "src/components/Navigation.tsx",
+        "src/components/Hero.tsx",
+        "README.md",
+        "package.json",
+        "public/**"
+      ],
+      "acceptance": [
+        "npm run lint reports 0 errors and 0 warnings",
+        "npm run build still succeeds",
+        "No blanket eslint-disable used to silence the react-hooks rule; fixes are idiomatic React 19",
+        "Persisted locale/progress/density behavior is preserved with no hydration warnings",
+        ".github/workflows/ci.yml runs npm ci + lint + build on pull_request and push to main"
+      ],
+      "verify": "## Setup\n- npm install\n\n## Automated\n- npm run lint (expect 0 errors, 0 warnings)\n- npm run build (must succeed)\n\n## Manual\n- npm start; toggle IT/EN and density, reload, and confirm persisted state restores without console hydration warnings.\n\n## Gotchas\n- Customized Next.js 16 / React 19; read node_modules/next/dist/docs. Avoid reintroducing setState-in-effect; use lazy initializers or useSyncExternalStore."
+    },
+    {
+      "name": "merge-production",
+      "type": "worker",
+      "scopedGoal": "Integrate the two upstream production branches into one deliverable branch and open a draft PR. The two upstream handoffs are pasted below; use the exact branch names from their `## Branch` lines. Merge both branches together on your current cloud branch (start from the rebrand-and-seo branch, then merge the code-health-ci branch into it). The two workers were scoped to disjoint files, so conflicts should be rare; if any occur, keep BOTH intents \u2014 branding/SEO changes from rebrand-and-seo and the lint/CI/hook fixes from code-health-ci \u2014 and never drop one side's work. After merging, run `npm install`, `npm run lint` (must be 0 errors, 0 warnings), and `npm run build` (must succeed). Then open a single draft PR against main titled \"OpenROAD Studio production\" summarizing the rebrand, SEO/PWA additions, code-health fixes, and CI. Do not rewrite history of the source branches.",
+      "dependsOn": ["rebrand-and-seo", "code-health-ci"],
+      "startingRef": "orch/openroad-studio/rebrand-and-seo",
+      "openPR": true,
+      "acceptance": [
+        "Both upstream branches are merged with their histories preserved",
+        "No upstream work is dropped during conflict resolution",
+        "npm run lint reports 0 errors and 0 warnings on the merged branch",
+        "npm run build succeeds on the merged branch",
+        "A single draft PR against main is opened describing the full production pass"
+      ],
+      "verify": "## Setup\n- npm install\n\n## Automated\n- npm run lint (0 errors, 0 warnings)\n- npm run build (succeeds)\n\n## Manual\n- npm start; confirm OpenROAD Studio branding, working IT/EN switch, and intact RTL\u2192GDSII content on the merged branch.\n\n## Gotchas\n- Use the actual branch names from the pasted upstream handoffs, not the orch/ placeholders, if they differ."
+    },
+    {
+      "name": "verify-production",
+      "type": "verifier",
+      "verifies": "merge-production",
+      "scopedGoal": "Verify the merged OpenROAD Studio production branch against every acceptance criterion. Run npm install, npm run lint, and npm run build. Confirm lint reports 0 errors and 0 warnings and the build emits the static export. Inspect the build output and source to confirm the product is branded \"OpenROAD Studio\" in metadata title, header, hero, and README; that Open Graph/Twitter metadata, robots, sitemap, and a web manifest are present; and that the RTL\u2192GDSII learning content plus IT/EN switching remain intact. Confirm .github/workflows/ci.yml exists and runs lint + build. Report a precise verdict with per-criterion evidence.",
+      "acceptance": [
+        "Verification section includes execution evidence (lint + build output) for all merge-production acceptance criteria",
+        "Branding, SEO/PWA, code-health, and CI criteria each have explicit met/not-met evidence"
+      ]
+    }
+  ]
+}
