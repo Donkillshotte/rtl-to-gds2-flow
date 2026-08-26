@@ -5,17 +5,19 @@ import { ChevronDown, ClipboardCheck, BookOpen, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/context";
 import { ui } from "@/i18n/ui";
-import { bilingualGlossary, bilingualSignoffChecklist } from "@/data/glossaryBilingual";
+import { bilingualSignoffChecklist } from "@/data/glossaryBilingual";
+import { getUniqueGlossary } from "@/lib/glossaryLookup";
 
 export function GlossarySection() {
   const { t } = useI18n();
   const [openTerm, setOpenTerm] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const glossary = useMemo(() => getUniqueGlossary(), []);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return bilingualGlossary;
-    return bilingualGlossary.filter((g) => {
+    if (!q) return glossary;
+    return glossary.filter((g) => {
       const hay = [
         g.term,
         g.fullName ? t(g.fullName) : "",
@@ -26,7 +28,7 @@ export function GlossarySection() {
         .toLowerCase();
       return hay.includes(q);
     });
-  }, [query, t]);
+  }, [query, t, glossary]);
 
   const categories = useMemo(
     () => [...new Set(filtered.map((g) => t(g.category)))],

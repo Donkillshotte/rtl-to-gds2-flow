@@ -1,6 +1,7 @@
 import type { BilingualGlossaryTerm } from "@/data/glossaryBilingual";
 import { bilingualGlossary } from "@/data/glossaryBilingual";
 import { glossaryAliases } from "@/data/glossaryAliases";
+import { glossaryLongDefinitions } from "@/data/glossaryLongDefinitions";
 
 export interface GlossaryEntry {
   /** Canonical term key (as in glossary). */
@@ -14,13 +15,20 @@ function escapeRegExp(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-/** Deduped glossary: last definition wins for duplicate term keys. */
+/** Prefer long bilingual definitions when available. */
+export function withLongDefinition(g: BilingualGlossaryTerm): BilingualGlossaryTerm {
+  const long = glossaryLongDefinitions[g.term];
+  if (!long) return g;
+  return { ...g, definition: long };
+}
+
+/** Deduped glossary: last definition wins for duplicate term keys; then long defs applied. */
 export function getUniqueGlossary(): BilingualGlossaryTerm[] {
   const map = new Map<string, BilingualGlossaryTerm>();
   for (const g of bilingualGlossary) {
     map.set(g.term.toUpperCase(), g);
   }
-  return [...map.values()];
+  return [...map.values()].map(withLongDefinition);
 }
 
 let cachedEntries: GlossaryEntry[] | null = null;

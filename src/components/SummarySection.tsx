@@ -2,12 +2,14 @@
 
 import { useI18n } from "@/i18n/context";
 import { ui } from "@/i18n/ui";
-import { bilingualGlossary, bilingualSignoffChecklist } from "@/data/glossaryBilingual";
+import { bilingualSignoffChecklist } from "@/data/glossaryBilingual";
+import { getUniqueGlossary } from "@/lib/glossaryLookup";
 import { cellGlossary } from "@/data/cellGlossary";
 
 export function SummarySection() {
   const { locale, t } = useI18n();
   const checkCount = bilingualSignoffChecklist.reduce((n, g) => n + g.items[locale].length, 0);
+  const termCount = getUniqueGlossary().length;
 
   return (
     <section className="relative py-20 sm:py-32 px-4 sm:px-6 border-t border-slate-800/50">
@@ -21,7 +23,7 @@ export function SummarySection() {
           <div className="grid sm:grid-cols-4 gap-4 mb-16">
             {[
               { value: "14", label: t(ui.statPhases), color: "#22d3ee" },
-              { value: String(bilingualGlossary.length), label: t(ui.statTerms), color: "#a78bfa" },
+              { value: String(termCount), label: t(ui.statTerms), color: "#a78bfa" },
               { value: String(checkCount), label: t(ui.statChecks), color: "#34d399" },
               { value: String(cellGlossary.length), label: t(ui.statCells), color: "#60a5fa" },
             ].map((stat) => (

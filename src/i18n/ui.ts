@@ -33,16 +33,16 @@ export const ui = {
   ),
   glossaryTitle: loc("Glossario Tecnico", "Technical Glossary"),
   glossarySubtitle: loc(
-    "Termini, acronimi e file del flusso RTL → GDSII. Nei testi delle fasi i termini sottolineati sono cliccabili e aprono questa definizione.",
-    "Terms, acronyms, and files of the RTL → GDSII flow. In phase text, dotted underlined terms are clickable and open this definition."
+    "Termini, acronimi e file del flusso RTL → GDSII con definizioni estese. Nei testi delle fasi i termini sottolineati aprono il popup; qui trovi la voce completa.",
+    "Terms, acronyms, and files of the RTL → GDSII flow with extended definitions. In stage text, underlined terms open the popup; here you get the full entry."
   ),
   glossarySearch: loc("Cerca termine (WNS, SPEF, AOCV…)", "Search term (WNS, SPEF, AOCV…)"),
   glossaryEmpty: loc("Nessun termine corrisponde alla ricerca.", "No terms match this search."),
   glossaryCount: loc("termini", "terms"),
   cellsTitle: loc("Glossario Celle Standard", "Standard Cell Glossary"),
   cellsSubtitle: loc(
-    "Ogni cella fisica del PDK: funzione, placement, e regole di utilizzo in produzione.",
-    "Every physical PDK cell: function, placement, and production usage rules."
+    "Ogni cella/porta della library: equazione booleana, placement, quando usarla, note di produzione (drive, VT, scan, DRC).",
+    "Every library cell/gate: Boolean equation, placement, when to use it, production notes (drive, VT, scan, DRC)."
   ),
   signoffTitle: loc("Checklist di Signoff", "Signoff Checklist"),
   signoffSubtitle: loc(
