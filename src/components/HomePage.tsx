@@ -17,6 +17,7 @@ import { InteractiveDiagrams } from "@/components/InteractiveDiagrams";
 import { ToolCommandsSection } from "@/components/ToolCommandsSection";
 import { CheatSheetSection } from "@/components/CheatSheetSection";
 import { WarStoriesSection } from "@/components/WarStoriesSection";
+import { PowerPkgDeepSection } from "@/components/PowerPkgDeepSection";
 import { useStages } from "@/hooks/useStages";
 
 export function HomePage() {
@@ -36,6 +37,7 @@ export function HomePage() {
         {stages.map((stage, index) => (
           <StageSection key={stage.id} stage={stage} index={index} />
         ))}
+        <PowerPkgDeepSection />
         <ToolCommandsSection />
         <WarStoriesSection />
         <CheatSheetSection />

@@ -387,6 +387,26 @@ export const interviewExtraMore2: Record<StageId, InterviewQuestion[]> = {
         "Redistribute bump map. RedHawk grid analysis. Die+package co-sim mandatory for designs >5 W."
       ),
     },
+    {
+      question: loc(
+        "SPM vs package extracted in CPA — quando basta lo SPM?",
+        "SPM vs extracted package in CPA — when is SPM enough?"
+      ),
+      answer: loc(
+        "Early budgeting e what-if su L_loop. Signoff: extracted/CPS se |Z(f)| diverge >~20% o multi-resonance. Stessa bump map della tapeout.",
+        "Early budgeting and L_loop what-if. Signoff: extracted/CPS if |Z(f)| diverges >~20% or multi-resonance. Same bump map as tapeout."
+      ),
+    },
+    {
+      question: loc(
+        "Decap ovunque vs hotspot — cosa chiedi al report?",
+        "Decap everywhere vs hotspot — what do you ask the report?"
+      ),
+      answer: loc(
+        "C_eff locale, ΔV WORST_dI/dt, leakage hot, inrush. C = I·Δt/ΔV nella regione che commuta — non conteggio filler globali.",
+        "Local C_eff, WORST_dI/dt ΔV, hot leakage, inrush. C = I·Δt/ΔV in the switching region — not global filler count."
+      ),
+    },
   ],
   package: [
     {
@@ -417,6 +437,16 @@ export const interviewExtraMore2: Record<StageId, InterviewQuestion[]> = {
       answer: loc(
         "Flip-chip. Wire-bond impraticabile >500 IO. Pitch 80–150 µm, L bassa, RDL obbligatorio. Floorplan diverge radicalmente.",
         "Flip-chip. Wire-bond impractical above ~500 IO. 80–150 µm pitch, low L, mandatory RDL. Floorplan differs radically."
+      ),
+    },
+    {
+      question: loc(
+        "Z_target = 10 mΩ ma |Z| package picca a 80 MHz — fix di sistema?",
+        "Z_target = 10 mΩ but package |Z| peaks at 80 MHz — system fix?"
+      ),
+      answer: loc(
+        "Anti-resonance board/pkg. ESR mirato, più power ball (↓L), mid-cap, shorter RDL, non solo strap on-die. CPA/CPS sulla bump map firmata.",
+        "Board/pkg anti-resonance. Targeted ESR, more power balls (↓L), mid-caps, shorter RDL—not only on-die straps. CPA/CPS on the signed bump map."
       ),
     },
   ],

@@ -212,6 +212,19 @@ export const sources: SourceRef[] = [
     ),
     kind: "industry",
   },
+  {
+    id: "swaminathan",
+    cite: "Swaminathan & Engin",
+    title: loc(
+      "Power Integrity Modeling and Design for Semiconductors and Systems",
+      "Power Integrity Modeling and Design for Semiconductors and Systems"
+    ),
+    detail: loc(
+      "Prentice Hall. Target impedance, |Z(f)|, anti-resonance board/package/die, CPA/CPS co-simulation, decap hierarchy. Riferimento per system PDN e modelli package.",
+      "Prentice Hall. Target impedance, |Z(f)|, board/package/die anti-resonance, CPA/CPS co-simulation, decap hierarchy. Reference for system PDN and package models."
+    ),
+    kind: "book",
+  },
 ];
 
 export function sourceById(id: string): SourceRef | undefined {

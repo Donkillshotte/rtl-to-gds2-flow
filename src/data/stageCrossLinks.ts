@@ -32,10 +32,13 @@ export const stageCrossLinks: Record<
     related: ["pdn", "placement"],
   },
   pdn: {
-    glossary: ["IR Drop", "EM", "Decap", "PDN"],
+    glossary: ["IR Drop", "EM", "Decap", "PDN", "System PDN", "CPA", "Z-target"],
     cells: ["decap", "tap"],
-    related: ["floorplan", "power"],
-    extras: [{ href: "#diagrams", labelIt: "Diagramma PDN", labelEn: "PDN diagram" }],
+    related: ["floorplan", "power", "package"],
+    extras: [
+      { href: "#diagrams", labelIt: "Diagramma PDN", labelEn: "PDN diagram" },
+      { href: "#power-pkg-deep", labelIt: "Approfondimento System PDN", labelEn: "System PDN deep dive" },
+    ],
   },
   placement: {
     glossary: ["Congestion", "Legalization", "Multi-Vt", "Pin Access"],
@@ -77,15 +80,19 @@ export const stageCrossLinks: Record<
     related: ["layout", "tapeout"],
   },
   power: {
-    glossary: ["IR Drop", "EM", "UPF", "IR-aware STA"],
+    glossary: ["IR Drop", "EM", "UPF", "IR-aware STA", "CPA", "SPM", "System PDN", "Decap"],
     cells: ["decap", "iso"],
-    related: ["pdn", "sta"],
-    extras: [{ href: "#war-stories", labelIt: "War stories", labelEn: "War stories" }],
+    related: ["pdn", "sta", "package"],
+    extras: [
+      { href: "#war-stories", labelIt: "War stories", labelEn: "War stories" },
+      { href: "#power-pkg-deep", labelIt: "CPA & Decap", labelEn: "CPA & Decap" },
+    ],
   },
   package: {
-    glossary: ["Bump / C4", "RDL", "Flip-chip"],
+    glossary: ["Bump / C4", "RDL", "Flip-chip", "PKG", "CPA", "SSO", "Z-target"],
     cells: [],
-    related: ["power", "tapeout"],
+    related: ["power", "tapeout", "pdn"],
+    extras: [{ href: "#power-pkg-deep", labelIt: "Approfondimento PKG", labelEn: "PKG deep dive" }],
   },
   tapeout: {
     glossary: ["GDSII", "BTO", "MTO", "GKC"],

@@ -130,6 +130,9 @@ export function Header() {
           <a href="#compare" className="px-2 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden xl:block">
             {t(ui.navCompare)}
           </a>
+          <a href="#power-pkg-deep" className="px-2 py-1 rounded-lg text-xs text-emerald-400/90 hover:text-emerald-300 transition-colors hidden xl:block">
+            {t(ui.navPowerPkg)}
+          </a>
           <a href="#glossary" className="px-2 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden xl:block">
             {t(ui.navGlossary)}
           </a>

@@ -12,12 +12,13 @@ import { playbookFinal } from "@/data/playbookFinal";
 import { useI18n } from "@/i18n/context";
 import { ui } from "@/i18n/ui";
 import { glossaryTermId } from "@/lib/utils";
+import { powerPkgTopics } from "@/data/powerPkgDeepDive";
 
 const allPlaybook = [...playbook, ...playbookMore, ...playbookEvenMore, ...playbookFinal];
 
 type Hit = {
   id: string;
-  kind: "stage" | "glossary" | "cell" | "playbook";
+  kind: "stage" | "glossary" | "cell" | "playbook" | "deep";
   title: string;
   href: string;
   blurb: string;
@@ -115,6 +116,22 @@ export function GlobalSearch() {
       }
     }
 
+    for (const tp of powerPkgTopics) {
+      const title = t(tp.title);
+      const body = `${t(tp.kicker)} ${tp.paragraphs.map((p) => t(p.body)).join(" ")}`;
+      const score = scoreMatch(needle, title, body);
+      if (score !== null) {
+        out.push({
+          id: tp.id,
+          kind: "deep",
+          title,
+          href: `#power-pkg-${tp.id}`,
+          blurb: t(ui.navPowerPkg),
+          score: score + 8,
+        });
+      }
+    }
+
     return out.sort((a, b) => b.score - a.score).slice(0, 10);
   }, [q, stages, t]);
 
@@ -138,6 +155,7 @@ export function GlobalSearch() {
     glossary: t(ui.searchKindGlossary),
     cell: t(ui.searchKindCell),
     playbook: t(ui.searchKindPlaybook),
+    deep: t(ui.navPowerPkg),
   };
 
   return (

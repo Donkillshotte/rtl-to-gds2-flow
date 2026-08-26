@@ -42,9 +42,19 @@ const rows = [
     note: loc("Aiuta setup, mangia hold", "Helps setup, eats hold"),
   },
   {
-    topic: loc("MTBF (sync)", "MTBF (sync)"),
-    formula: "MTBF ≈ e^(τ/τ0) / (T · W · f₁ · f₂)",
-    note: loc("Harris/Weste; multi-flop", "Harris/Weste; multi-flop"),
+    topic: loc("Z-target PDN", "PDN Z-target"),
+    formula: "Z_target = ΔV_allowed / ΔI_step",
+    note: loc("Es. 40 mV / 4 A = 10 mΩ", "E.g. 40 mV / 4 A = 10 mΩ"),
+  },
+  {
+    topic: loc("Decap (ordine)", "Decap (order)"),
+    formula: "C ≥ I · Δt / ΔV",
+    note: loc("Locale all’hotspot; non fixa R_dc", "Local to hotspot; does not fix R_dc"),
+  },
+  {
+    topic: loc("Package L·di/dt", "Package L·di/dt"),
+    formula: "ΔV_L = L_loop · di/dt",
+    note: loc("CPA: stessa bump map del tapeout", "CPA: same bump map as tapeout"),
   },
 ];
 

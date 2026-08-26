@@ -122,6 +122,7 @@ export function MobileHeaderMenu() {
     { href: "#learn-lab", label: t(ui.navLearn) },
     { href: "#progress", label: t(ui.progressTitle) },
     { href: "#diagrams", label: t(ui.navDiagrams) },
+    { href: "#power-pkg-deep", label: t(ui.navPowerPkg) },
     { href: "#compare", label: t(ui.navCompare) },
     { href: "#tool-commands", label: t(ui.navTools) },
     { href: "#war-stories", label: t(ui.navWar) },

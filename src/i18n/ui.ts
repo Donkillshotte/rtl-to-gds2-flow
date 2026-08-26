@@ -173,6 +173,13 @@ export const ui = {
   sourcedEssay: loc("Approfondimento da letteratura", "Literature deep-dive"),
   sourcedRefs: loc("Fonti", "Sources"),
   navSources: loc("Fonti", "Sources"),
+  powerPkgTitle: loc("Approfondimento PKG · CPA · Decap · System PDN", "Deep dive: PKG · CPA · Decap · System PDN"),
+  powerPkgLead: loc(
+    "Dal package alla mesh on-die: modelli CPA, capacità di decoupling e impedenza end-to-end VRM→pin. Saggi bilingue con fonti e link alle fasi PDN, power e package.",
+    "From package to on-die mesh: CPA models, decoupling capacitance, and end-to-end VRM→pin impedance. Bilingual essays with sources and links to PDN, power, and package stages."
+  ),
+  powerPkgTakeaways: loc("Takeaway operativi", "Operating takeaways"),
+  navPowerPkg: loc("PDN/PKG", "PDN/PKG"),
   searchPlaceholder: loc("Cerca fasi, termini…", "Search stages, terms…"),
   searchEmpty: loc("Nessun risultato.", "No results."),
   searchPlaybook: loc("Capitolo playbook", "Playbook chapter"),
