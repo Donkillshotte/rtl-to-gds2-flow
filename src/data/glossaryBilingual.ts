@@ -156,6 +156,13 @@ export const bilingualGlossary: BilingualGlossaryTerm[] = [
   g("PRO Exit", "Placement/Post-Route Optimization Exit", "Placement o post-route opt chiusa: timing accettabile, congestion ok, DRC interno pulito.", "Placement or post-route opt closed: acceptable timing, congestion OK, internal DRC clean.", "Milestone", "Milestone"),
   g("MPW", "Multi-Project Wafer", "Più design sullo stesso wafer. Costo mask condiviso. Per prototipi, non volume.", "Multiple designs on one wafer. Shared mask cost. For prototypes, not volume.", "Tapeout", "Tapeout"),
   g("Respin", undefined, "Nuovo tapeout dopo silicon fail o ECO tardi. Metal-only respin (BEOL) vs full (FEOL+BEOL).", "New tapeout after silicon fail or late ECO. Metal-only respin (BEOL) vs full (FEOL+BEOL).", "Tapeout", "Tapeout"),
+  g("Lock-up", "Lock-up latch / FF", "Livello extra sullo scan stitch inter-domain: spezza il path hold Q→SI. Non è un delay buffer. Hold intra-domain resta con delay cell.", "Extra level on an inter-domain scan stitch: breaks the Q→SI hold path. Not a delay buffer. Intra-domain hold still uses delay cells.", "Test", "Test"),
+  g("OCC", "On-Chip Clock Control", "Mux/sync che lancia 1–2 pulse at-speed per transition test. È un clock root extra per CTS, con glitch check da ICG.", "Mux/sync that launches 1–2 at-speed pulses for transition test. Extra clock root for CTS, with ICG-style glitch checks.", "Test", "Test"),
+  g("EDT", "Embedded Deterministic Test", "Compressione scan: poche porte ATE ↔ molte chain interne. Pattern count e pin ATE crollano. Codec analogo in altri vendor.", "Scan compression: few ATE pins ↔ many internal chains. Pattern count and ATE pins collapse. Other vendors ship an analogous codec.", "Test", "Test"),
+  g("HFNS", "High Fanout Net Synthesis", "Albero di buffer per reset, scan_en, e altri net non-clock a 10k–100k sink. Non è CTS (niente skew/duty/NDR da clock).", "Buffer tree for reset, scan_en, and other non-clock nets with 10k–100k sinks. Not CTS (no clock skew/duty/NDR).", "PD", "PD"),
+  g("LELE", "Litho-Etch-Litho-Etch", "Double patterning: due mask, grafo 2-colorabile. Odd cycle = coloring conflict. A 7 nm è DRC, non un warning CAD.", "Double patterning: two masks, 2-colorable graph. Odd cycle = coloring conflict. At 7 nm it is DRC, not a CAD warning.", "DFM", "DFM"),
+  g("PV-band", undefined, "Inviluppo geometrico sotto variation di processo. Hotspot fuori spec = fail litho, si fixa in layout.", "Geometric envelope under process variation. Hotspot out of spec = litho fail, fixed in layout.", "DFM", "DFM"),
+  g("DRV", "Design Rule / Electrical DRV", "In STA: max_tran, max_cap, max_fanout. Zero prima di credere al WNS: fuori range il .lib estrapola.", "In STA: max_tran, max_cap, max_fanout. Zero before you believe WNS: outside range the .lib extrapolates.", "Timing", "Timing"),
 ];
 
 export const bilingualSignoffChecklist = [
@@ -170,6 +177,7 @@ export const bilingualSignoffChecklist = [
         "RTL ↔ synthesis LEC pass (no non-eq)",
         "UPF/CLP verification pass (isolation, LS, retention)",
         "DFT: scan inserted, ATPG coverage nel target, MBIST su tutte le memorie",
+        "Lock-up latch su stitch inter-domain; OCC nel clock spec; TCK/TMS/TDI/TDO riservati",
       ],
       [
         "Lint clean (documented waivers, no inferred latches)",
@@ -179,6 +187,7 @@ export const bilingualSignoffChecklist = [
         "RTL ↔ synthesis LEC pass (no non-eq)",
         "UPF/CLP verification pass (isolation, LS, retention)",
         "DFT: scan inserted, ATPG coverage on target, MBIST on all memories",
+        "Lock-up latches on inter-domain stitches; OCC in the clock spec; TCK/TMS/TDI/TDO reserved",
       ]
     ),
   },
@@ -296,6 +305,8 @@ export const bilingualSignoffChecklist = [
         "Post-PEX SPEF (coupled RC) su signoff corners",
         "CPPR/AOCV o POCV/LVF applicato secondo nodo",
         "IR-aware STA se IR hotspot > soglia",
+        "Scan shift hold chiuso (lock-up + delay); capture at-speed setup; mode mbist in MMMC",
+        "Temp inversion: SS-cold incluso a nodi bassi V",
       ],
       [
         "Setup WNS ≥ 0, TNS = 0 (all setup corners)",
@@ -305,6 +316,8 @@ export const bilingualSignoffChecklist = [
         "Post-PEX SPEF (coupled RC) on signoff corners",
         "CPPR/AOCV or POCV/LVF applied per node",
         "IR-aware STA if IR hotspot exceeds threshold",
+        "Scan-shift hold closed (lock-up + delay); at-speed capture setup; mbist mode in MMMC",
+        "Temp inversion: SS-cold included at low-V nodes",
       ]
     ),
   },
@@ -319,6 +332,7 @@ export const bilingualSignoffChecklist = [
         "Metal density: min/max compliant per layer",
         "Seal ring DRC continuo",
         "DFM: via doubling / hotspot waiver firmato",
+        "Coloring LELE: zero odd-cycle; litho/PV-band dentro spec",
       ],
       [
         "DRC: ZERO violations (foundry runset, merged GDS)",
@@ -328,6 +342,7 @@ export const bilingualSignoffChecklist = [
         "Metal density: min/max compliant per layer",
         "Seal ring DRC continuous",
         "DFM: via doubling / hotspot waiver signed",
+        "LELE coloring: zero odd-cycles; litho/PV-band in spec",
       ]
     ),
   },
@@ -342,6 +357,7 @@ export const bilingualSignoffChecklist = [
         "Signal EM: RMS + peak within limits",
         "MTTF ≥ 10 anni @ Tmax (125°C/150°C)",
         "Mode: functional, scan, low-power VCD",
+        "Peak current BIST/test-mode analizzato (IR/EM)",
       ],
       [
         "Static IR drop < 5% VDD (all instances)",
@@ -351,6 +367,26 @@ export const bilingualSignoffChecklist = [
         "Signal EM: RMS + peak within limits",
         "MTTF ≥ 10 years @ Tmax (125°C/150°C)",
         "Modes: functional, scan, low-power VCD",
+        "BIST/test-mode peak current analyzed (IR/EM)",
+      ]
+    ),
+  },
+  {
+    category: loc("DFT Signoff", "DFT Signoff"),
+    items: loc(
+      [
+        "ATPG stuck-at e transition sul netlist ECO-finale",
+        "Coverage con lista untestable (analog, RAM→MBIST, tied-off)",
+        "Pattern consegnati; compressione EDT/Codec se specificata",
+        "MBIST wrap su SRAM; analog/CAM documented",
+        "Boundary scan 1149.1 / IJTAG 1687 se nel spec",
+      ],
+      [
+        "Stuck-at and transition ATPG on the final ECO netlist",
+        "Coverage with untestable list (analog, RAM→MBIST, tied-off)",
+        "Patterns delivered; EDT/Codec compression if specified",
+        "MBIST wrap on SRAMs; analog/CAM documented",
+        "Boundary scan 1149.1 / IJTAG 1687 if in spec",
       ]
     ),
   },

@@ -28,7 +28,7 @@ Guida professionale interattiva al flusso completo di **physical design** — da
 
 ## Sezioni aggiuntive
 
-- **Laboratorio da colloquio** — Quiz, flashcard, calcolatori STA/IR/utilization/antenna, esempi numerici passo-passo
+- **Laboratorio da colloquio** — Quiz, flashcard, **drill war-room** (scenari multi-step: hold post-CTS, congestion, IR, ECO/GKC, scan/DFT, coloring/DFM, floorplan, EM, SSO, TNS), calcolatori STA/IR/utilization/antenna, esempi numerici, playbook DFT/DFM/ECO/GKC
 - **Formule & Modelli** — KaTeX (setup/hold, FO4, logical effort, IR drop, Black's Eq, MTBF, antenna, …)
 - **Senior Interview Prep** — Q&A per ogni fase (AOCV/POCV, bump map, fill SI, handoff FE→PD, …)
 - **Checklist di Signoff** — Check di produzione per ogni milestone

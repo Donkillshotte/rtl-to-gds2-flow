@@ -61,17 +61,26 @@ export const ui = {
   navLearn: loc("Lab", "Lab"),
   learnTitle: loc("Laboratorio da colloquio", "Interview lab"),
   learnSubtitle: loc(
-    "Quiz con spiegazione, flashcard dalle Q&A senior, calcolatori (setup/hold, IR, utilization, antenna) ed esempi numerici passo-passo. Cambia i numeri: è così che si impara lo STA, non a memoria.",
-    "Quiz with explanations, senior Q&A flashcards, calculators (setup/hold, IR, utilization, antenna) and step-by-step numerical examples. Change the numbers: that is how you learn STA, not by memorizing."
+    "Quiz, flashcard, drill da war-room (tu sei il PD), calcolatori, esempi numerici e playbook DFT/DFM/ECO/GKC. Cambia i numeri: è così che si impara lo STA, non a memoria.",
+    "Quiz, flashcards, war-room drills (you are the PD), calculators, numerical examples, and DFT/DFM/ECO/GKC playbooks. Change the numbers: that is how you learn STA, not by memorizing."
   ),
   learnQuiz: loc("Quiz", "Quiz"),
   learnCards: loc("Flashcard", "Flashcards"),
+  learnScenarios: loc("Drill war-room", "War-room drills"),
+  learnPlaybook: loc("Playbook", "Playbook"),
   learnCalc: loc("Calcolatori", "Calculators"),
   learnExamples: loc("Esempi svolti", "Worked examples"),
   learnScore: loc("punteggio", "score"),
   learnNext: loc("Prossima domanda", "Next question"),
   learnTap: loc("Tocca per la risposta", "Tap for the answer"),
   learnQ: loc("Tocca per la domanda", "Tap for the question"),
+  learnNextStep: loc("Passo successivo", "Next step"),
+  learnDebrief: loc("Debrief", "Debrief"),
+  learnClosing: loc("Takeaway da colloquio", "Interview takeaway"),
+  learnRestart: loc("Ricomincia lo scenario", "Restart scenario"),
+  learnSymptoms: loc("Numeri sul tavolo", "Numbers on the table"),
+  learnPickScenario: loc("Scegli uno scenario", "Pick a scenario"),
+  learnStepOf: loc("passo", "step"),
   learnStaHint: loc(
     "Skew positivo (capture tardi) aiuta setup e mangia hold. Hold NON dipende da Tclk. Valori verdi = slack ≥ 0.",
     "Positive skew (late capture) helps setup and eats hold. Hold does NOT depend on Tclk. Green = slack ≥ 0."

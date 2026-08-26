@@ -512,6 +512,426 @@ export const quizBank: QuizItem[] = [
       "WORST_POWER: max-energy cycle (thermal/resistive droop). WORST_dI/dt: steepest edge (package inductance). You need both VCDs."
     ),
   },
+  {
+    id: "q-lockup",
+    stage: "sta",
+    difficulty: "senior",
+    question: loc(
+      "Un lock-up latch sullo scan stitch serve a…",
+      "A lock-up latch on a scan stitch is there to…"
+    ),
+    choices: loc(
+      [
+        "Spezzare il path hold tra due clock domain / segmenti lunghi con un livello extra — NON è un buffer di delay",
+        "Alzare la frequenza di shift",
+        "Sostituire l'OCC",
+        "Chiudere il setup di capture at-speed",
+      ],
+      [
+        "Break the hold path between two clock domains / long segments with an extra level — it is NOT a delay buffer",
+        "Raise shift frequency",
+        "Replace the OCC",
+        "Close at-speed capture setup",
+      ]
+    ),
+    correct: 0,
+    explain: loc(
+      "Lock-up è trasparente su una fase e cattura sull'altra: il hold path Q→SI non è più combo diretta. Capture at-speed si chiude come setup funzionale.",
+      "Lock-up is transparent on one phase and captures on the other: the Q→SI hold path is no longer a direct combo. At-speed capture is closed like functional setup."
+    ),
+  },
+  {
+    id: "q-atpg-golden",
+    stage: "tapeout",
+    difficulty: "senior",
+    question: loc(
+      "ATPG a 99.4% sul netlist pre-ECO, ECO metal-only dopo. Copertura valida al GKC?",
+      "ATPG at 99.4% on the pre-ECO netlist, metal-only ECO after. Valid coverage at GKC?"
+    ),
+    choices: loc(
+      [
+        "Sì, metal-only non tocca transistor",
+        "No: anche uno spare riwirato cambia compare-point. ATPG (e LEC) sul golden ECO-finale",
+        "Sì se coverage > 99%",
+        "No solo se hai toccato scan_en",
+      ],
+      [
+        "Yes, metal-only does not touch transistors",
+        "No: even a rewired spare changes compare-points. ATPG (and LEC) on the final ECO golden",
+        "Yes if coverage > 99%",
+        "No only if you touched scan_en",
+      ]
+    ),
+    correct: 1,
+    explain: loc(
+      "Spare NAND+INV è funzione nuova. Pattern vecchi possono non coprire o, peggio, assumere un netlist diverso. GKC DFT chiede il log sul GDS/netlist firmati.",
+      "A spare NAND+INV is new function. Old patterns may not cover or, worse, assume a different netlist. GKC DFT wants the log on the signed GDS/netlist."
+    ),
+  },
+  {
+    id: "q-color-odd",
+    stage: "pv",
+    difficulty: "senior",
+    question: loc(
+      "Un coloring conflict LELE è, in teoria dei grafi:",
+      "A LELE coloring conflict is, in graph theory:"
+    ),
+    choices: loc(
+      [
+        "Un odd cycle: il grafo delle adiacenze non è bipartito",
+        "Un via enclosure corto",
+        "Un antenna ratio alto",
+        "Un hold path",
+      ],
+      [
+        "An odd cycle: the adjacency graph is not bipartite",
+        "A short via enclosure",
+        "A high antenna ratio",
+        "A hold path",
+      ]
+    ),
+    correct: 0,
+    explain: loc(
+      "Due mask = 2-coloring. Odd cycle ⇒ non 2-colorabile. Fix geometrico (cut/jog/layer), non waiver.",
+      "Two masks = 2-coloring. Odd cycle ⇒ not 2-colorable. Geometric fix (cut/jog/layer), not a waiver."
+    ),
+  },
+  {
+    id: "q-via-double-cap",
+    stage: "pv",
+    difficulty: "junior",
+    question: loc(
+      "Double-via su TUTTI i net a 7 nm. Effetto collaterale tipico?",
+      "Double-via on ALL nets at 7 nm. Typical side effect?"
+    ),
+    choices: loc(
+      [
+        "Overflow/coloring: i via extra mangiano track. Si prioritizza clock e PG",
+        "Migliora sempre anche il timing hold",
+        "Elimina il bisogno di fill",
+        "Riduce il pattern ATPG",
+      ],
+      [
+        "Overflow/coloring: extra vias eat tracks. Prioritize clock and PG",
+        "Always improves hold timing too",
+        "Removes the need for fill",
+        "Reduces ATPG pattern count",
+      ]
+    ),
+    correct: 0,
+    explain: loc(
+      "DFM vs capacity è un trade-off. Via array dove J e yield contano; non un bottone globale il venerdì sera.",
+      "DFM vs capacity is a trade-off. Via arrays where J and yield matter; not a global Friday-night button."
+    ),
+  },
+  {
+    id: "q-wns-tns",
+    stage: "sta",
+    difficulty: "junior",
+    question: loc(
+      "WNS −5 ps, TNS −80 ns. Quanti path (ordine) stai guardando?",
+      "WNS −5 ps, TNS −80 ns. How many paths (order of mag.) are you looking at?"
+    ),
+    choices: loc(
+      [
+        "Uno: il WNS",
+        "Migliaia: TNS/|WNS| ~ 16k path-equivalenti — è lavoro di massa, non un buffer",
+        "80: uno per nanosecondo",
+        "Zero: TNS negativo è un bug del tool",
+      ],
+      [
+        "One: the WNS",
+        "Thousands: TNS/|WNS| ~ 16k path-equivalents — mass work, not one buffer",
+        "80: one per nanosecond",
+        "Zero: negative TNS is a tool bug",
+      ]
+    ),
+    correct: 1,
+    explain: loc(
+      "TNS è la somma degli slack negativi. |−80 ns|/5 ps = 16k. Un buffer sul path 1 lascia 15 999 path rossi.",
+      "TNS is the sum of negative slacks. |−80 ns|/5 ps = 16k. One buffer on path 1 leaves 15,999 paths red."
+    ),
+  },
+  {
+    id: "q-temp-inv",
+    stage: "sta",
+    difficulty: "senior",
+    question: loc(
+      "A 7 nm il setup peggiore a volte è SS@cold, non SS@hot. Perché?",
+      "At 7 nm the worst setup is sometimes SS@cold, not SS@hot. Why?"
+    ),
+    choices: loc(
+      [
+        "Temperature inversion: a basso V il mobility/scattering fa ritardare il cold più del hot su alcuni path",
+        "Il tester è in freezer",
+        "Hold e setup condividono sempre lo stesso corner",
+        "Cold riduce solo il leakage",
+      ],
+      [
+        "Temperature inversion: at low V, mobility/scattering makes cold slower than hot on some paths",
+        "The tester is in a freezer",
+        "Hold and setup always share the same corner",
+        "Cold only reduces leakage",
+      ]
+    ),
+    correct: 0,
+    explain: loc(
+      "MMMC deve includere SS-cold e SS-hot. Chi firma solo SS-hot a 0.75 V si beve un respin. Hold resta FF-cold in genere.",
+      "MMMC must include SS-cold and SS-hot. Signing only SS-hot at 0.75 V buys a respin. Hold is still usually FF-cold."
+    ),
+  },
+  {
+    id: "q-bto-eco",
+    stage: "tapeout",
+    difficulty: "junior",
+    question: loc(
+      "Dopo BTO puoi ancora piazzare una NAND2 nuova in un hole?",
+      "After BTO can you still place a new NAND2 in a hole?"
+    ),
+    choices: loc(
+      [
+        "Sì, BTO congela solo il package",
+        "No: BTO congela FEOL (diffusion/poly/implant). Nuova cella = respin FEOL. Metal-only = spare già presenti + metal/via",
+        "Sì se LVS passa",
+        "No solo se è LVT",
+      ],
+      [
+        "Yes, BTO only freezes the package",
+        "No: BTO freezes FEOL (diffusion/poly/implant). A new cell = FEOL respin. Metal-only = existing spares + metal/via",
+        "Yes if LVS passes",
+        "No only if it is LVT",
+      ]
+    ),
+    correct: 1,
+    explain: loc(
+      "Spare cells si piazzano PRIMA del BTO. Dopo, si riwirano. MTO congela anche il metal.",
+      "Spare cells are placed BEFORE BTO. After, you rewire them. MTO freezes metal too."
+    ),
+  },
+  {
+    id: "q-mbist-ir",
+    stage: "power",
+    difficulty: "senior",
+    question: loc(
+      "In MBIST la corrente SRAM è 1.8× func. Firmi IR solo sul mode funzionale?",
+      "In MBIST SRAM current is 1.8× func. Do you sign IR on functional mode only?"
+    ),
+    choices: loc(
+      [
+        "Sì, BIST dura due minuti",
+        "No: peak IR può collassare V o fondere via anche in test. Scenario BIST (o peak-current) è parte del signoff",
+        "Sì perché 400 MHz < 1.2 GHz implica meno I",
+        "No, quindi disattivi MBIST",
+      ],
+      [
+        "Yes, BIST lasts two minutes",
+        "No: peak IR can collapse V or fuse vias even in test. A BIST scenario (or peak-current) is part of signoff",
+        "Yes because 400 MHz < 1.2 GHz implies less I",
+        "No, therefore you disable MBIST",
+      ]
+    ),
+    correct: 1,
+    explain: loc(
+      "EM (MTTF) può tollerare minuti; IR peak no. Frequenza più bassa non significa array più quieti: March patterns switchano banche.",
+      "EM (MTTF) may tolerate minutes; peak IR does not. Lower frequency does not mean quiet arrays: March patterns switch banks."
+    ),
+  },
+  {
+    id: "q-sso-l",
+    stage: "package",
+    difficulty: "senior",
+    question: loc(
+      "SSO scala principalmente con…",
+      "SSO scales primarily with…"
+    ),
+    choices: loc(
+      [
+        "L_loop del return × di/dt × N bit che commutano insieme",
+        "Solo Cgate delle std cell interne",
+        "Solo il WNS",
+        "Il numero di layer di fill",
+      ],
+      [
+        "Return-path L_loop × di/dt × N bits switching together",
+        "Only Cgate of internal std cells",
+        "Only WNS",
+        "The number of fill layers",
+      ]
+    ),
+    correct: 0,
+    explain: loc(
+      "Vbounce ≈ L di/dt. Riduci L (più bump VSS, flip-chip), di/dt (slew, stagger), N (bus splitting). Decap on-die taglia il droop locale.",
+      "Vbounce ≈ L di/dt. Cut L (more VSS bumps, flip-chip), di/dt (slew, stagger), N (bus splitting). On-die decap cuts local droop."
+    ),
+  },
+  {
+    id: "q-mcp-hold",
+    stage: "sta",
+    difficulty: "senior",
+    question: loc(
+      "set_multicycle_path 4 -setup. Cosa fai sul hold?",
+      "set_multicycle_path 4 -setup. What do you do for hold?"
+    ),
+    choices: loc(
+      [
+        "Di solito -hold 1 (o 3 se il tool conta end-point): hold resta 1 ciclo, altrimenti il path è un false hold di 4 cicli",
+        "Anche -hold 4, sempre",
+        "Niente: hold ignora MCP",
+        "False path automatico",
+      ],
+      [
+        "Usually -hold 1 (or 3 if the tool is end-point counted): hold stays 1 cycle, otherwise the path is a 4-cycle false hold",
+        "Always -hold 4 too",
+        "Nothing: hold ignores MCP",
+        "Automatic false path",
+      ]
+    ),
+    correct: 0,
+    explain: loc(
+      "Setup MCP=4 allunga il required. Hold MCP=4 lo allunga troppo e maschera race veri. Default industriale: setup N, hold 1, documentato.",
+      "Setup MCP=4 stretches required. Hold MCP=4 stretches it too far and hides real races. Industrial default: setup N, hold 1, documented."
+    ),
+  },
+  {
+    id: "q-drv-first",
+    stage: "sta",
+    difficulty: "junior",
+    question: loc(
+      "Prima di credere a un WNS di −6 ps post-route, cosa deve essere zero?",
+      "Before you believe a −6 ps post-route WNS, what must be zero?"
+    ),
+    choices: loc(
+      [
+        "DRV: max_tran / max_cap (e preferibilmente noise). Fuori caratterizzazione il .lib estrapola",
+        "Il numero di spare cells",
+        "L'overflow a esattamente 0.000%",
+        "Il leakage",
+      ],
+      [
+        "DRV: max_tran / max_cap (and preferably noise). Outside characterization the .lib extrapolates",
+        "Spare-cell count",
+        "Overflow at exactly 0.000%",
+        "Leakage",
+      ]
+    ),
+    correct: 0,
+    explain: loc(
+      "NLDM/CCS sono tabelle boundate. Slew fuori range ⇒ delay di fantasia. DRV=0 è exit criterion, poi SI, poi WNS.",
+      "NLDM/CCS are bounded tables. Slew out of range ⇒ fantasy delay. DRV=0 is an exit criterion, then SI, then WNS."
+    ),
+  },
+  {
+    id: "q-occ",
+    stage: "cts",
+    difficulty: "senior",
+    question: loc(
+      "OCC (on-chip clock control) per at-speed test è, per CTS:",
+      "OCC (on-chip clock control) for at-speed test is, for CTS:"
+    ),
+    choices: loc(
+      [
+        "Un clock root extra con mux/sync: glitch check come un ICG, latency verso i sink, mode capture nel MMMC",
+        "Solo un pin ATE, niente tree",
+        "Un lock-up latch",
+        "Un filler cap",
+      ],
+      [
+        "An extra clock root with mux/sync: glitch checks like an ICG, latency to sinks, capture mode in MMMC",
+        "Only an ATE pin, no tree",
+        "A lock-up latch",
+        "A filler cap",
+      ]
+    ),
+    correct: 0,
+    explain: loc(
+      "OCC lancia 1–2 pulse a f funzionale. Se il mux glitcha, il test (e il silicon) muore. CTS deve vederlo come root, non come datapath.",
+      "OCC launches 1–2 pulses at functional f. If the mux glitches, the test (and silicon) dies. CTS must see it as a root, not as datapath."
+    ),
+  },
+  {
+    id: "q-fill-spef",
+    stage: "layout",
+    difficulty: "junior",
+    question: loc(
+      "SPEF di signoff senza metal fill merged. Cosa succede al WNS?",
+      "Signoff SPEF without merged metal fill. What happens to WNS?"
+    ),
+    choices: loc(
+      [
+        "Cground/coupling sbagliati: WNS può muoversi di decine di ps vs silicon",
+        "Niente: il fill è dummy",
+        "WNS migliora sempre di 50 ps",
+        "LEC fallisce",
+      ],
+      [
+        "Wrong Cground/coupling: WNS can move tens of ps vs silicon",
+        "Nothing: fill is dummy",
+        "WNS always improves by 50 ps",
+        "LEC fails",
+      ]
+    ),
+    correct: 0,
+    explain: loc(
+      "Fill grounded aumenta C. Fill floating accoppia. Signoff extraction = GDS merged. P&R database senza fill è un pre-check.",
+      "Grounded fill raises C. Floating fill couples. Signoff extraction = merged GDS. P&R database without fill is a pre-check."
+    ),
+  },
+  {
+    id: "q-black-em",
+    stage: "power",
+    difficulty: "senior",
+    question: loc(
+      "J via = 1.6×Jmax, n=2. MTTF rispetto al target 10 anni (stessa T)?",
+      "Via J = 1.6×Jmax, n=2. MTTF vs a 10-year target (same T)?"
+    ),
+    choices: loc(
+      [
+        "MTTF ∝ J^(−n) → 10 / 1.6² ≈ 3.9 anni — fail",
+        "1.6× è solo 60% in più: ancora 10 anni",
+        "MTTF cresce con J",
+        "n=2 implica MTTF infinito",
+      ],
+      [
+        "MTTF ∝ J^(−n) → 10 / 1.6² ≈ 3.9 years — fail",
+        "1.6× is only 60% more: still 10 years",
+        "MTTF grows with J",
+        "n=2 implies infinite MTTF",
+      ]
+    ),
+    correct: 0,
+    explain: loc(
+      "Black's law è potenza, non lineare. 1.6× su un via di clock è un classico fail. Via array, non 'è solo 60%'.",
+      "Black's law is a power law, not linear. 1.6× on a clock via is a classic fail. Via arrays, not 'it is only 60%'."
+    ),
+  },
+  {
+    id: "q-hfns",
+    stage: "routing",
+    difficulty: "junior",
+    question: loc(
+      "Reset e scan_en con 80k sink. Li tratti come clock in CTS?",
+      "Reset and scan_en with 80k sinks. Do you treat them as clocks in CTS?"
+    ),
+    choices: loc(
+      [
+        "No: HFNS (high-fanout non-clock) → buffer tree / clone. CTS è per clock (skew/duty/NDR)",
+        "Sì, stesso ccopt",
+        "Sì, clock mesh anche sul reset",
+        "No, un INV X32 basta",
+      ],
+      [
+        "No: HFNS (high-fanout non-clock) → buffer tree / clones. CTS is for clocks (skew/duty/NDR)",
+        "Yes, same ccopt",
+        "Yes, clock mesh on reset too",
+        "No, one X32 INV is enough",
+      ]
+    ),
+    correct: 0,
+    explain: loc(
+      "Un X32 non guida 80k gate. HFNS synthesis prima del detailed. Clock cells su un reset sprecano NDR e power.",
+      "An X32 does not drive 80k gates. HFNS synthesis before detailed. Clock cells on a reset waste NDR and power."
+    ),
+  },
 ];
 
 export interface WorkedExample {
@@ -750,6 +1170,188 @@ export const workedExamples: WorkedExample[] = [
     result: loc(
       "Questa stima si fa a RTL, mesi prima del PD. Se il datapath è a 80 FO4, nessun placer ti salva.",
       "This estimate is done at RTL, months before PD. If the datapath is 80 FO4, no placer will save you."
+    ),
+  },
+  {
+    id: "ex-cts-skew",
+    stage: "cts",
+    title: loc("Budget di skew a 1.2 GHz", "Skew budget at 1.2 GHz"),
+    given: loc(
+      [
+        "Tclk = 833 ps",
+        "Overhead fisso: Tco+Tsu+jitter = 160 ps",
+        "OCV/AOCV extra sul clock path (depth 12) ≈ 35 ps",
+        "Vuoi ≥ 40 FO4 di logica (FO4 = 12 ps) → 480 ps",
+      ],
+      [
+        "Tclk = 833 ps",
+        "Fixed overhead: Tco+Tsu+jitter = 160 ps",
+        "Extra OCV/AOCV on the clock path (depth 12) ≈ 35 ps",
+        "Want ≥ 40 FO4 of logic (FO4 = 12 ps) → 480 ps",
+      ]
+    ),
+    steps: [
+      {
+        title: loc("Cosa resta allo skew", "What is left for skew"),
+        body: loc(
+          "Tlogic_max = Tclk − overhead − OCV − skew_budget. 833 − 160 − 35 − skew = 480 → skew_budget ≤ 158 ps. Target industriale HPC è molto più stretto (20–50 ps tree, <15 ps mesh) per lasciare margine SI/IR.",
+          "Tlogic_max = Tclk − overhead − OCV − skew_budget. 833 − 160 − 35 − skew = 480 → skew_budget ≤ 158 ps. Industrial HPC targets are much tighter (20–50 ps tree, <15 ps mesh) to leave SI/IR margin."
+        ),
+      },
+      {
+        title: loc("Useful skew", "Useful skew"),
+        body: loc(
+          "Se un path ha bisogno di +40 ps sul capture, quel +40 è −40 sul path successivo (zero-sum). Si usa su endpoint critici, non come '158 ps ovunque'.",
+          "If a path needs +40 ps on capture, that +40 is −40 on the next path (zero-sum). Use it on critical endpoints, not as '158 ps everywhere'."
+        ),
+      },
+    ],
+    result: loc(
+      "Skew è un budget che mangia FO4. Mesh costa power; tree costa OCV. Al colloquio quantifica, non dire 'minimizziamo lo skew'.",
+      "Skew is a budget that eats FO4. Mesh costs power; tree costs OCV. In interview quantify, do not say 'we minimize skew'."
+    ),
+  },
+  {
+    id: "ex-overflow",
+    stage: "routing",
+    title: loc("Overflow da capacity GCell", "Overflow from GCell capacity"),
+    given: loc(
+      [
+        "GCell 1.2 µm × 1.2 µm su M2",
+        "Track pitch M2 = 48 nm → ~25 track/GCell in una direzione",
+        "Demand stimata nel canale SRAM = 31 track-equivalent (net + via blockage 20%)",
+      ],
+      [
+        "GCell 1.2 µm × 1.2 µm on M2",
+        "M2 track pitch = 48 nm → ~25 tracks/GCell in one direction",
+        "Estimated demand in the SRAM channel = 31 track-equivalent (nets + 20% via blockage)",
+      ]
+    ),
+    steps: [
+      {
+        title: loc("Capacity netta", "Net capacity"),
+        body: loc(
+          "Capacity bruta 25, blockage via/NDR ~20% → ~20 track utili. Demand 31 → overflow = (31−20)/20 = 55% su QUEL GCell. Un '8% medio' nasconde picchi così.",
+          "Gross capacity 25, via/NDR blockage ~20% → ~20 useful tracks. Demand 31 → overflow = (31−20)/20 = 55% on THAT GCell. An '8% average' hides peaks like this."
+        ),
+      },
+      {
+        title: loc("Cosa muove il numero", "What moves the number"),
+        body: loc(
+          "Allargare il canale (più GCell), pin-orient, layer promote su M3/M4 (capacity extra), spread. Detailed S&R non crea track.",
+          "Widen the channel (more GCells), pin-orient, layer-promote to M3/M4 (extra capacity), spread. Detailed S&R does not create tracks."
+        ),
+      },
+    ],
+    result: loc(
+      "Overflow = (demand−capacity)/capacity per GCell. Si legge la mappa, non la media. 55% locale è floorplan, non un effort flag.",
+      "Overflow = (demand−capacity)/capacity per GCell. Read the map, not the average. 55% local is floorplan, not an effort flag."
+    ),
+  },
+  {
+    id: "ex-lockup",
+    stage: "sta",
+    title: loc("Hold scan con e senza lock-up", "Scan hold with and without lock-up"),
+    given: loc(
+      [
+        "Due FF, clock domain A e B, stitch SI",
+        "Tco_min + Twire_min = 40 ps",
+        "Thold + unc = 30 ps",
+        "Skew A→B (capture B tardi) = +90 ps",
+      ],
+      [
+        "Two FFs, clock domains A and B, SI stitch",
+        "Tco_min + Twire_min = 40 ps",
+        "Thold + unc = 30 ps",
+        "Skew A→B (B capture late) = +90 ps",
+      ]
+    ),
+    steps: [
+      {
+        title: loc("Senza lock-up", "Without lock-up"),
+        body: loc(
+          "Hold slack = 40 − (30+90) = −80 ps. Tshift è 100 ns e non entra. Delay cell da 90 ps sul SI occupa area e può creare setup a 10 MHz (qui setup è facile) ma resta fragile a OCV.",
+          "Hold slack = 40 − (30+90) = −80 ps. Tshift is 100 ns and does not enter. A 90 ps delay cell on SI costs area and can create setup at 10 MHz (setup is easy here) but stays OCV-fragile."
+        ),
+      },
+      {
+        title: loc("Con lock-up (livello)", "With lock-up (level)"),
+        body: loc(
+          "Il latch è trasparente quando A è stabile e chiude prima che B catturi: il path hold non è più combo Q_A→SI_B nello stesso istante. Lo skew inter-domain viene assorbito dalla fase. Restano solo hold INTRA-domain (delay locali).",
+          "The latch is transparent while A is stable and closes before B captures: the hold path is no longer combo Q_A→SI_B at the same instant. Inter-domain skew is absorbed by the phase. Only INTRA-domain holds remain (local delays)."
+        ),
+      },
+    ],
+    result: loc(
+      "Lock-up è la risposta strutturale inter-domain. Delay cell è intra-domain. Non invertire i due al colloquio.",
+      "Lock-up is the structural inter-domain answer. Delay cells are intra-domain. Do not swap them in interview."
+    ),
+  },
+  {
+    id: "ex-em-mttf",
+    stage: "power",
+    title: loc("MTTF via clock da Black", "Clock-via MTTF from Black"),
+    given: loc(
+      [
+        "J / Jmax = 1.6, n = 2, Ea tipica già nel Jmax foundry @ 105 °C",
+        "Target 10 anni",
+        "Via singoli sullo spine",
+      ],
+      [
+        "J / Jmax = 1.6, n = 2, typical Ea already inside foundry Jmax @ 105 °C",
+        "10-year target",
+        "Single vias on the spine",
+      ]
+    ),
+    steps: [
+      {
+        title: loc("Scala", "Scale"),
+        body: loc(
+          "MTTF/MTTF0 = (Jmax/J)^n = (1/1.6)^2 = 0.39 → 3.9 anni vs target 10. Due via in parallelo (corrente ~split) → J ≈ 0.8 Jmax, (1/0.8)^2 = 1.56 → ~15.6 anni se 10 anni è definito a Jmax.",
+          "MTTF/MTTF0 = (Jmax/J)^n = (1/1.6)^2 = 0.39 → 3.9 years vs 10-year target. Two vias in parallel (current ~splits) → J ≈ 0.8 Jmax, (1/0.8)^2 = 1.56 → ~15.6 years if 10 years is defined at Jmax."
+        ),
+      },
+    ],
+    result: loc(
+      "Via array è un calcolo, non un rituale. Falsificare activity del clock a 0.01 per 'passare' EM è un respin annunciato.",
+      "Via arrays are a calculation, not a ritual. Faking clock activity to 0.01 to 'pass' EM is an advertised respin."
+    ),
+  },
+  {
+    id: "ex-decap",
+    stage: "pdn",
+    title: loc("Decap per un burst di 90 ps", "Decap for a 90 ps burst"),
+    given: loc(
+      [
+        "ΔI = 2 A per Δt = 90 ps (CPU quadrant)",
+        "Budget droop extra 40 mV (oltre lo statico già a 4%)",
+        "Vuoi C tale che I Δt / C ≤ 40 mV",
+      ],
+      [
+        "ΔI = 2 A for Δt = 90 ps (CPU quadrant)",
+        "Extra droop budget 40 mV (on top of static already at 4%)",
+        "Want C such that I Δt / C ≤ 40 mV",
+      ]
+    ),
+    steps: [
+      {
+        title: loc("C minima", "Minimum C"),
+        body: loc(
+          "C ≥ I Δt / ΔV = 2 × 90×10⁻¹² / 0.040 = 4.5 nF nel quadrante. ESR/ESL: le cap devono stare VICINO all'hotspot, non a 2 mm.",
+          "C ≥ I Δt / ΔV = 2 × 90×10⁻¹² / 0.040 = 4.5 nF in the quadrant. ESR/ESL: caps must sit NEAR the hotspot, not 2 mm away."
+        ),
+      },
+      {
+        title: loc("Inrush", "Inrush"),
+        body: loc(
+          "4.5 nF a VDD=0.75 V è 3.4 nC. Se il power-on è 1 µs, I_inrush ≈ 3.4 nC / 1 µs = 3.4 mA (ok). Se è 10 ns, 340 mA extra: si simula lo startup.",
+          "4.5 nF at VDD=0.75 V is 3.4 nC. If power-on is 1 µs, I_inrush ≈ 3.4 nC / 1 µs = 3.4 mA (ok). If it is 10 ns, 340 mA extra: simulate startup."
+        ),
+      },
+    ],
+    result: loc(
+      "Decap è C, distanza, e inrush. 5% di area è un'euristica da junior; il senior fa I Δt / C.",
+      "Decap is C, distance, and inrush. 5% of area is a junior heuristic; a senior does I Δt / C."
     ),
   },
 ];

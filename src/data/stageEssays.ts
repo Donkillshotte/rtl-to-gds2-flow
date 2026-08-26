@@ -148,6 +148,10 @@ export const stageEssays: Record<StageId, StageEssay> = {
         "Hold si chiude DOPO CTS. Pre-CTS il clock è ideale: i buffer di hold sono spazzatura. Setup si lavora da place in poi. IR-aware STA applica voltage map per istanza: un hotspot IR è un SS locale. Senza di esso firmi un WNS ottimistico.",
         "Hold is closed AFTER CTS. Pre-CTS the clock is ideal: hold buffers are garbage. Setup is worked from place onward. IR-aware STA applies a per-instance voltage map: an IR hotspot is local SS. Without it you sign an optimistic WNS."
       ),
+      loc(
+        "DFT è STA: scan_shift (hold brutale, Tclk irrilevante), capture at-speed (setup a f funzionale), mbist. Lock-up latch sugli stitch inter-domain; delay cell in-domain. ATPG e coverage sul netlist ECO-finale. MCP: setup N, hold 1, contratto architetturale — false path su scan_en o AXI ready è un bug.",
+        "DFT is STA: scan_shift (brutal hold, Tclk irrelevant), at-speed capture (setup at functional f), mbist. Lock-up latches on inter-domain stitches; delay cells in-domain. ATPG and coverage on the final ECO netlist. MCP: setup N, hold 1, architectural contract — a false path on scan_en or AXI ready is a bug."
+      ),
     ],
   },
   pv: {
@@ -156,6 +160,10 @@ export const stageEssays: Record<StageId, StageEssay> = {
       loc(
         "DRC: width, spacing, enclosure, density, antenna, coloring (multi-patterning). LVS: connectivity e device count. Puoi essere DRC-clean e LVS-short. ERC: floating gate, missing tap. Signoff sul GDS merged (fill + seal + IO), non sul database P&R. Waivers: scritti, firmati, mai 'lo sappiamo'.",
         "DRC: width, spacing, enclosure, density, antenna, coloring (multi-patterning). LVS: connectivity and device count. You can be DRC-clean and LVS-short. ERC: floating gate, missing tap. Signoff on merged GDS (fill + seal + IO), not the P&R database. Waivers: written, signed, never 'we know'."
+      ),
+      loc(
+        "DFM a 7 nm: coloring = 2-colorability (odd cycle = fail). Via doubling su clock/PG per EM e yield; globale satura i track. Density window e CMP fill (grounded vs floating) cambiano C — SPEF sul GDS merged. Litho hotspot / PV-band fuori spec si fixano in layout. P&R DRC=0 su deck ridotto non è Calibre.",
+        "DFM at 7 nm: coloring = 2-colorability (odd cycle = fail). Via doubling on clock/PG for EM and yield; global doubling saturates tracks. Density windows and CMP fill (grounded vs floating) change C — SPEF on merged GDS. Litho hotspots / PV-band out of spec are fixed in layout. P&R DRC=0 on a reduced deck is not Calibre."
       ),
     ],
   },
@@ -166,6 +174,10 @@ export const stageEssays: Record<StageId, StageEssay> = {
         "Static IR = Iavg·R. Dynamic = C e L nel tempo. VCD cycle selection: WORST_POWER e WORST_dI/dt. EM: Black MTTF = A·J^(−n)·exp(Ea/kT). Power EM è DC su straps; signal EM è RMS/peak su clock. 10 anni @ Tmax. Decap: ΔV ≈ I·Δt/C. Troppa decap = inrush a power-on.",
         "Static IR = Iavg·R. Dynamic = C and L in time. VCD cycle selection: WORST_POWER and WORST_dI/dt. EM: Black MTTF = A·J^(−n)·exp(Ea/kT). Power EM is DC on straps; signal EM is RMS/peak on clocks. 10 years @ Tmax. Decap: ΔV ≈ I·Δt/C. Too much decap = power-on inrush."
       ),
+      loc(
+        "IR-aware STA: voltage map per istanza, hotspot = SS locale. BIST può tirare 1.5–2× corrente: scenario di test nel signoff. Activity onesta sul clock (≈2 edge/ciclo). J via 1.6× e n=2 ⇒ MTTF ~4 anni su un target da 10.",
+        "IR-aware STA: per-instance voltage map, hotspot = local SS. BIST can draw 1.5–2× current: a test scenario in signoff. Honest clock activity (≈2 edges/cycle). Via J 1.6× and n=2 ⇒ MTTF ~4 years on a 10-year target."
+      ),
     ],
   },
   package: {
@@ -175,6 +187,10 @@ export const stageEssays: Record<StageId, StageEssay> = {
         "Flip-chip: corrente entra dall'area, non dal bordo. I bump VDD/VSS dettano gli hotspot IR. Deciderli a fine PD è rifare il chip. SSO: V = Lpkg·di/dt sugli IO. RDL redistribuisce pad→bump. Wire-bond è per IO bassi e L alta. Co-design PKG dal day-1 con il team package.",
         "Flip-chip: current enters from the area, not the edge. VDD/VSS bumps dictate IR hotspots. Deciding them at the end of PD is redoing the chip. SSO: V = Lpkg·di/dt on IO. RDL redistributes pad→bump. Wire-bond is for low IO count and high L. PKG co-design from day one with the package team."
       ),
+      loc(
+        "SSO si dimensiona: I_pin ≈ C dv/dt, N bit insieme, L del return. Ratio PG alto sul PHY, pattern signal-ground. Substrate già freeze ⇒ solo mitigazione die (decap, slew, stagger). IBIS + modello PKG, non un foglio da tre righe.",
+        "Size SSO: I_pin ≈ C dv/dt, N bits together, return L. High PG ratio on the PHY, signal-ground pattern. Substrate already frozen ⇒ die-only mitigation (decap, slew, stagger). IBIS + PKG model, not a three-line spreadsheet."
+      ),
     ],
   },
   tapeout: {
@@ -183,6 +199,10 @@ export const stageEssays: Record<StageId, StageEssay> = {
       loc(
         "GKC: ogni disciplina firma. Un veto blocca. BTO poi MTO per parallelizzare FEOL in fab. GDS/OASIS merged, layer map, job deck, PDK locked. Dopo MTO l'unico undo è un respin (soldi e mesi). MPW per prototipi. TOR è il go/no-go verbale, ma il contenuto è la checklist che hai già visto in questo sito.",
         "GKC: every discipline signs. One veto blocks. BTO then MTO to parallelize FEOL in fab. Merged GDS/OASIS, layer map, job deck, PDK locked. After MTO the only undo is a respin (money and months). MPW for prototypes. TOR is the verbal go/no-go, but the content is the checklist already on this site."
+      ),
+      loc(
+        "Metal-only = spare già nel FEOL + metal/via. AND2 = NAND2+INV. Nuova cella in un hole slitta BTO. Dopo l'ECO: LEC, ATPG, PV, IR se hai toccato PG. Evidenza GKC = log tool, non una slide con tre pallini verdi. Spare 2–4% è assicurazione.",
+        "Metal-only = spares already in FEOL + metal/via. AND2 = NAND2+INV. A new cell in a hole slips BTO. After the ECO: LEC, ATPG, PV, IR if you touched PG. GKC evidence = tool logs, not a slide with three green dots. 2–4% spare is insurance."
       ),
     ],
   },

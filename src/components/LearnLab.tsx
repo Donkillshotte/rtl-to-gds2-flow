@@ -1,16 +1,18 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { GraduationCap, Calculator, Layers, ListChecks, FlipHorizontal } from "lucide-react";
+import { GraduationCap, Calculator, Layers, ListChecks, FlipHorizontal, Swords, BookOpen } from "lucide-react";
 import { useI18n } from "@/i18n/context";
 import { ui } from "@/i18n/ui";
 import { quizBank, workedExamples } from "@/data/quizBank";
 import { extraInterview } from "@/data/interviewExtra";
 import { stageInterview } from "@/data/stageFormulas";
+import { scenarios } from "@/data/scenarios";
+import { playbook } from "@/data/playbook";
 import type { StageId } from "@/data/stages";
 import { cn } from "@/lib/utils";
 
-type Tab = "quiz" | "cards" | "calc" | "examples";
+type Tab = "quiz" | "cards" | "scenarios" | "playbook" | "calc" | "examples";
 
 const STAGE_OPTS: { id: StageId | "all"; label: string }[] = [
   { id: "all", label: "ALL" },
@@ -21,6 +23,10 @@ const STAGE_OPTS: { id: StageId | "all"; label: string }[] = [
   { id: "placement", label: "PLC" },
   { id: "routing", label: "RT" },
   { id: "power", label: "IR" },
+  { id: "pv", label: "PV" },
+  { id: "package", label: "PKG" },
+  { id: "tapeout", label: "TO" },
+  { id: "rtl", label: "RTL" },
 ];
 
 export function LearnLab() {
@@ -41,6 +47,8 @@ export function LearnLab() {
             [
               ["quiz", t(ui.learnQuiz), ListChecks],
               ["cards", t(ui.learnCards), FlipHorizontal],
+              ["scenarios", t(ui.learnScenarios), Swords],
+              ["playbook", t(ui.learnPlaybook), BookOpen],
               ["calc", t(ui.learnCalc), Calculator],
               ["examples", t(ui.learnExamples), Layers],
             ] as const
@@ -64,6 +72,8 @@ export function LearnLab() {
 
         {tab === "quiz" && <QuizPanel />}
         {tab === "cards" && <CardPanel />}
+        {tab === "scenarios" && <ScenarioPanel />}
+        {tab === "playbook" && <PlaybookPanel />}
         {tab === "calc" && <CalcPanel />}
         {tab === "examples" && <ExamplePanel />}
       </div>
@@ -222,6 +232,178 @@ function CardPanel() {
           →
         </button>
       </div>
+    </div>
+  );
+}
+
+function ScenarioPanel() {
+  const { t, locale } = useI18n();
+  const [sid, setSid] = useState(scenarios[0].id);
+  const sc = scenarios.find((s) => s.id === sid) ?? scenarios[0];
+  const [step, setStep] = useState(0);
+  const [picked, setPicked] = useState<number | null>(null);
+  const [score, setScore] = useState({ ok: 0, n: 0 });
+  const done = step >= sc.steps.length;
+  const st = !done ? sc.steps[step] : null;
+  const choices = st ? st.choices[locale] : [];
+
+  const reset = (id = sid) => {
+    setSid(id);
+    setStep(0);
+    setPicked(null);
+    setScore({ ok: 0, n: 0 });
+  };
+
+  const choose = (i: number) => {
+    if (!st || picked !== null) return;
+    setPicked(i);
+    setScore((s) => ({ ok: s.ok + (i === st.correct ? 1 : 0), n: s.n + 1 }));
+  };
+
+  const next = () => {
+    setPicked(null);
+    setStep((s) => s + 1);
+  };
+
+  return (
+    <div className="grid lg:grid-cols-[240px_1fr] gap-6">
+      <div>
+        <p className="text-[11px] font-mono text-slate-500 mb-2">{t(ui.learnPickScenario)}</p>
+        <div className="flex lg:flex-col gap-2 overflow-x-auto pb-2">
+          {scenarios.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              onClick={() => reset(s.id)}
+              className={cn(
+                "text-left px-3 py-2 rounded-lg text-xs border shrink-0",
+                s.id === sid
+                  ? "border-amber-500/40 text-amber-300 bg-amber-500/10"
+                  : "border-slate-700/40 text-slate-400"
+              )}
+            >
+              <span className="block font-mono text-[10px] text-slate-500 mb-0.5">{s.stage}</span>
+              {t(s.title)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <div className="glass rounded-2xl p-5 sm:p-6">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <span className="text-[10px] font-mono uppercase text-amber-400/80">{sc.stage}</span>
+            <span className="text-[10px] font-mono text-slate-500 ml-auto">
+              {done ? `${score.ok}/${score.n}` : `${t(ui.learnStepOf)} ${step + 1}/${sc.steps.length}`}
+              {score.n > 0 && !done ? ` · ${score.ok}/${score.n}` : ""}
+            </span>
+          </div>
+          <h3 className="text-lg font-semibold text-slate-100 mb-1">{t(sc.title)}</h3>
+          <p className="text-xs font-mono text-amber-300/80 mb-3">{t(sc.role)}</p>
+          <p className="text-sm text-slate-300 leading-relaxed">{t(sc.briefing)}</p>
+          <p className="text-[11px] font-mono text-slate-500 mt-4 mb-2">{t(ui.learnSymptoms)}</p>
+          <ul className="space-y-1">
+            {sc.symptoms[locale].map((line) => (
+              <li key={line} className="text-sm text-slate-400 font-mono">
+                ▸ {line}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {!done && st && (
+          <div className="glass rounded-2xl p-5 sm:p-6">
+            <p className="text-slate-200 font-medium mb-4 leading-relaxed">{t(st.prompt)}</p>
+            <div className="space-y-2">
+              {choices.map((c, i) => {
+                const show = picked !== null;
+                const good = i === st.correct;
+                const bad = show && i === picked && i !== st.correct;
+                return (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => choose(i)}
+                    className={cn(
+                      "w-full text-left px-4 py-3 rounded-xl text-sm border transition-colors",
+                      !show && "border-slate-700/50 hover:border-amber-500/30 text-slate-300",
+                      show && good && "border-green-500/50 bg-green-500/10 text-green-200",
+                      bad && "border-red-500/40 bg-red-500/10 text-red-200"
+                    )}
+                  >
+                    {c}
+                  </button>
+                );
+              })}
+            </div>
+            {picked !== null && (
+              <div className="mt-4">
+                <p className="text-[11px] font-mono text-amber-400/80 mb-1">{t(ui.learnDebrief)}</p>
+                <p className="text-sm text-slate-400 leading-relaxed">{t(st.debrief)}</p>
+                <button
+                  type="button"
+                  onClick={next}
+                  className="mt-4 px-4 py-2 rounded-lg text-sm bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                >
+                  {step + 1 < sc.steps.length ? t(ui.learnNextStep) : t(ui.learnClosing)}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {done && (
+          <div className="glass rounded-2xl p-5 sm:p-6 border border-amber-500/20">
+            <p className="text-[11px] font-mono text-amber-400/80 mb-2">{t(ui.learnClosing)}</p>
+            <p className="text-sm text-slate-200 leading-relaxed mb-4">{t(sc.closing)}</p>
+            <p className="text-xs font-mono text-slate-500 mb-4">
+              {score.ok}/{score.n}
+            </p>
+            <button
+              type="button"
+              onClick={() => reset(sid)}
+              className="px-4 py-2 rounded-lg text-sm bg-amber-500/20 text-amber-300 border border-amber-500/30"
+            >
+              {t(ui.learnRestart)}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function PlaybookPanel() {
+  const { t } = useI18n();
+  const [id, setId] = useState(playbook[0].id);
+  const ch = playbook.find((c) => c.id === id) ?? playbook[0];
+
+  return (
+    <div className="grid lg:grid-cols-[220px_1fr] gap-6">
+      <div className="flex lg:flex-col gap-2 overflow-x-auto">
+        {playbook.map((c) => (
+          <button
+            key={c.id}
+            type="button"
+            onClick={() => setId(c.id)}
+            className={cn(
+              "text-left px-3 py-2 rounded-lg text-xs border shrink-0",
+              c.id === id ? "border-amber-500/40 text-amber-300 bg-amber-500/10" : "border-slate-700/40 text-slate-400"
+            )}
+          >
+            {t(c.title)}
+          </button>
+        ))}
+      </div>
+      <article className="glass rounded-2xl p-5 sm:p-6 space-y-4">
+        <h3 className="text-xl font-semibold text-slate-100">{t(ch.title)}</h3>
+        <p className="text-sm text-amber-300/90 leading-relaxed">{t(ch.kicker)}</p>
+        {ch.paragraphs.map((p, i) => (
+          <p key={i} className="text-sm text-slate-400 leading-relaxed">
+            {t(p)}
+          </p>
+        ))}
+      </article>
     </div>
   );
 }
