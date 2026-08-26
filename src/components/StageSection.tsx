@@ -9,8 +9,10 @@ import { ui } from "@/i18n/ui";
 import { stageFormulas, stageInterview } from "@/data/stageFormulas";
 import { extraInterview } from "@/data/interviewExtra";
 import { interviewExtraMore } from "@/data/interviewExtraMore";
+import { interviewExtraMore2 } from "@/data/interviewExtraMore2";
 import { stageEssays } from "@/data/stageEssays";
 import { stageEssayExtras } from "@/data/stageEssayExtras";
+import { stageEssayExtras3 } from "@/data/stageEssayExtras3";
 import { stageDeepDiveExtras } from "@/data/stageDeepDiveExtras";
 import { stageDeepDiveExtras2 } from "@/data/stageDeepDiveExtras2";
 import { stageSubsectionExtras } from "@/data/stageSubsectionExtras";
@@ -31,9 +33,13 @@ export function StageSection({ stage, index }: StageSectionProps) {
     ...(stageInterview[stage.id] ?? []),
     ...(extraInterview[stage.id] ?? []),
     ...(interviewExtraMore[stage.id] ?? []),
+    ...(interviewExtraMore2[stage.id] ?? []),
   ];
   const essay = stageEssays[stage.id];
-  const essayExtras = stageEssayExtras[stage.id] ?? [];
+  const essayExtras = [
+    ...(stageEssayExtras[stage.id] ?? []),
+    ...(stageEssayExtras3[stage.id] ?? []),
+  ];
   const deepDiveExtras = [
     ...(stageDeepDiveExtras[stage.id] ?? []),
     ...(stageDeepDiveExtras2[stage.id] ?? []),
