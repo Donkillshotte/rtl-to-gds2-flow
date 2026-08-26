@@ -122,6 +122,9 @@ export function Header() {
           <a href="#signoff-checklist" className="px-2.5 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden md:block">
             {t(ui.navSignoff)}
           </a>
+          <a href="#sources" className="px-2.5 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden md:block">
+            {t(ui.navSources)}
+          </a>
           <a href="#glossary" className="px-2.5 py-1 rounded-lg text-xs text-slate-400 hover:text-white transition-colors hidden md:block">
             {t(ui.navGlossary)}
           </a>

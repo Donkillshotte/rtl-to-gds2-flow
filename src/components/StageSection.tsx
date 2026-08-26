@@ -15,12 +15,15 @@ import { stageEssayExtras } from "@/data/stageEssayExtras";
 import { stageEssayExtras3 } from "@/data/stageEssayExtras3";
 import { stageDeepDiveExtras } from "@/data/stageDeepDiveExtras";
 import { stageDeepDiveExtras2 } from "@/data/stageDeepDiveExtras2";
+import { stageDeepDiveSourced } from "@/data/stageDeepDiveSourced";
 import { stageSubsectionExtras } from "@/data/stageSubsectionExtras";
 import { practicalNotesExtras } from "@/data/practicalNotesExtras";
 import { stageDescriptionExtras } from "@/data/stageDescriptionExtras";
 import { workedExamples } from "@/data/quizBank";
 import { workedExamplesMore } from "@/data/workedExamplesMore";
 import { TermText } from "@/components/TermPopup";
+import { stageSourcedEssays } from "@/data/stageSourcedEssays";
+import { sourceById } from "@/data/sources";
 
 interface StageSectionProps {
   stage: Stage;
@@ -42,10 +45,12 @@ export function StageSection({ stage, index }: StageSectionProps) {
     ...(stageEssayExtras[stage.id] ?? []),
     ...(stageEssayExtras3[stage.id] ?? []),
   ];
+  const sourced = stageSourcedEssays[stage.id];
   const deepDiveExtras = [
     ...(stageDeepDiveExtras[stage.id] ?? []),
     ...(stageDeepDiveExtras2[stage.id] ?? []),
   ];
+  const deepDiveSourced = stageDeepDiveSourced[stage.id] ?? [];
   const subsectionExtras = stageSubsectionExtras[stage.id] ?? [];
   const workNotesExtras = practicalNotesExtras[stage.id] ?? [];
   const descriptionExtras = stageDescriptionExtras[stage.id] ?? [];
@@ -116,6 +121,28 @@ export function StageSection({ stage, index }: StageSectionProps) {
                     <TermText>{paragraph}</TermText>
                   </p>
                 ))}
+                {deepDiveSourced.map((para, i) => (
+                  <div key={`src-dd-${i}`} className="pt-1">
+                    <p className="text-sm text-slate-400 leading-relaxed">
+                      <TermText>{t(para.body)}</TermText>
+                    </p>
+                    <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                      {para.refs.map((rid) => {
+                        const src = sourceById(rid);
+                        return (
+                          <a
+                            key={rid}
+                            href={`#source-${rid}`}
+                            className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-slate-600/50 text-slate-400 hover:text-sky-300 hover:border-sky-500/30"
+                            title={src ? t(src.title) : rid}
+                          >
+                            {src?.cite ?? rid}
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -127,6 +154,40 @@ export function StageSection({ stage, index }: StageSectionProps) {
                     <p key={i} className="text-sm text-slate-400 leading-relaxed">
                       <TermText>{t(p)}</TermText>
                     </p>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {sourced && (
+              <div className="glass rounded-xl p-5 border border-sky-500/20">
+                <h3 className="text-sm font-semibold text-sky-300 mb-1">{t(ui.sourcedEssay)}</h3>
+                <p className="text-xs text-slate-500 mb-4 leading-relaxed">{t(sourced.kicker)}</p>
+                <div className="space-y-5">
+                  {sourced.paragraphs.map((para, i) => (
+                    <div key={i}>
+                      <p className="text-sm text-slate-400 leading-relaxed">
+                        <TermText>{t(para.body)}</TermText>
+                      </p>
+                      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-sky-500/70">
+                          {t(ui.sourcedRefs)}
+                        </span>
+                        {para.refs.map((rid) => {
+                          const src = sourceById(rid);
+                          return (
+                            <a
+                              key={rid}
+                              href={`#source-${rid}`}
+                              className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-sky-500/25 text-sky-300/90 hover:bg-sky-500/10"
+                              title={src ? t(src.title) : rid}
+                            >
+                              {src?.cite ?? rid}
+                            </a>
+                          );
+                        })}
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>

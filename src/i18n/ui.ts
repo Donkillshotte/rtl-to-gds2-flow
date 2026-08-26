@@ -165,4 +165,12 @@ export const ui = {
     "I termini sottolineati sono cliccabili: aprono la definizione dal glossario.",
     "Dotted underlined terms are clickable: they open the glossary definition."
   ),
+  sourcesTitle: loc("Fonti e riferimenti", "Sources and references"),
+  sourcesSubtitle: loc(
+    "Testi di fase e saggi citati si basano su libri VLSI classici, paper IEEE, standard (UPF, JTAG, SystemVerilog) e modelli industriali (Liberty/CCS, SDC, MTBF). Ogni paragrafo «da letteratura» elenca le fonti usate.",
+    "Stage text and cited essays draw on classic VLSI textbooks, IEEE papers, standards (UPF, JTAG, SystemVerilog), and industry models (Liberty/CCS, SDC, MTBF). Each «from literature» paragraph lists its sources."
+  ),
+  sourcedEssay: loc("Approfondimento da letteratura", "Literature deep-dive"),
+  sourcedRefs: loc("Fonti", "Sources"),
+  navSources: loc("Fonti", "Sources"),
 };

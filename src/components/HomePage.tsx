@@ -7,6 +7,7 @@ import { SummarySection, Footer } from "@/components/SummarySection";
 import { GlossarySection, SignoffChecklistSection } from "@/components/GlossarySection";
 import { CellGlossarySection } from "@/components/CellGlossarySection";
 import { ReferenceSection } from "@/components/ReferenceSection";
+import { SourcesSection } from "@/components/SourcesSection";
 import { Header, Navigation } from "@/components/Navigation";
 import { MobileBottomNav } from "@/components/MobileNav";
 import { LearnLab } from "@/components/LearnLab";
@@ -28,6 +29,7 @@ export function HomePage() {
         ))}
         <SignoffChecklistSection />
         <ReferenceSection />
+        <SourcesSection />
         <GlossarySection />
         <CellGlossarySection />
         <SummarySection />
